@@ -1,0 +1,6 @@
+<Project>
+
+    <Import Sdk="PostSharp.Engineering.Sdk" Project="AssemblyMetadata.targets"/>
+    <Import Sdk="PostSharp.Engineering.Sdk" Project="TeamCity.targets"/>
+
+</Project>
