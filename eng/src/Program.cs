@@ -9,7 +9,7 @@ using Spectre.Console.Cli;
 
 var product = new Product( Dependencies.MyProduct )
 {
-    Solutions = new[] { new DotNetSolution( "src\\My.Product.sln" ) },
+    Solutions = new[] { new DotNetSolution( "src\\My.Product.sln" ) { CanFormatCode = true } },
     PublicArtifacts = Pattern.Create( "My.Product.$(PackageVersion).nupkg" ),
     Dependencies = new[] { Dependencies.PostSharpEngineering, Dependencies.Metalama }
 };
