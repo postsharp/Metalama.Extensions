@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Metalama.Framework" Version="$(MetalamaVersion)" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Metalama.Framework.DependencyInjection\Metalama.Framework.DependencyInjection.csproj" />
+    </ItemGroup>
+
+	<Import Sdk="PostSharp.Engineering.Sdk" Project="SystemTypes.props"/>
+
+</Project>
