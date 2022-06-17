@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metalama.Framework.DependencyInjection.DotNet", "src\Metalama.Framework.DependencyInjection.DotNet\Metalama.Framework.DependencyInjection.DotNet.csproj", "{35D7011A-49FF-4C77-A675-6E03B6BB26A7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metalama.Framework.DependencyInjection.AspectTests", "src\Metalama.Framework.DependencyInjection.AspectTests\Metalama.Framework.DependencyInjection.AspectTests.csproj", "{45EC025C-8C55-4FB4-B63C-5EF3EA1BD1D2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metalama.Framework.DependencyInjection.DotNet.Tests", "src\Metalama.Framework.DependencyInjection.DotNet.Tests\Metalama.Framework.DependencyInjection.DotNet.Tests.csproj", "{45EC025C-8C55-4FB4-B63C-5EF3EA1BD1D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metalama.Framework.DependencyInjection", "src\Metalama.Framework.DependencyInjection\Metalama.Framework.DependencyInjection.csproj", "{848DBD9D-1ED2-4A27-B4F9-B0D33727EBF8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metalama.Framework.DependencyInjection", "src\Metalama.Framework.DependencyInjection\Metalama.Framework.DependencyInjection.csproj", "{848DBD9D-1ED2-4A27-B4F9-B0D33727EBF8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metalama.Framework.DependencyInjection.ServiceLocator", "src\Metalama.Framework.DependencyInjection.ServiceLocator\Metalama.Framework.DependencyInjection.ServiceLocator.csproj", "{62F91CB4-7A7E-4BCF-9906-3B5F0DA9DD9C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metalama.Framework.DependencyInjection.ServiceLocator.AspectTests", "src\Metalama.Framework.DependencyInjection.ServiceLocator.AspectTests\Metalama.Framework.DependencyInjection.ServiceLocator.AspectTests.csproj", "{BE2C078A-5AB6-4927-83EC-70D099471688}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,10 +17,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{35D7011A-49FF-4C77-A675-6E03B6BB26A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{35D7011A-49FF-4C77-A675-6E03B6BB26A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{35D7011A-49FF-4C77-A675-6E03B6BB26A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{35D7011A-49FF-4C77-A675-6E03B6BB26A7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{45EC025C-8C55-4FB4-B63C-5EF3EA1BD1D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{45EC025C-8C55-4FB4-B63C-5EF3EA1BD1D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{45EC025C-8C55-4FB4-B63C-5EF3EA1BD1D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -27,6 +25,14 @@ Global
 		{848DBD9D-1ED2-4A27-B4F9-B0D33727EBF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{848DBD9D-1ED2-4A27-B4F9-B0D33727EBF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{848DBD9D-1ED2-4A27-B4F9-B0D33727EBF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{62F91CB4-7A7E-4BCF-9906-3B5F0DA9DD9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62F91CB4-7A7E-4BCF-9906-3B5F0DA9DD9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62F91CB4-7A7E-4BCF-9906-3B5F0DA9DD9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62F91CB4-7A7E-4BCF-9906-3B5F0DA9DD9C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE2C078A-5AB6-4927-83EC-70D099471688}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE2C078A-5AB6-4927-83EC-70D099471688}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE2C078A-5AB6-4927-83EC-70D099471688}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE2C078A-5AB6-4927-83EC-70D099471688}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -20,16 +20,16 @@ public class DefaultPullStrategy : IPullStrategy
     /// </summary>
     /// <param name="context">The context information for the introduced dependency.</param>
     /// <param name="introducedFieldOrProperty">The dependency field or property in the target type.</param>
-    public DefaultPullStrategy( DependencyInjectionContext context, IFieldOrProperty introducedFieldOrProperty )
+    public DefaultPullStrategy( DependencyContext context, IFieldOrProperty introducedFieldOrProperty )
     {
         this.Context = context;
         this.IntroducedFieldOrProperty = introducedFieldOrProperty;
     }
 
     /// <summary>
-    /// Gets the <see cref="DependencyInjectionContext"/>.
+    /// Gets the <see cref="IntroduceDependencyContext"/>.
     /// </summary>
-    public DependencyInjectionContext Context { get; }
+    public DependencyContext Context { get; }
 
     /// <summary>
     /// Gets the dependency field or property in the target type. 
@@ -126,7 +126,7 @@ public class DefaultPullStrategy : IPullStrategy
         // Initialize the field or property to the parameter.
         string assignmentCode;
 
-        if ( this.Context.DependencyAttribute.GetIsRequired().GetValueOrDefault( true ) )
+        if ( this.Context.DependencyAttribute.GetIsRequired().GetValueOrDefault( this.Context.Project.DependencyInjectionOptions().IsRequiredByDefault ) )
         {
             assignmentCode =
                 $"this.{assignedFieldOrProperty.Name} = {existingParameter.Name} ?? throw new System.ArgumentNullException(nameof({existingParameter.Name}));";

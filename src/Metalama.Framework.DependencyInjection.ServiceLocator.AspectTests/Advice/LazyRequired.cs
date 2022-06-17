@@ -2,16 +2,18 @@
 // This project is not open source.Please see the LICENSE.md file in the repository root for details.
 
 using Metalama.Framework.Aspects;
+using Metalama.Framework.DependencyInjection;
+using Metalama.Framework.DependencyInjection.DotNet.Tests.Advice.LazyRequired;
 
-namespace Metalama.Framework.DependencyInjection.DotNet.Tests.LazyRequired;
+[assembly: AspectOrder( typeof(DependencyAttribute), typeof(MyAspect) )]
 
-#pragma warning disable IDE0051 // Remove unused private members
-#pragma warning disable CS8618  // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-#pragma warning disable CS0169  // Field is never used
+namespace Metalama.Framework.DependencyInjection.DotNet.Tests.Advice.LazyRequired;
+
+#pragma warning disable CS1591, CS8618
 
 public class MyAspect : TypeAspect
 {
-    [Dependency( IsLazy = true )]
+    [IntroduceDependency( IsLazy = true )]
     private readonly IFormatProvider _formatProvider;
 }
 
