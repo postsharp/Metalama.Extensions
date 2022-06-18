@@ -10,7 +10,10 @@ using Spectre.Console.Cli;
 var product = new Product(Dependencies.MetalamaFrameworkExtensions)
 {
     Solutions = new[] { new DotNetSolution("Metalama.Framework.Extensions.sln") { CanFormatCode = true } },
-    PublicArtifacts = Pattern.Create("Metalama.Framework.Extensions.$(PackageVersion).nupkg"),
+    PublicArtifacts = Pattern.Create(
+        "Metalama.Framework.DependencyInjection.$(PackageVersion).nupkg",
+        "Metalama.Framework.DependencyInjection.ServiceLocator.$(PackageVersion).nupkg"
+        ),
     Dependencies = new[] { Dependencies.PostSharpEngineering, Dependencies.Metalama }
 };
 
