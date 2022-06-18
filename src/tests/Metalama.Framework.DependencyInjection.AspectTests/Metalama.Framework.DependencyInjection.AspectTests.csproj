@@ -3,22 +3,9 @@
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-		<DisableCodeQuality>true</DisableCodeQuality>
-        <IsPackable>false</IsPackable>
+        <RootNamespace>Metalama.Framework.DependencyInjection.AspectTests</RootNamespace>
+        <NoWarn>IDE0051,CS8618,CS0169</NoWarn>
     </PropertyGroup>
-
-    <ItemGroup>
-      <Compile Remove="EarlyRequired - Copy.t.cs" />
-      <Compile Remove="IntroduceNewParameter - Copy.t.cs" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <None Include="LazyRequired.t.cs">
-        <SubType>Code</SubType>
-        <DependentUpon>LazyRequired.cs</DependentUpon>
-      </None>
-    </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
@@ -35,7 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Metalama.Framework.DependencyInjection.DotNet\Metalama.Framework.DependencyInjection.DotNet.csproj" />
+      <ProjectReference Include="..\..\Metalama.Framework.DependencyInjection\Metalama.Framework.DependencyInjection.csproj" />
     </ItemGroup>
 
 </Project>

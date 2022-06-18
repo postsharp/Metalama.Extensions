@@ -1,10 +1,8 @@
-﻿// Copyright (c) SharpCrafters s.r.o.All rights reserved.
-// This project is not open source.Please see the LICENSE.md file in the repository root for details.
+﻿// Copyright (c) SharpCrafters s.r.o. All rights reserved. See LICENSE.md in the repository root for details.
 
 using Metalama.Framework.DependencyInjection.Implementation;
 using Metalama.Framework.Project;
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -12,31 +10,73 @@ using System.Linq;
 namespace Metalama.Framework.DependencyInjection;
 
 /// <summary>
-/// Options that influence the processing of <see cref="DependencyAttribute"/>.
+/// Options that influence the processing of <see cref="IntroduceDependencyAttribute"/>.
 /// </summary>
 public sealed class DependencyInjectionOptions : ProjectExtension
 {
-    private readonly List<IDependencyInjectionFramework> _frameworks = new();
-    private Func<DependencyInjectionContext, IDependencyInjectionFramework?>? _selector;
+    private Func<DependencyContext, ImmutableArray<IDependencyInjectionFramework>, IDependencyInjectionFramework?> _selector = ( context, frameworks )
+        => frameworks[0];
+
+    private ImmutableArray<IDependencyInjectionFramework> _registeredFrameworks =
+        ImmutableArray.Create<IDependencyInjectionFramework>( new DefaultDependencyInjectionFramework() );
 
     /// <summary>
-    /// Registers an implementation of the <see cref="IDependencyInjectionFramework"/> class.
+    /// Gets or sets the list of frameworks that can be used to implement the <see cref="IntroduceDependencyAttribute"/> advice and <see cref="DependencyAttribute"/>
+    /// aspect.
     /// </summary>
-    public void RegisterFramework( IDependencyInjectionFramework framework )
+    public ImmutableArray<IDependencyInjectionFramework> RegisteredFrameworks
+    {
+        get => this._registeredFrameworks;
+        set
+        {
+            if ( this.IsReadOnly )
+            {
+                throw new InvalidOperationException();
+            }
+
+            this._registeredFrameworks = value.IsDefault ? ImmutableArray<IDependencyInjectionFramework>.Empty : value;
+        }
+    }
+
+#pragma warning disable SA1623
+    /// <summary>
+    /// Gets or sets the default value for the <see cref="DependencyAttribute.IsRequired"/> property of <see cref="DependencyAttribute"/> and <see cref="IntroduceDependencyAttribute"/>.
+    /// </summary>
+    public bool IsRequiredByDefault { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the default value for the <see cref="DependencyAttribute.IsLazy"/> property of <see cref="DependencyAttribute"/> and <see cref="IntroduceDependencyAttribute"/>.
+    /// </summary>
+    public bool IsLazyByDefault { get; set; }
+#pragma warning restore SA1623
+
+    /// <summary>
+    /// Registers an implementation of the <see cref="IDependencyInjectionFramework"/> interface with highest priority.
+    /// The registration is ignored if another framework of the same was already registered.
+    /// </summary>
+    /// <returns><c>true</c> if <paramref name="framework"/> was registered, or <c>false</c> if a framework of the same type was already registered.</returns>
+    public bool RegisterFramework( IDependencyInjectionFramework framework )
     {
         if ( this.IsReadOnly )
         {
             throw new InvalidOperationException();
         }
 
-        this._frameworks.Add( framework );
+        if ( this.RegisteredFrameworks.Any( f => f.GetType() == framework.GetType() ) )
+        {
+            return false;
+        }
+
+        this.RegisteredFrameworks = this.RegisteredFrameworks.Insert( 0, framework );
+
+        return true;
     }
 
     /// <summary>
     /// Gets or sets a delegate that is called when several dependency injection frameworks have been registered
     /// for the current project and many vote to handle a given dependency.
     /// </summary>
-    public Func<DependencyInjectionContext, IDependencyInjectionFramework?>? Selector
+    public Func<DependencyContext, ImmutableArray<IDependencyInjectionFramework>, IDependencyInjectionFramework?> Selector
     {
         get => this._selector;
         set
@@ -50,21 +90,21 @@ public sealed class DependencyInjectionOptions : ProjectExtension
         }
     }
 
-    internal bool TryGetFramework( DependencyInjectionContext context, [NotNullWhen( true )] out IDependencyInjectionFramework? framework )
+    internal bool TryGetFramework( DependencyContext context, [NotNullWhen( true )] out IDependencyInjectionFramework? framework )
     {
-        var eligibleFrameworks = this._frameworks.Where( f => f.CanInjectDependency( context ) ).ToImmutableArray();
+        var eligibleFrameworks = this.RegisteredFrameworks.Where( f => f.CanHandleDependency( context ) ).ToImmutableArray();
 
         if ( eligibleFrameworks.IsEmpty )
         {
-            if ( this._frameworks.Count == 0 )
+            if ( this.RegisteredFrameworks.IsDefaultOrEmpty )
             {
                 context.Diagnostics.Report(
-                    DiagnosticDescriptors.NoDependencyInjectionFrameworkRegistered.WithArguments( (context.AspectFieldOrProperty, context.TargetType) ) );
+                    DiagnosticDescriptors.NoDependencyInjectionFrameworkRegistered.WithArguments( (context.FieldOrProperty, context.TargetType) ) );
             }
             else
             {
                 context.Diagnostics.Report(
-                    DiagnosticDescriptors.NoSuitableDependencyInjectionFramework.WithArguments( (context.AspectFieldOrProperty, context.TargetType) ) );
+                    DiagnosticDescriptors.NoSuitableDependencyInjectionFramework.WithArguments( (context.FieldOrProperty, context.TargetType) ) );
             }
 
             framework = null;
@@ -76,24 +116,14 @@ public sealed class DependencyInjectionOptions : ProjectExtension
         {
             framework = eligibleFrameworks[0];
         }
-        else if ( this.Selector == null )
-        {
-            context.Diagnostics.Report(
-                DiagnosticDescriptors.MoreThanOneSuitableDependencyInjectionFramework.WithArguments( (context.AspectFieldOrProperty, context.TargetType) ) );
-
-            framework = null;
-
-            return false;
-        }
         else
         {
-            framework = this.Selector.Invoke( context );
+            framework = this.Selector.Invoke( context, eligibleFrameworks );
 
             if ( framework == null )
             {
                 context.Diagnostics.Report(
-                    DiagnosticDescriptors.MoreThanOneSuitableDependencyInjectionFramework.WithArguments(
-                        (context.AspectFieldOrProperty, context.TargetType) ) );
+                    DiagnosticDescriptors.MoreThanOneSuitableDependencyInjectionFramework.WithArguments( (context.FieldOrProperty, context.TargetType) ) );
 
                 return false;
             }

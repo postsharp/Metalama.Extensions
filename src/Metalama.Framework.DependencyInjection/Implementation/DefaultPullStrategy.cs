@@ -1,5 +1,4 @@
-﻿// Copyright (c) SharpCrafters s.r.o.All rights reserved.
-// This project is not open source.Please see the LICENSE.md file in the repository root for details.
+﻿// Copyright (c) SharpCrafters s.r.o. All rights reserved. See LICENSE.md in the repository root for details.
 
 using Metalama.Framework.Advising;
 using Metalama.Framework.Code;
@@ -20,16 +19,16 @@ public class DefaultPullStrategy : IPullStrategy
     /// </summary>
     /// <param name="context">The context information for the introduced dependency.</param>
     /// <param name="introducedFieldOrProperty">The dependency field or property in the target type.</param>
-    public DefaultPullStrategy( DependencyInjectionContext context, IFieldOrProperty introducedFieldOrProperty )
+    public DefaultPullStrategy( DependencyContext context, IFieldOrProperty introducedFieldOrProperty )
     {
         this.Context = context;
         this.IntroducedFieldOrProperty = introducedFieldOrProperty;
     }
 
     /// <summary>
-    /// Gets the <see cref="DependencyInjectionContext"/>.
+    /// Gets the <see cref="IntroduceDependencyContext"/>.
     /// </summary>
-    public DependencyInjectionContext Context { get; }
+    public DependencyContext Context { get; }
 
     /// <summary>
     /// Gets the dependency field or property in the target type. 
@@ -37,7 +36,7 @@ public class DefaultPullStrategy : IPullStrategy
     public IFieldOrProperty IntroducedFieldOrProperty { get; }
 
     /// <summary>
-    /// Gets the field or property that must be assigned by the <see cref="GetAssignmentStatement"/> method.
+    /// Gets the field or property that must be assigned by the <see cref="GetAssignmentStatement(IParameter)"/> method.
     /// </summary>
     protected virtual IFieldOrProperty AssignedFieldOrProperty => this.IntroducedFieldOrProperty;
 
@@ -126,7 +125,7 @@ public class DefaultPullStrategy : IPullStrategy
         // Initialize the field or property to the parameter.
         string assignmentCode;
 
-        if ( this.Context.DependencyAttribute.GetIsRequired().GetValueOrDefault( true ) )
+        if ( this.Context.DependencyAttribute.GetIsRequired().GetValueOrDefault( this.Context.Project.DependencyInjectionOptions().IsRequiredByDefault ) )
         {
             assignmentCode =
                 $"this.{assignedFieldOrProperty.Name} = {existingParameter.Name} ?? throw new System.ArgumentNullException(nameof({existingParameter.Name}));";

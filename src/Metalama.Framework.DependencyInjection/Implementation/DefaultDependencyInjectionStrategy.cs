@@ -1,47 +1,47 @@
-﻿// Copyright (c) SharpCrafters s.r.o.All rights reserved.
-// This project is not open source.Please see the LICENSE.md file in the repository root for details.
+﻿// Copyright (c) SharpCrafters s.r.o. All rights reserved. See LICENSE.md in the repository root for details.
 
 using Metalama.Framework.Advising;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 using System;
-using System.Diagnostics;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 namespace Metalama.Framework.DependencyInjection.Implementation;
 
 /// <summary>
-/// The default implementation of the <see cref="IDependencyInjectionFramework.InjectDependency"/> interface method. It is designed
+/// The default implementation of the <see cref="IDependencyInjectionFramework.IntroduceDependency"/> interface method. It is designed
 /// to be easily extended and overwritten.
 /// </summary>
 [CompileTime]
 public class DefaultDependencyInjectionStrategy
 {
     /// <summary>
-    /// Gets the <see cref="DependencyInjectionContext"/> for which the current object was created.
+    /// Gets the <see cref="IntroduceDependencyContext"/> for which the current object was created.
     /// </summary>
-    public DependencyInjectionContext Context { get; }
+    public DependencyContext Context { get; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DefaultDependencyInjectionStrategy"/> class.
     /// </summary>
-    public DefaultDependencyInjectionStrategy( DependencyInjectionContext context )
+    public DefaultDependencyInjectionStrategy( DependencyContext context )
     {
         this.Context = context;
     }
 
     /// <summary>
-    /// Introduces the field or property into the tatget class.
+    /// Introduces the field or property into the target class.
     /// </summary>
     /// <param name="builder">An <see cref="IAspectBuilder{TAspectTarget}"/> for the target class.</param>
     /// <param name="introducedFieldOrProperty">At output, the created field or property.</param>
     /// <returns><c>true</c> if the dependency was introduced, <c>false</c> if the dependency was ignored (for instance because it already existed) or in case or error.</returns>
-    protected virtual bool TryIntroduceDependency( IAspectBuilder<INamedType> builder, [NotNullWhen( true )] out IFieldOrProperty? introducedFieldOrProperty )
+    protected virtual bool TryIntroduceFieldOrProperty(
+        IAspectBuilder<INamedType> builder,
+        [NotNullWhen( true )] out IFieldOrProperty? introducedFieldOrProperty )
     {
-        Debugger.Break();
-
         var adviceResult =
-            this.Context.AspectFieldOrProperty switch
+            this.Context.FieldOrProperty switch
             {
                 IField field =>
                     (IIntroductionAdviceResult<IFieldOrProperty>) builder.Advice.IntroduceField(
@@ -76,13 +76,13 @@ public class DefaultDependencyInjectionStrategy
     }
 
     /// <summary>
-    /// The entry point of the <see cref="DefaultDependencyInjectionStrategy"/>. Orchestrates all steps: first calls <see cref="TryIntroduceDependency"/>,
-    /// then <see cref="GetPullStrategy"/>, then <see cref="PullDependency"/>.
+    /// The entry point of the <see cref="DefaultDependencyInjectionStrategy"/>. Orchestrates all steps: first calls <see cref="TryIntroduceFieldOrProperty"/>,
+    /// then <see cref="GetPullStrategy"/>, then <see cref="PullDependency(Metalama.Framework.Aspects.IAspectBuilder{Metalama.Framework.Code.INamedType},Metalama.Framework.DependencyInjection.Implementation.IPullStrategy)"/>.
     /// </summary>
     /// <param name="builder"></param>
-    public virtual void Implement( IAspectBuilder<INamedType> builder )
+    public virtual void IntroduceDependency( IAspectBuilder<INamedType> builder )
     {
-        if ( !this.TryIntroduceDependency( builder, out var fieldOrProperty ) )
+        if ( !this.TryIntroduceFieldOrProperty( builder, out var fieldOrProperty ) )
         {
             return;
         }
@@ -92,54 +92,75 @@ public class DefaultDependencyInjectionStrategy
         this.PullDependency( builder, pullStrategy );
     }
 
+    public virtual void ImplementDependency( IAspectBuilder<IFieldOrProperty> builder )
+    {
+        var pullStrategy = this.GetPullStrategy( builder.Target );
+
+        this.PullDependency( builder.WithTarget( builder.Target.DeclaringType ), pullStrategy );
+    }
+
+    /// <summary>
+    /// Gets the constructors that are modified by <see cref="PullDependency(Metalama.Framework.Aspects.IAspectBuilder{Metalama.Framework.Code.INamedType},Metalama.Framework.DependencyInjection.Implementation.IPullStrategy)"/>.
+    /// </summary>
+    /// <param name="type">The type in which the dependency is being injected.</param>
+    /// <returns></returns>
+    protected virtual IEnumerable<IConstructor> GetConstructors( INamedType type )
+        => type.Constructors.Where( c => c.InitializerKind != ConstructorInitializerKind.This );
+
     /// <summary>
     /// Pulls the dependency from all constructors, i.e. introduce a parameter to these constructors (according to an <see cref="IPullStrategy"/>), and
     /// assigns its value to the dependency property.
     /// </summary>
     /// <param name="aspectBuilder">An <see cref="IAspectBuilder{TAspectTarget}"/> for the target type.</param>
     /// <param name="pullStrategy">A pull strategy (typically the one returned by <see cref="GetPullStrategy"/>).</param>
-#pragma warning disable CA1822 // Can be static
-    protected void PullDependency( IAspectBuilder<INamedType> aspectBuilder, IPullStrategy pullStrategy )
-#pragma warning restore CA1822
+    protected virtual void PullDependency( IAspectBuilder<INamedType> aspectBuilder, IPullStrategy pullStrategy )
     {
-        foreach ( var constructor in aspectBuilder.Target.Constructors )
+        foreach ( var constructor in this.GetConstructors( aspectBuilder.Target ) )
         {
             if ( constructor.InitializerKind != ConstructorInitializerKind.This )
             {
-                // Find a compatible type in the constructor.
-                var existingParameter = pullStrategy.GetExistingParameter( constructor );
-
-                // If there is no compatible parameter, create one.
-                if ( existingParameter == null )
-                {
-                    var newParameter = pullStrategy.GetNewParameter( constructor );
-
-                    existingParameter = aspectBuilder.Advice.IntroduceParameter(
-                            constructor,
-                            newParameter.Name,
-                            newParameter.Type,
-                            TypedConstant.Default( newParameter.Type ),
-                            pullStrategy.PullParameter,
-                            builder =>
-                            {
-                                foreach ( var attribute in newParameter.Attributes )
-                                {
-                                    builder.AddAttribute( attribute );
-                                }
-                            } )
-                        .Parameter;
-                }
-
-                var assignment = pullStrategy.GetAssignmentStatement( existingParameter );
-                aspectBuilder.Advice.AddInitializer( constructor, assignment );
+                this.PullDependency( aspectBuilder, pullStrategy, constructor );
             }
         }
     }
 
     /// <summary>
+    /// Pulls the dependency from a given constructor.
+    /// </summary>
+    protected virtual void PullDependency( IAspectBuilder<INamedType> aspectBuilder, IPullStrategy pullStrategy, IConstructor constructor )
+    {
+        // Find a compatible type in the constructor.
+        var existingParameter = pullStrategy.GetExistingParameter( constructor );
+
+        // If there is no compatible parameter, create one.
+        if ( existingParameter == null )
+        {
+            var newParameter = pullStrategy.GetNewParameter( constructor );
+
+            existingParameter = aspectBuilder.Advice.IntroduceParameter(
+                    constructor,
+                    newParameter.Name,
+                    newParameter.Type,
+                    TypedConstant.Default( newParameter.Type ),
+                    pullStrategy.PullParameter,
+                    builder =>
+                    {
+                        foreach ( var attribute in newParameter.Attributes )
+                        {
+                            builder.AddAttribute( attribute );
+                        }
+                    } )
+                .Declaration;
+        }
+
+        var assignment = pullStrategy.GetAssignmentStatement( existingParameter );
+        aspectBuilder.Advice.AddInitializer( constructor, assignment );
+    }
+
+    /// <summary>
     /// Gets an <see cref="IPullStrategy"/>, i.e. a strategy to pull a dependency field or property from constructors.
     /// </summary>
-    /// <param name="introducedFieldOrProperty">The value returned by <see cref="TryIntroduceDependency"/>.</param>
+    /// <param name="introducedFieldOrProperty">The value returned by <see cref="TryIntroduceFieldOrProperty"/>.</param>
     /// <returns>The <see cref="IPullStrategy"/>.</returns>
     protected virtual IPullStrategy GetPullStrategy( IFieldOrProperty introducedFieldOrProperty )
         => new DefaultPullStrategy( this.Context, introducedFieldOrProperty );

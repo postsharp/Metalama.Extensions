@@ -7,22 +7,42 @@ using Metalama.Framework.DependencyInjection.Implementation;
 namespace Metalama.Framework.DependencyInjection;
 
 /// <summary>
-/// Custom attribute that, when be applied to a field or automatic property in user code, means that this field or property is a service dependency
-/// that must be pulled from the dependency injection framework. Contrarily to <see cref="IntroduceDependencyAttribute"/> that must be used
-/// in aspect code, this attribute must be used in user code. 
+/// Custom attribute that, when be applied to a field or automatic property of an aspect, means that this field or property is a service dependency
+/// that introduced into the target type and handled by a dependency injection framework. Contrarily to <see cref="DependencyAttribute"/> that can be used
+/// in user code, this attribute can be used only in an aspect. 
 /// </summary>
 /// <remarks>
 ///  The implementation of this custom attribute depends on the selected dependency injection framework.
 /// </remarks>
-public class DependencyAttribute : FieldOrPropertyAspect, IDependencyAttribute
+public class IntroduceDependencyAttribute : DeclarativeAdviceAttribute, IDependencyAttribute
 {
     private bool? _isLazy;
     private bool? _isRequired;
 
+    public sealed override void BuildAspect( IMemberOrNamedType templateMember, string templateMemberId, IAspectBuilder<IDeclaration> builder )
+    {
+        var context = new IntroduceDependencyContext(
+            (IFieldOrProperty) templateMember,
+            templateMemberId,
+            this,
+            builder.Target.GetDeclaringType()!,
+            builder.Diagnostics,
+            builder.Project );
+
+        if ( !builder.Project.DependencyInjectionOptions().TryGetFramework( context, out var framework ) )
+        {
+            builder.SkipAspect();
+
+            return;
+        }
+
+        framework.IntroduceDependency( context, builder.WithTarget( builder.Target.GetDeclaringType()! ) );
+    }
+
     /// <summary>
     /// Gets the value of the <see cref="IsLazy"/> if it has been assigned, or <c>null</c> if it has not been assigned.
     /// </summary>
-    bool? IDependencyAttribute.GetIsLazy() => this._isLazy;
+    public bool? GetIsLazy() => this._isLazy;
 
     /// <summary>
     /// Gets or sets a value indicating whether the dependency should be pulled from the container lazily, i.e. upon first use.
@@ -45,23 +65,5 @@ public class DependencyAttribute : FieldOrPropertyAspect, IDependencyAttribute
     /// <summary>
     /// Gets the value of the <see cref="IsRequired"/> if it has been assigned, or <c>null</c> if it has not been assigned.
     /// </summary>
-    bool? IDependencyAttribute.GetIsRequired() => this._isRequired;
-
-    public override void BuildAspect( IAspectBuilder<IFieldOrProperty> builder )
-    {
-        var context = new ImplementDependencyContext(
-            builder.Project,
-            builder.Target,
-            this,
-            builder.Diagnostics );
-
-        if ( !builder.Project.DependencyInjectionOptions().TryGetFramework( context, out var framework ) )
-        {
-            builder.SkipAspect();
-
-            return;
-        }
-
-        framework.ImplementDependency( context, builder );
-    }
+    public bool? GetIsRequired() => this._isRequired;
 }

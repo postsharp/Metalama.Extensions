@@ -3,12 +3,12 @@ public class TargetClass
 {
     public TargetClass(Func<IFormatProvider>? formatProvider = default)
     {
-        this._formatProviderFunc = formatProvider ?? throw new System.ArgumentNullException(nameof(formatProvider));
+        this._formatProviderFunc = formatProvider;
     }
 
     public TargetClass(int x, IFormatProvider existingParameter, Func<IFormatProvider>? formatProvider = default)
     {
-        this._formatProviderFunc = formatProvider ?? throw new System.ArgumentNullException(nameof(formatProvider));
+        this._formatProviderFunc = formatProvider;
     }
 
     private IFormatProvider? _formatProviderCache;
@@ -18,7 +18,7 @@ public class TargetClass
     {
         get
         {
-            return _formatProviderCache ??= _formatProviderFunc();
+            return _formatProviderCache ??= _formatProviderFunc.Invoke();
         }
     }
 }

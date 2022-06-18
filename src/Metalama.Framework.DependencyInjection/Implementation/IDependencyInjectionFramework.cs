@@ -1,5 +1,4 @@
-﻿// Copyright (c) SharpCrafters s.r.o.All rights reserved.
-// This project is not open source.Please see the LICENSE.md file in the repository root for details.
+﻿// Copyright (c) SharpCrafters s.r.o. All rights reserved. See LICENSE.md in the repository root for details.
 
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
@@ -7,22 +6,31 @@ using Metalama.Framework.Code;
 namespace Metalama.Framework.DependencyInjection.Implementation;
 
 /// <summary>
-/// Interface that dependency injection framework adapters must implement to handle the <see cref="DependencyAttribute"/> advice.
+/// Interface that dependency injection framework adapters must implement to handle the <see cref="IntroduceDependencyAttribute"/> advice.
 /// An implementation typically also implements <see cref="IPullStrategy"/>.
 /// </summary>
 [CompileTime]
 public interface IDependencyInjectionFramework
 {
     /// <summary>
-    /// Determines whether the current instance can weave a given aspect dependency advice into a given type. The implementation can
-    /// report diagnostics to <see cref="DependencyInjectionContext.Diagnostics"/>.
+    /// Determines whether the current instance can handle a <see cref="DependencyAttribute"/> aspect or <see cref="IntroduceDependencyAttribute"/> advice.
+    /// The implementation can report diagnostics to <see cref="DependencyContext.Diagnostics"/>.
     /// </summary>
-    bool CanInjectDependency( DependencyInjectionContext context );
+    /// <param name="context">A <see cref="IntroduceDependencyContext"/> or <see cref="ImplementDependencyContext"/>.</param>
+    bool CanHandleDependency( DependencyContext context );
 
     /// <summary>
-    /// Injects the dependency into the target type.
+    /// Processes the <see cref="IntroduceDependencyAttribute"/> advice, i.e. introduce a dependency defined by a custom aspect into the target
+    /// type of the aspect.
     /// </summary>
     /// <param name="context">Information regarding the dependency to inject.</param>
     /// <param name="aspectBuilder">An <see cref="IAspectBuilder{TAspectTarget}"/> for the target type.</param>
-    void InjectDependency( DependencyInjectionContext context, IAspectBuilder<INamedType> aspectBuilder );
+    void IntroduceDependency( IntroduceDependencyContext context, IAspectBuilder<INamedType> aspectBuilder );
+
+    /// <summary>
+    /// Processes the <see cref="DependencyAttribute"/> aspect, i.e. changes the target field or property of the aspect into a dependency. 
+    /// </summary>
+    /// <param name="context">Information regarding the dependency to inject.</param>
+    /// <param name="aspectBuilder">The <see cref="IAspectBuilder{TAspectTarget}"/> for the field or property to pull.</param>
+    void ImplementDependency( ImplementDependencyContext context, IAspectBuilder<IFieldOrProperty> aspectBuilder );
 }

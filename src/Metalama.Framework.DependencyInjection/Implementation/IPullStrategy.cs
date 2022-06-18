@@ -1,5 +1,4 @@
-﻿// Copyright (c) SharpCrafters s.r.o.All rights reserved.
-// This project is not open source.Please see the LICENSE.md file in the repository root for details.
+﻿// Copyright (c) SharpCrafters s.r.o. All rights reserved. See LICENSE.md in the repository root for details.
 
 using Metalama.Framework.Advising;
 using Metalama.Framework.Aspects;
@@ -8,6 +7,11 @@ using Metalama.Framework.Code.SyntaxBuilders;
 
 namespace Metalama.Framework.DependencyInjection.Implementation;
 
+/// <summary>
+/// Interface used by <see cref="DefaultDependencyInjectionStrategy"/> to pull a field or property from the constructor.
+/// This interface is instantiated from <see cref="DefaultDependencyInjectionStrategy.GetPullStrategy"/>. You must override this method
+/// if you want to provide a custom implementation of <see cref="IPullStrategy"/>. The default implementation is <see cref="DefaultPullStrategy"/>.
+/// </summary>
 [CompileTime]
 public interface IPullStrategy
 {
