@@ -3,10 +3,7 @@
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-		<DisableCodeQuality>true</DisableCodeQuality>
-        <IsPackable>false</IsPackable>
-        <RootNamespace>Metalama.Framework.DependencyInjection.AspectTests</RootNamespace>
+        <RootNamespace>Metalama.Framework.DependencyInjection.ServiceLocator.Tests</RootNamespace>
         <NoWarn>IDE0051,CS8618,CS0169</NoWarn>
     </PropertyGroup>
 
@@ -25,7 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Metalama.Framework.DependencyInjection\Metalama.Framework.DependencyInjection.csproj" />
+      <ProjectReference Include="..\..\Metalama.Framework.DependencyInjection.ServiceLocator\Metalama.Framework.DependencyInjection.ServiceLocator.csproj" />
     </ItemGroup>
 
 </Project>
