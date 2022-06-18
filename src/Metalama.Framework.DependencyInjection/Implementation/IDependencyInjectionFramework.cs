@@ -21,11 +21,17 @@ public interface IDependencyInjectionFramework
     bool CanHandleDependency( DependencyContext context );
 
     /// <summary>
-    /// Injects the dependency into the target type.
+    /// Processes the <see cref="IntroduceDependencyAttribute"/> advice, i.e. introduce a dependency defined by a custom aspect into the target
+    /// type of the aspect.
     /// </summary>
     /// <param name="context">Information regarding the dependency to inject.</param>
     /// <param name="aspectBuilder">An <see cref="IAspectBuilder{TAspectTarget}"/> for the target type.</param>
     void IntroduceDependency( IntroduceDependencyContext context, IAspectBuilder<INamedType> aspectBuilder );
 
+    /// <summary>
+    /// Processes the <see cref="DependencyAttribute"/> aspect, i.e. changes the target field or property of the aspect into a dependency. 
+    /// </summary>
+    /// <param name="context">Information regarding the dependency to inject.</param>
+    /// <param name="aspectBuilder">The <see cref="IAspectBuilder{TAspectTarget}"/> for the field or property to pull.</param>
     void ImplementDependency( ImplementDependencyContext context, IAspectBuilder<IFieldOrProperty> aspectBuilder );
 }

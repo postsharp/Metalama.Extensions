@@ -10,7 +10,11 @@ using System.Diagnostics;
 
 namespace Metalama.Framework.DependencyInjection.Implementation;
 
-public class LazyDependencyInjectionStrategy : DefaultDependencyInjectionStrategy, ITemplateProvider
+/// <summary>
+/// A dependency implementation strategy that resolves the dependencies the first time they are used and pull a <see cref="Func{TResult}"/>
+/// from the constructor.
+/// </summary>
+public partial class LazyDependencyInjectionStrategy : DefaultDependencyInjectionStrategy, ITemplateProvider
 {
     public LazyDependencyInjectionStrategy( DependencyContext context ) : base( context ) { }
 
@@ -75,7 +79,7 @@ public class LazyDependencyInjectionStrategy : DefaultDependencyInjectionStrateg
 
         propertyArgs.CacheField = introduceCacheFieldResult.Declaration;
 
-        var pullStrategy = new LazyPullStrategy( this.Context, property, introduceFuncFieldResult.Declaration );
+        var pullStrategy = new PullStrategy( this.Context, property, introduceFuncFieldResult.Declaration );
 
         this.PullDependency( builder, pullStrategy );
     }

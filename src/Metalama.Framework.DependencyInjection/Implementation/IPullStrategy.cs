@@ -8,6 +8,11 @@ using Metalama.Framework.Code.SyntaxBuilders;
 
 namespace Metalama.Framework.DependencyInjection.Implementation;
 
+/// <summary>
+/// Interface used by <see cref="DefaultDependencyInjectionStrategy"/> to pull a field or property from the constructor.
+/// This interface is instantiated from <see cref="DefaultDependencyInjectionStrategy.GetPullStrategy"/>. You must override this method
+/// if you want to provide a custom implementation of <see cref="IPullStrategy"/>. The default implementation is <see cref="DefaultPullStrategy"/>.
+/// </summary>
 [CompileTime]
 public interface IPullStrategy
 {

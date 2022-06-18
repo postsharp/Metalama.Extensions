@@ -9,9 +9,12 @@ namespace Metalama.Framework.DependencyInjection;
 
 /// <summary>
 /// Custom attribute that, when be applied to a field or automatic property of an aspect, means that this field or property is a service dependency
-/// that introduced into the target type and handled by a dependency injection framework. The implementation of this custom attribute depends
-/// on the dependency injection framework. 
+/// that introduced into the target type and handled by a dependency injection framework. Contrarily to <see cref="DependencyAttribute"/> that can be used
+/// in user code, this attribute can be used only in an aspect. 
 /// </summary>
+/// <remarks>
+///  The implementation of this custom attribute depends on the selected dependency injection framework.
+/// </remarks>
 public class IntroduceDependencyAttribute : DeclarativeAdviceAttribute, IDependencyAttribute
 {
     private bool? _isLazy;

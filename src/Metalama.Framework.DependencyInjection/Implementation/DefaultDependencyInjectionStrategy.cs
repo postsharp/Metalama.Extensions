@@ -5,7 +5,9 @@ using Metalama.Framework.Advising;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 namespace Metalama.Framework.DependencyInjection.Implementation;
 
@@ -74,14 +76,9 @@ public class DefaultDependencyInjectionStrategy
         }
     }
 
-    protected virtual bool TryAdviseFieldOrProperty( IAspectBuilder<IFieldOrProperty> builder )
-    {
-        return true;
-    }
-
     /// <summary>
     /// The entry point of the <see cref="DefaultDependencyInjectionStrategy"/>. Orchestrates all steps: first calls <see cref="TryIntroduceFieldOrProperty"/>,
-    /// then <see cref="GetPullStrategy"/>, then <see cref="PullDependency"/>.
+    /// then <see cref="GetPullStrategy"/>, then <see cref="PullDependency(Metalama.Framework.Aspects.IAspectBuilder{Metalama.Framework.Code.INamedType},Metalama.Framework.DependencyInjection.Implementation.IPullStrategy)"/>.
     /// </summary>
     /// <param name="builder"></param>
     public virtual void IntroduceDependency( IAspectBuilder<INamedType> builder )
@@ -98,15 +95,18 @@ public class DefaultDependencyInjectionStrategy
 
     public virtual void ImplementDependency( IAspectBuilder<IFieldOrProperty> builder )
     {
-        if ( !this.TryAdviseFieldOrProperty( builder ) )
-        {
-            return;
-        }
-
         var pullStrategy = this.GetPullStrategy( builder.Target );
 
         this.PullDependency( builder.WithTarget( builder.Target.DeclaringType ), pullStrategy );
     }
+
+    /// <summary>
+    /// Gets the constructors that are modified by <see cref="PullDependency(Metalama.Framework.Aspects.IAspectBuilder{Metalama.Framework.Code.INamedType},Metalama.Framework.DependencyInjection.Implementation.IPullStrategy)"/>.
+    /// </summary>
+    /// <param name="type">The type in which the dependency is being injected.</param>
+    /// <returns></returns>
+    protected virtual IEnumerable<IConstructor> GetConstructors( INamedType type )
+        => type.Constructors.Where( c => c.InitializerKind != ConstructorInitializerKind.This );
 
     /// <summary>
     /// Pulls the dependency from all constructors, i.e. introduce a parameter to these constructors (according to an <see cref="IPullStrategy"/>), and
@@ -118,7 +118,7 @@ public class DefaultDependencyInjectionStrategy
     protected virtual void PullDependency( IAspectBuilder<INamedType> aspectBuilder, IPullStrategy pullStrategy )
 #pragma warning restore CA1822
     {
-        foreach ( var constructor in aspectBuilder.Target.Constructors )
+        foreach ( var constructor in this.GetConstructors( aspectBuilder.Target ) )
         {
             if ( constructor.InitializerKind != ConstructorInitializerKind.This )
             {
@@ -127,6 +127,9 @@ public class DefaultDependencyInjectionStrategy
         }
     }
 
+    /// <summary>
+    /// Pulls the dependency from a given constructor.
+    /// </summary>
     protected virtual void PullDependency( IAspectBuilder<INamedType> aspectBuilder, IPullStrategy pullStrategy, IConstructor constructor )
     {
         // Find a compatible type in the constructor.
