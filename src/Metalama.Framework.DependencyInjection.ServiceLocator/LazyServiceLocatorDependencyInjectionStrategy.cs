@@ -1,5 +1,4 @@
-﻿// Copyright (c) SharpCrafters s.r.o.All rights reserved.
-// This project is not open source.Please see the LICENSE.md file in the repository root for details.
+﻿// Copyright (c) SharpCrafters s.r.o. All rights reserved. See LICENSE.md in the repository root for details.
 
 using Metalama.Framework.Advising;
 using Metalama.Framework.Aspects;
@@ -25,7 +24,7 @@ internal class LazyServiceLocatorDependencyInjectionStrategy : DefaultDependency
             .IntroduceProperty(
                 builder.Target,
                 aspectFieldOrProperty.Name,
-                nameof(this.GetDependencyTemplate),
+                nameof(GetDependencyTemplate),
                 null,
                 IntroductionScope.Instance,
                 OverrideStrategy.Ignore,
@@ -55,7 +54,7 @@ internal class LazyServiceLocatorDependencyInjectionStrategy : DefaultDependency
             .WithTemplateProvider( this )
             .OverrideAccessors(
                 builder.Target,
-                nameof(this.GetDependencyTemplate),
+                nameof(GetDependencyTemplate),
                 builder.Target.Writeability != Writeability.None ? nameof(this.SetDependencyTemplate) : null,
                 args: new { args = propertyArgs, T = builder.Target.Type } );
 
@@ -107,7 +106,7 @@ internal class LazyServiceLocatorDependencyInjectionStrategy : DefaultDependency
             if ( constructor.InitializerKind != ConstructorInitializerKind.This )
             {
                 builder.Advice.WithTemplateProvider( this )
-                    .AddInitializer( constructor, nameof(this.Initializer), args: new { serviceProviderField = serviceProviderField } );
+                    .AddInitializer( constructor, nameof(Initializer), args: new { serviceProviderField = serviceProviderField } );
             }
         }
     }
@@ -120,7 +119,7 @@ internal class LazyServiceLocatorDependencyInjectionStrategy : DefaultDependency
     }
 
     [Template] // Bug: Cannot be private!
-    public T GetDependencyTemplate<T>( PropertyArgs args )
+    public static T GetDependencyTemplate<T>( PropertyArgs args )
     {
         return args.CacheField.ToExpression().Value ??= (T) args.ServiceProviderField!.ToExpression().Value!.GetService( typeof(T) );
     }
@@ -132,7 +131,7 @@ internal class LazyServiceLocatorDependencyInjectionStrategy : DefaultDependency
     }
 
     [Template]
-    public void Initializer( IField serviceProviderField )
+    public static void Initializer( IField serviceProviderField )
     {
         serviceProviderField.ToExpression().Value = ServiceProviderProvider.ServiceProvider();
     }

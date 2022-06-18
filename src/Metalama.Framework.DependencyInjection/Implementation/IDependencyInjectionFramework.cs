@@ -1,5 +1,4 @@
-﻿// Copyright (c) SharpCrafters s.r.o.All rights reserved.
-// This project is not open source.Please see the LICENSE.md file in the repository root for details.
+﻿// Copyright (c) SharpCrafters s.r.o. All rights reserved. See LICENSE.md in the repository root for details.
 
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
@@ -15,7 +14,7 @@ public interface IDependencyInjectionFramework
 {
     /// <summary>
     /// Determines whether the current instance can handle a <see cref="DependencyAttribute"/> aspect or <see cref="IntroduceDependencyAttribute"/> advice.
-    /// The implementation can report diagnostics to <see cref="IntroduceDependencyContext.Diagnostics"/>.
+    /// The implementation can report diagnostics to <see cref="DependencyContext.Diagnostics"/>.
     /// </summary>
     /// <param name="context">A <see cref="IntroduceDependencyContext"/> or <see cref="ImplementDependencyContext"/>.</param>
     bool CanHandleDependency( DependencyContext context );

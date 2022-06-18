@@ -1,10 +1,8 @@
-﻿// Copyright (c) SharpCrafters s.r.o.All rights reserved.
-// This project is not open source.Please see the LICENSE.md file in the repository root for details.
+﻿// Copyright (c) SharpCrafters s.r.o. All rights reserved. See LICENSE.md in the repository root for details.
 
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 using Metalama.Framework.DependencyInjection.Implementation;
-using System.Diagnostics;
 
 namespace Metalama.Framework.DependencyInjection;
 
@@ -51,8 +49,6 @@ public class DependencyAttribute : FieldOrPropertyAspect, IDependencyAttribute
 
     public override void BuildAspect( IAspectBuilder<IFieldOrProperty> builder )
     {
-        Debugger.Break();
-
         var context = new ImplementDependencyContext(
             builder.Project,
             builder.Target,

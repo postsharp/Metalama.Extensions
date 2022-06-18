@@ -1,5 +1,4 @@
-﻿// Copyright (c) SharpCrafters s.r.o.All rights reserved.
-// This project is not open source.Please see the LICENSE.md file in the repository root for details.
+﻿// Copyright (c) SharpCrafters s.r.o. All rights reserved. See LICENSE.md in the repository root for details.
 
 using Metalama.Framework.Advising;
 using Metalama.Framework.Aspects;
@@ -114,9 +113,7 @@ public class DefaultDependencyInjectionStrategy
     /// </summary>
     /// <param name="aspectBuilder">An <see cref="IAspectBuilder{TAspectTarget}"/> for the target type.</param>
     /// <param name="pullStrategy">A pull strategy (typically the one returned by <see cref="GetPullStrategy"/>).</param>
-#pragma warning disable CA1822 // Can be static
     protected virtual void PullDependency( IAspectBuilder<INamedType> aspectBuilder, IPullStrategy pullStrategy )
-#pragma warning restore CA1822
     {
         foreach ( var constructor in this.GetConstructors( aspectBuilder.Target ) )
         {

@@ -1,12 +1,10 @@
-﻿// Copyright (c) SharpCrafters s.r.o.All rights reserved.
-// This project is not open source.Please see the LICENSE.md file in the repository root for details.
+﻿// Copyright (c) SharpCrafters s.r.o. All rights reserved. See LICENSE.md in the repository root for details.
 
 using Metalama.Framework.Advising;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 using Metalama.Framework.Code.SyntaxBuilders;
 using System;
-using System.Diagnostics;
 
 namespace Metalama.Framework.DependencyInjection.Implementation;
 
@@ -86,8 +84,6 @@ public partial class LazyDependencyInjectionStrategy : DefaultDependencyInjectio
 
     public override void ImplementDependency( IAspectBuilder<IFieldOrProperty> builder )
     {
-        Debugger.Break();
-
         var templateArgs = new TemplateArgs();
 
         var overrideResult = builder.Advice
@@ -114,7 +110,7 @@ public partial class LazyDependencyInjectionStrategy : DefaultDependencyInjectio
     }
 
     [Template] // Bug: Cannot be private!
-    public dynamic? GetDependencyTemplate( TemplateArgs args ) => args.CacheField!.ToExpression().Value ??= args.DependencyField!.ToExpression().Value.Invoke();
+    public static dynamic? GetDependencyTemplate( TemplateArgs args ) => args.CacheField!.ToExpression().Value ??= args.DependencyField!.ToExpression().Value.Invoke();
 
     [Template]
     public void SetDependencyTemplate( TemplateArgs args )
