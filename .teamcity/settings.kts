@@ -16,8 +16,7 @@ project {
    buildType(DebugBuild)
    buildType(PublicBuild)
    buildType(PublicDeployment)
-   buildType(VersionBump)
-   buildTypesOrder = arrayListOf(DebugBuild,PublicBuild,PublicDeployment,VersionBump)
+   buildTypesOrder = arrayListOf(DebugBuild,PublicBuild,PublicDeployment)
 }
 
 object DebugBuild : BuildType({
@@ -187,44 +186,6 @@ object PublicDeployment : BuildType({
         }
 
      }
-
-})
-
-object VersionBump : BuildType({
-
-    name = "Version Bump"
-
-    type = Type.DEPLOYMENT
-
-    vcs {
-        root(DslContext.settingsRoot)
-    }
-
-    steps {
-        powerShell {
-            name = "Version Bump"
-            scriptMode = file {
-                path = "Build.ps1"
-            }
-            noProfile = false
-            param("jetbrains_powershell_scriptArguments", "bump")
-        }
-    }
-
-    requirements {
-        equals("env.BuildAgentType", "caravela02")
-    }
-
-    features {
-        swabra {
-            lockingProcesses = Swabra.LockingProcessPolicy.KILL
-            verbose = true
-        }
-        sshAgent {
-            // By convention, the SSH key name is always PostSharp.Engineering for all repositories using SSH to connect.
-            teamcitySshKey = "PostSharp.Engineering"
-        }
-    }
 
 })
 

@@ -13,7 +13,7 @@ namespace Metalama.Framework.DependencyInjection.Implementation;
 public class DefaultDependencyInjectionFramework : IDependencyInjectionFramework
 {
     /// <inheritdoc />
-    public virtual bool CanHandleDependency( DependencyContext context ) => true;
+    public virtual bool CanHandleDependency( DependencyContext context ) => !context.FieldOrProperty.IsStatic;
 
     /// <inheritdoc />
     public void IntroduceDependency( IntroduceDependencyContext context, IAspectBuilder<INamedType> aspectBuilder )

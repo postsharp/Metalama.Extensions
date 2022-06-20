@@ -4,6 +4,9 @@ using Metalama.Framework.Aspects;
 
 namespace Metalama.Framework.DependencyInjection;
 
+/// <summary>
+/// A common interface for <see cref="DependencyAttribute"/> and <see cref="IntroduceDependencyAttribute"/>.
+/// </summary>
 [RunTimeOrCompileTime]
 public interface IDependencyAttribute
 {

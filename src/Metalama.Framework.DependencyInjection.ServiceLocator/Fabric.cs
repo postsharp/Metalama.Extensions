@@ -4,7 +4,7 @@ using Metalama.Framework.Fabrics;
 
 namespace Metalama.Framework.DependencyInjection.ServiceLocator;
 
-public class Fabric : TransitiveProjectFabric
+internal class Fabric : TransitiveProjectFabric
 {
     public override void AmendProject( IProjectAmender amender )
     {

@@ -52,7 +52,9 @@ public sealed class DependencyInjectionOptions : ProjectExtension
 
     /// <summary>
     /// Registers an implementation of the <see cref="IDependencyInjectionFramework"/> interface with highest priority.
-    /// The registration is ignored if another framework of the same was already registered.
+    /// The registration is ignored if another framework of the same was already registered. This method is typically called from the transitive project fabric
+    /// of libraries that implement a specific dependency injection framework so that they are registered first by default. In a user project, you should
+    /// rather set the <see cref="RegisteredFrameworks"/> property.
     /// </summary>
     /// <returns><c>true</c> if <paramref name="framework"/> was registered, or <c>false</c> if a framework of the same type was already registered.</returns>
     public bool RegisterFramework( IDependencyInjectionFramework framework )
@@ -74,7 +76,8 @@ public sealed class DependencyInjectionOptions : ProjectExtension
 
     /// <summary>
     /// Gets or sets a delegate that is called when several dependency injection frameworks have been registered
-    /// for the current project and many vote to handle a given dependency.
+    /// for the current project and many vote to handle a given dependency. The default implementation is to return
+    /// the first framework in the array.
     /// </summary>
     public Func<DependencyContext, ImmutableArray<IDependencyInjectionFramework>, IDependencyInjectionFramework?> Selector
     {

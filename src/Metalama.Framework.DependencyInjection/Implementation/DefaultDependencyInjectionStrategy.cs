@@ -143,13 +143,7 @@ public class DefaultDependencyInjectionStrategy
                     newParameter.Type,
                     TypedConstant.Default( newParameter.Type ),
                     pullStrategy.PullParameter,
-                    builder =>
-                    {
-                        foreach ( var attribute in newParameter.Attributes )
-                        {
-                            builder.AddAttribute( attribute );
-                        }
-                    } )
+                    newParameter.Attributes )
                 .Declaration;
         }
 
