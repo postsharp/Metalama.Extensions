@@ -19,7 +19,7 @@ public class IntroduceDependencyAttribute : DeclarativeAdviceAttribute, IDepende
     private bool? _isLazy;
     private bool? _isRequired;
 
-    public sealed override void BuildAspect( IMemberOrNamedType templateMember, string templateMemberId, IAspectBuilder<IDeclaration> builder )
+    public sealed override void BuildAdvice( IMemberOrNamedType templateMember, string templateMemberId, IAspectBuilder<IDeclaration> builder )
     {
         var context = new IntroduceDependencyContext(
             (IFieldOrProperty) templateMember,
