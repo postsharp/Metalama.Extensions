@@ -99,6 +99,8 @@ internal class LazyServiceLocatorDependencyInjectionStrategy : DefaultDependency
         propertyArgs.CacheField = introduceCacheFieldResult.Declaration;
     }
 
+#pragma warning disable IDE0079
+#pragma warning disable CS8604 // Warnings that appear only on the build server.
     private void InitializeServiceProvider( IAspectBuilder<INamedType> builder, IField serviceProviderField )
     {
         foreach ( var constructor in builder.Target.Constructors )
@@ -110,6 +112,7 @@ internal class LazyServiceLocatorDependencyInjectionStrategy : DefaultDependency
             }
         }
     }
+#pragma warning restore CS8604, IDE0079
 
     public class PropertyArgs
     {
