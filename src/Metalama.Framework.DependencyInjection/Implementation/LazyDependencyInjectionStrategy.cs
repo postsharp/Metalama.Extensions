@@ -110,7 +110,7 @@ public partial class LazyDependencyInjectionStrategy : DefaultDependencyInjectio
     }
 
     [Template] // Bug: Cannot be private!
-    public static dynamic? GetDependencyTemplate( TemplateArgs args ) => args.CacheField!.ToExpression().Value ??= args.DependencyField!.ToExpression().Value.Invoke();
+    public static dynamic? GetDependencyTemplate( TemplateArgs args ) => args.CacheField!.ToExpression().Value ??= args.DependencyField!.ToExpression().Value!.Invoke();
 
     [Template]
     public void SetDependencyTemplate( TemplateArgs args )
