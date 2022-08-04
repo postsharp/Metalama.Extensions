@@ -8,7 +8,7 @@ public class TargetClass
             return _formatProviderCache ??= (IFormatProvider)_serviceProvider.GetService(typeof(IFormatProvider));
         }
 
-        set
+        init
         {
             throw new NotSupportedException($"Cannot set '_formatProvider' because of the dependency aspect.");
         }

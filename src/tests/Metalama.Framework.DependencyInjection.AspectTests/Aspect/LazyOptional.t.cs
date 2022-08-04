@@ -8,7 +8,7 @@ public class TargetClass
             return _formatProviderCache ??= _formatProviderFunc.Invoke();
         }
 
-        set
+        init
         {
             throw new NotSupportedException($"Cannot set '_formatProvider' because of the dependency aspect.");
         }
