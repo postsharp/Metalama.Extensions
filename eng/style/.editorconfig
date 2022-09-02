@@ -6,6 +6,9 @@ root = true
 
 #### Core EditorConfig Options ####
 
+# File header
+file_header_template = Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
+
 # Indentation and spacing
 indent_size = 4
 indent_style = space
@@ -80,7 +83,7 @@ csharp_style_expression_bodied_constructors = false:warning
 csharp_style_expression_bodied_indexers = when_on_single_line:warning
 csharp_style_expression_bodied_lambdas = true:warning
 csharp_style_expression_bodied_local_functions = false:none
-csharp_style_expression_bodied_methods = when_on_single_line:suggestion
+csharp_style_expression_bodied_methods = when_on_single_line:hint
 csharp_style_expression_bodied_operators = when_on_single_line:warning
 csharp_style_expression_bodied_properties = when_on_single_line:warning
 
@@ -254,6 +257,10 @@ dotnet_diagnostic.SA1309.severity = none
 
 # SA1633: File should have header
 dotnet_diagnostic.SA1633.severity = none
+
+# SA1636: File header should be correct
+dotnet_diagnostic.SA1636.severity = none
+
 
 # SA1200: Using directives should be placed within namespace
 dotnet_diagnostic.SA1200.severity = none
