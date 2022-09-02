@@ -1,4 +1,4 @@
-﻿// Copyright (c) SharpCrafters s.r.o. All rights reserved. See LICENSE.md in the repository root for details.
+﻿// Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
 using Metalama.Framework.Advising;
 using Metalama.Framework.Aspects;
@@ -27,7 +27,7 @@ public partial class LazyDependencyInjectionStrategy : DefaultDependencyInjectio
             .IntroduceProperty(
                 builder.Target,
                 aspectFieldOrProperty.Name,
-                nameof(this.GetDependencyTemplate),
+                nameof(GetDependencyTemplate),
                 null,
                 IntroductionScope.Instance,
                 OverrideStrategy.Ignore,
@@ -90,7 +90,7 @@ public partial class LazyDependencyInjectionStrategy : DefaultDependencyInjectio
             .WithTemplateProvider( this )
             .OverrideAccessors(
                 builder.Target,
-                nameof(this.GetDependencyTemplate),
+                nameof(GetDependencyTemplate),
                 builder.Target.Writeability != Writeability.None ? nameof(this.SetDependencyTemplate) : null,
                 args: new { args = templateArgs } );
 
@@ -110,7 +110,8 @@ public partial class LazyDependencyInjectionStrategy : DefaultDependencyInjectio
     }
 
     [Template] // Bug: Cannot be private!
-    public static dynamic? GetDependencyTemplate( TemplateArgs args ) => args.CacheField!.ToExpression().Value ??= args.DependencyField!.ToExpression().Value!.Invoke();
+    public static dynamic? GetDependencyTemplate( TemplateArgs args )
+        => args.CacheField!.ToExpression().Value ??= args.DependencyField!.ToExpression().Value!.Invoke();
 
     [Template]
     public void SetDependencyTemplate( TemplateArgs args )
