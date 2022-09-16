@@ -19,9 +19,8 @@ var product = new Product( Dependencies.MetalamaFrameworkExtensions )
     MainVersionDependency = Dependencies.Metalama,
     Configurations = Product.DefaultConfigurations
         .WithValue(
-        BuildConfiguration.Public, new BuildConfigurationInfo(
-            MSBuildName: "Release",
-            PublicPublishers: Product.DefaultPublicPublishers.Add( new MergePublisher() ).ToArray() ) )
+        BuildConfiguration.Public, Product.DefaultConfigurations.Public with { 
+            PublicPublishers = Product.DefaultPublicPublishers.Add( new MergePublisher() ).ToArray() } )
 };
 
 var commandApp = new CommandApp();
