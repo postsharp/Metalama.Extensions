@@ -25,7 +25,7 @@ public class IntroduceDependencyAttribute : DeclarativeAdviceAttribute, IDepende
             (IFieldOrProperty) templateMember,
             templateMemberId,
             this,
-            builder.Target.GetDeclaringType()!,
+            builder.Target.GetClosestNamedType()!,
             builder.Diagnostics,
             builder.Project );
 
@@ -36,7 +36,7 @@ public class IntroduceDependencyAttribute : DeclarativeAdviceAttribute, IDepende
             return;
         }
 
-        framework.IntroduceDependency( context, builder.WithTarget( builder.Target.GetDeclaringType()! ) );
+        framework.IntroduceDependency( context, builder.WithTarget( builder.Target.GetClosestNamedType()! ) );
     }
 
     /// <summary>
