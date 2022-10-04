@@ -20,7 +20,8 @@ var product = new Product( Dependencies.MetalamaFrameworkExtensions )
     Configurations = Product.DefaultConfigurations
         .WithValue(
         BuildConfiguration.Public, Product.DefaultConfigurations.Public with { 
-            PublicPublishers = Product.DefaultPublicPublishers.Add( new MergePublisher() ).ToArray() } )
+            PublicPublishers = Product.DefaultPublicPublishers.Add( new MergePublisher() ).ToArray() } ),
+    BuildAgentType = "caravela03"
 };
 
 var commandApp = new CommandApp();
