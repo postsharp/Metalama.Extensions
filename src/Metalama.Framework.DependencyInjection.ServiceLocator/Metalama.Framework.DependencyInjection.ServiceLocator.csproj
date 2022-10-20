@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+	<PackageDescription>A Metalama framework adapter that locates and pulls dependencies from a global service provider.</PackageDescription>
   </PropertyGroup>
 
   <ItemGroup>
