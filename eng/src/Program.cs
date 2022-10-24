@@ -19,9 +19,10 @@ var product = new Product( Dependencies.MetalamaFrameworkExtensions )
     MainVersionDependency = Dependencies.Metalama,
     Configurations = Product.DefaultConfigurations
         .WithValue(
-        BuildConfiguration.Public, Product.DefaultConfigurations.Public with { 
+        BuildConfiguration.Public, Product.DefaultConfigurations.Public with {
             PublicPublishers = Product.DefaultPublicPublishers.Add( new MergePublisher() ).ToArray() } ),
-    BuildAgentType = "caravela03"
+    BuildAgentType = "caravela03",
+    PublishTestResults = true
 };
 
 var commandApp = new CommandApp();
