@@ -13,6 +13,7 @@ public class TargetClass
             throw new NotSupportedException("Cannot set '_formatProvider' because of the dependency aspect.");
         }
     }
+
     public TargetClass(Func<IFormatProvider>? formatProvider = default)
     {
         this._formatProviderFunc = formatProvider ?? throw new System.ArgumentNullException(nameof(formatProvider));

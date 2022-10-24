@@ -20,7 +20,7 @@ public partial class LazyDependencyInjectionStrategy : DefaultDependencyInjectio
     {
         var propertyArgs = new TemplateArgs();
 
-        var aspectFieldOrProperty = this.Context.FieldOrProperty!;
+        var aspectFieldOrProperty = this.Context.FieldOrProperty;
 
         // Introduce the visible property, something like `IMyService MyService => this._myServiceCache ??= this._myServiceFunc`.
         var introducePropertyResult = builder.Advice.WithTemplateProvider( this )
@@ -50,7 +50,7 @@ public partial class LazyDependencyInjectionStrategy : DefaultDependencyInjectio
     private void AddFields( IAspectBuilder<INamedType> builder, IProperty property, TemplateArgs propertyArgs )
     {
         // Introduce a field that stores the Func<>
-        var dependencyFieldType = ((INamedType) TypeFactory.GetType( typeof(Func<>) )).ConstructGenericInstance( property.Type );
+        var dependencyFieldType = ((INamedType) TypeFactory.GetType( typeof(Func<>) )).WithTypeArguments( property.Type );
 
         var introduceFuncFieldResult = builder.Advice.IntroduceField(
             builder.Target,
