@@ -9,7 +9,7 @@ using PostSharp.Engineering.BuildTools.Dependencies.Model;
 using Spectre.Console.Cli;
 using System.Linq;
 
-var product = new Product( Dependencies.MetalamaFrameworkExtensions )
+var product = new Product( Dependencies.MetalamaExtensions )
 {
     Solutions = new[] { new DotNetSolution( "Metalama.Extensions.sln" ) { CanFormatCode = true } },
     PublicArtifacts = Pattern.Create(
