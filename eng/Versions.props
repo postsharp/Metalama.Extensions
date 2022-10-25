@@ -4,14 +4,14 @@
     <Import Project="MainVersion.props" />
     
     <PropertyGroup>
-        <MetalamaFrameworkExtensionsVersion>$(MainVersion)$(PackageVersionSuffix)</MetalamaFrameworkExtensionsVersion>
-        <MetalamaFrameworkExtensionsAssemblyVersion>$(MainVersion)</MetalamaFrameworkExtensionsAssemblyVersion>
+        <MetalamaExtensionsVersion>$(MainVersion)$(PackageVersionSuffix)</MetalamaExtensionsVersion>
+        <MetalamaExtensionsAssemblyVersion>$(MainVersion)</MetalamaExtensionsAssemblyVersion>
     </PropertyGroup>
 
     
     <!-- Set the default versions of dependencies -->
     <PropertyGroup>
-        <PostSharpEngineeringVersion>1.0.97-preview</PostSharpEngineeringVersion>
+        <PostSharpEngineeringVersion>1.0.98-preview</PostSharpEngineeringVersion>
 		<MetalamaVersion>0.5.50-preview</MetalamaVersion>
         <MetalamaVersion Condition="$(VcsBranch.StartsWith('dev'))">branch:master</MetalamaVersion>
     </PropertyGroup>
@@ -20,8 +20,8 @@
     <Import Project="Versions.g.props" Condition="Exists('Versions.g.props')" />
 
     <PropertyGroup>
-        <AssemblyVersion>$(MetalamaFrameworkExtensionsAssemblyVersion)</AssemblyVersion>
-        <Version>$(MetalamaFrameworkExtensionsVersion)</Version>
+        <AssemblyVersion>$(MetalamaExtensionsAssemblyVersion)</AssemblyVersion>
+        <Version>$(MetalamaExtensionsVersion)</Version>
     </PropertyGroup>
 
 </Project>
