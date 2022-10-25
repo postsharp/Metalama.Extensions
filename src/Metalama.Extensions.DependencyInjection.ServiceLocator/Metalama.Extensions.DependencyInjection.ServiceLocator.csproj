@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+	<PackageDescription>A Metalama framework adapter that locates and pulls dependencies from a global service provider.</PackageDescription>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Metalama.Extensions.DependencyInjection\Metalama.Extensions.DependencyInjection.csproj" />
+  </ItemGroup>
+
+</Project>

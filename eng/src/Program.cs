@@ -11,10 +11,10 @@ using System.Linq;
 
 var product = new Product( Dependencies.MetalamaFrameworkExtensions )
 {
-    Solutions = new[] { new DotNetSolution( "Metalama.Framework.Extensions.sln" ) { CanFormatCode = true } },
+    Solutions = new[] { new DotNetSolution( "Metalama.Extensions.sln" ) { CanFormatCode = true } },
     PublicArtifacts = Pattern.Create(
-        "Metalama.Framework.DependencyInjection.$(PackageVersion).nupkg",
-        "Metalama.Framework.DependencyInjection.ServiceLocator.$(PackageVersion).nupkg" ),
+        "Metalama.Extensions.DependencyInjection.$(PackageVersion).nupkg",
+        "Metalama.Extensions.DependencyInjection.ServiceLocator.$(PackageVersion).nupkg" ),
     Dependencies = new[] { Dependencies.PostSharpEngineering, Dependencies.Metalama },
     MainVersionDependency = Dependencies.Metalama,
     Configurations = Product.DefaultConfigurations
