@@ -4,8 +4,8 @@
     <Import Project="MainVersion.props" />
     
     <PropertyGroup>
-        <MetalamaFrameworkExtensionsVersion>$(MainVersion)$(PackageVersionSuffix)</MetalamaFrameworkExtensionsVersion>
-        <MetalamaFrameworkExtensionsAssemblyVersion>$(MainVersion)</MetalamaFrameworkExtensionsAssemblyVersion>
+        <MetalamaExtensionsVersion>$(MainVersion)$(PackageVersionSuffix)</MetalamaExtensionsVersion>
+        <MetalamaExtensionsAssemblyVersion>$(MainVersion)</MetalamaExtensionsAssemblyVersion>
     </PropertyGroup>
 
     
@@ -20,8 +20,8 @@
     <Import Project="Versions.g.props" Condition="Exists('Versions.g.props')" />
 
     <PropertyGroup>
-        <AssemblyVersion>$(MetalamaFrameworkExtensionsAssemblyVersion)</AssemblyVersion>
-        <Version>$(MetalamaFrameworkExtensionsVersion)</Version>
+        <AssemblyVersion>$(MetalamaExtensionsAssemblyVersion)</AssemblyVersion>
+        <Version>$(MetalamaExtensionsVersion)</Version>
     </PropertyGroup>
 
 </Project>
