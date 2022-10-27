@@ -17,7 +17,7 @@ public partial class LazyDependencyInjectionStrategy
         public PullStrategy( DependencyContext context, IProperty mainProperty, IField funcField ) : base( context, mainProperty )
         {
             this._funcField = funcField;
-            this._funcType = ((INamedType) TypeFactory.GetType( typeof(Func<>) )).WithTypeArguments( mainProperty.Type ).ConstructNullable();
+            this._funcType = ((INamedType) TypeFactory.GetType( typeof(Func<>) )).WithTypeArguments( mainProperty.Type ).ToNullableType();
         }
 
         protected override IFieldOrProperty AssignedFieldOrProperty => this._funcField;

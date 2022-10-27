@@ -92,7 +92,7 @@ internal class LazyServiceLocatorDependencyInjectionStrategy : DefaultDependency
         var introduceCacheFieldResult = builder.Advice.IntroduceField(
             builder.Target,
             property.Name + "Cache",
-            property.Type.ConstructNullable() );
+            property.Type.ToNullableType() );
 
         if ( introduceCacheFieldResult.Outcome == AdviceOutcome.Error )
         {

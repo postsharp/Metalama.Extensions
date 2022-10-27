@@ -67,7 +67,7 @@ public class DefaultPullStrategy : IPullStrategy
     /// <summary>
     /// Gets the type of the constructor parameter. This is used by both <see cref="GetNewParameter"/> and <see cref="GetExistingParameter"/>.
     /// </summary>
-    protected virtual IType ParameterType => this.IntroducedFieldOrProperty.Type.ConstructNullable();
+    protected virtual IType ParameterType => this.IntroducedFieldOrProperty.Type.ToNullableType();
 
     /// <summary>
     /// Normalizes the name of the parameter by applying naming conventions.
