@@ -8,7 +8,7 @@ using System;
 namespace Metalama.Extensions.Multicast;
 
 /// <summary>
-///   Kinds of targets to which multicast custom attributes (<see cref = "MulticastAttribute" />)
+///   Kinds of targets to which multicast custom attributes (<see cref = "IMulticastAttribute" />)
 ///   can apply.
 /// </summary>
 [Flags]

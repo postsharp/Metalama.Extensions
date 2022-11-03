@@ -2,9 +2,7 @@
 
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
-using Metalama.Framework.Diagnostics;
 using System;
-using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 
 namespace Metalama.Extensions.Multicast;
@@ -46,11 +44,11 @@ internal class MulticastAttributeInfo : IComparable<MulticastAttributeInfo>
                 }
             }
 
-            {
-                return new Regex(
-                    "^" + Regex.Escape( filter ).Replace( "\\*", ".*" ).Replace( "<", "\\<" ).Replace( ">", "\\>" ) + "$",
-                    RegexOptions.IgnoreCase );
-            }
+#pragma warning disable CA1307
+            return new Regex(
+                "^" + Regex.Escape( filter ).Replace( "\\*", ".*" ).Replace( "<", "\\<" ).Replace( ">", "\\>" ) + "$",
+                RegexOptions.IgnoreCase );
+#pragma warning restore CA1307
         }
     }
 

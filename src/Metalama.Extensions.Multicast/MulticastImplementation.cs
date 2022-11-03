@@ -127,7 +127,7 @@ public sealed class MulticastImplementation : IMulticastImplementation<ICompilat
                 } );
         }
 
-        return EligibilityRuleFactory.CreateRule<IDeclaration>( builder => { builder.MustSatisfyAny( rules.ToArray() ); } );
+        return EligibilityRuleFactory.CreateRule<IDeclaration>( builder => builder.MustSatisfyAny( rules.ToArray() ) );
     }
 
     public void AddAspects( IAspectBuilder<ICompilation> builder )

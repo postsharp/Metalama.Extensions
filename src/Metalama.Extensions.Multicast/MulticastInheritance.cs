@@ -5,12 +5,12 @@ using System;
 
 namespace Metalama.Extensions.Multicast;
 
+// [Obsolete] cannot be an error because it is used from the compile-time compilation, which does not copy [Obsolete].
+
 /// <summary>
-///   Kind of inheritance of <see cref = "MulticastAttribute" />.
+///   Kind of inheritance of <see cref = "IMulticastAttribute" />.
 /// </summary>
 [Obsolete( "Inheritance is Metalama is implemented at the aspect class level with the [Inherited] attribute." )]
-
-// [Obsolete] cannot be an error because it is used from the compile-time compilation, which does not copy [Obsolete].
 [RunTimeOrCompileTime]
 public enum MulticastInheritance
 {

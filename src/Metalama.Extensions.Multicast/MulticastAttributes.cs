@@ -6,21 +6,10 @@ using System;
 namespace Metalama.Extensions.Multicast;
 
 /// <summary>
-///   Attributes of elements to which multicast custom attributes (<see cref = "MulticastAttribute" />)
+///   Attributes (i.e. in C# terms, modifiers) of elements to which multicast custom attributes (<see cref = "IMulticastAttribute" />)
 ///   apply.
 /// </summary>
 /// <remarks>
-/// <para>
-/// If you specify this in a <see cref="MulticastAttributeUsageAttribute"/>, then the annotated attribute can only be multicast
-/// to elements that have these attributes. For example, if you create an aspect and annotate it with <c>[MulticastAttributeUsage(TargetMemberAttributes=MulticastAttributes.Protected)]</c>,
-/// then multicasting will never apply the aspect to any type member that isn't <c>protected</c>.
-/// </para>
-/// <para>
-/// If you specify this in a property of <see cref="MulticastAttribute" />, then that specific
-/// multicast will be even more narrowed just to elements that have these attributes. For example, if you annotate a class with the aspect from the previous
-/// paragraph with <c>[MyAspect(TargetMemberAttributes=MulticastAttributes.Virtual)]</c>, then it will only apply to that class's members that are both
-/// protected and, for methods, virtual.
-/// </para>
 /// <para>
 /// There are 8 categories of flags. If you specify at least one flag for a category, you narrow the multicast just to elements
 /// that have one of the flags you specified in the category. For example, if you specify <c>Public | Protected</c>, you multicast
@@ -172,7 +161,7 @@ public enum MulticastAttributes
     UserGenerated = 1 << 19,
 
     /// <summary>
-    ///   Any code generation (<see cref = "CompilerGenerated" /> | <see cref = "UserGenerated" />)l
+    ///   Any code generation (<see cref = "CompilerGenerated" /> | <see cref = "UserGenerated" />).
     /// </summary>
     AnyGeneration = CompilerGenerated | UserGenerated,
 

@@ -2,7 +2,6 @@
 
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -17,8 +16,10 @@ internal class MulticastAttributeGroup
 
     public MulticastAttributeGroup( IAspectBuilder builder )
     {
-        this._attributes = new List<MulticastAttributeInfo>( builder.AspectInstance.SecondaryInstances.Length + 1 );
-        this._attributes.Add( new MulticastAttributeInfo( builder.AspectInstance, builder ) );
+        this._attributes = new List<MulticastAttributeInfo>( builder.AspectInstance.SecondaryInstances.Length + 1 )
+        {
+            new MulticastAttributeInfo( builder.AspectInstance, builder )
+        };
         this.AspectClass = builder.AspectInstance.AspectClass;
 
         foreach ( var instance in builder.AspectInstance.SecondaryInstances )

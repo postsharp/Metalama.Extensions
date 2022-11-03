@@ -9,8 +9,7 @@ using System.Threading.Tasks;
 
 namespace Metalama.Extensions.Multicast;
 
-public abstract class OverrideMethodMulticastAspect : MulticastAspect
-                                                    , IAspect<IProperty>,
+public abstract class OverrideMethodMulticastAspect : MulticastAspect, IAspect<IProperty>,
                                                       IAspect<IEvent>
 {
     protected OverrideMethodMulticastAspect() : base( MulticastTargets.Method ) { }
@@ -34,10 +33,10 @@ public abstract class OverrideMethodMulticastAspect : MulticastAspect
             this.UseEnumerableTemplateForAnyEnumerable );
 #else
         var templates = new MethodTemplateSelector(
-            nameof(this.OverrideMethod),
-            nameof(this.OverrideAsyncMethod),
-            nameof(this.OverrideEnumerableMethod),
-            nameof(this.OverrideEnumeratorMethod),
+            nameof( this.OverrideMethod ),
+            nameof( this.OverrideAsyncMethod ),
+            nameof( this.OverrideEnumerableMethod ),
+            nameof( this.OverrideEnumeratorMethod ),
             null,
             null,
             this.UseAsyncTemplateForAnyAwaitable,
@@ -69,13 +68,13 @@ public abstract class OverrideMethodMulticastAspect : MulticastAspect
     }
 
     /// <summary>
-    /// Gets or sets a value indicating whether the <see cref="OverrideAsyncMethod"/> template must be applied to all methods returning an awaitable
+    /// Gets a value indicating whether the <see cref="OverrideAsyncMethod"/> template must be applied to all methods returning an awaitable
     /// type (including <c>IAsyncEnumerable</c> and <c>IAsyncEnumerator</c>), instead of only to methods that have the <c>async</c> modifier.
     /// </summary>
     protected bool UseEnumerableTemplateForAnyEnumerable { get; init; }
 
     /// <summary>
-    /// Gets or sets a value indicating whether the <see cref="OverrideEnumerableMethod"/>, <see cref="OverrideEnumeratorMethod"/>,
+    /// Gets a value indicating whether the <see cref="OverrideEnumerableMethod"/>, <see cref="OverrideEnumeratorMethod"/>,
     /// <c>OverrideAsyncEnumerableMethod"</c> or  <c>OverrideAsyncEnumeratorMethod"</c> template must be applied to all methods returning
     /// a compatible return type, instead of only to methods using the <c>yield</c> statement.
     /// </summary>
