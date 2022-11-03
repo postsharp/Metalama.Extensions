@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>netstandard2.0;net5.0</TargetFrameworks>
+        <Nullable>enable</Nullable>
+        <PackageDescription>Emulates PostSharp multicasting in Metalama.</PackageDescription>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Metalama.Framework" Version="$(MetalamaVersion)" />
+    </ItemGroup>
+
+    <Import Sdk="PostSharp.Engineering.Sdk" Project="SystemTypes.props" />
+</Project>

@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metalama.Extensions.Depende
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metalama.Extensions.DependencyInjection.ServiceLocator.AspectTests", "src\tests\Metalama.Extensions.DependencyInjection.ServiceLocator.AspectTests\Metalama.Extensions.DependencyInjection.ServiceLocator.AspectTests.csproj", "{BE2C078A-5AB6-4927-83EC-70D099471688}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metalama.Extensions.Multicast", "src\Metalama.Extensions.Multicast\Metalama.Extensions.Multicast.csproj", "{66170BA3-19B6-4BA8-B654-4F153ACB90FC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{BE2C078A-5AB6-4927-83EC-70D099471688}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BE2C078A-5AB6-4927-83EC-70D099471688}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BE2C078A-5AB6-4927-83EC-70D099471688}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66170BA3-19B6-4BA8-B654-4F153ACB90FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66170BA3-19B6-4BA8-B654-4F153ACB90FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66170BA3-19B6-4BA8-B654-4F153ACB90FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66170BA3-19B6-4BA8-B654-4F153ACB90FC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
