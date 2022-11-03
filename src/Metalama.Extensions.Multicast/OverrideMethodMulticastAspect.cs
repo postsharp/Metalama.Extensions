@@ -23,15 +23,15 @@ public abstract class OverrideMethodMulticastAspect : MulticastAspect
         }
 
 #if NET5_0_OR_GREATER
-            var templates = new MethodTemplateSelector(
-                nameof(this.OverrideMethod),
-                nameof(this.OverrideAsyncMethod),
-                nameof(this.OverrideEnumerableMethod),
-                nameof(this.OverrideEnumeratorMethod),
-                nameof(this.OverrideAsyncEnumerableMethod),
-                nameof(this.OverrideAsyncEnumeratorMethod),
-                this.UseAsyncTemplateForAnyAwaitable,
-                this.UseEnumerableTemplateForAnyEnumerable );
+        var templates = new MethodTemplateSelector(
+            nameof(this.OverrideMethod),
+            nameof(this.OverrideAsyncMethod),
+            nameof(this.OverrideEnumerableMethod),
+            nameof(this.OverrideEnumeratorMethod),
+            nameof(this.OverrideAsyncEnumerableMethod),
+            nameof(this.OverrideAsyncEnumeratorMethod),
+            this.UseAsyncTemplateForAnyAwaitable,
+            this.UseEnumerableTemplateForAnyEnumerable );
 #else
         var templates = new MethodTemplateSelector(
             nameof(this.OverrideMethod),
@@ -98,11 +98,11 @@ public abstract class OverrideMethodMulticastAspect : MulticastAspect
     public virtual IEnumerator<dynamic?> OverrideEnumeratorMethod() => throw new NotSupportedException();
 
 #if NET5_0_OR_GREATER
-        [Template( IsEmpty = true )]
-        public virtual IAsyncEnumerable<dynamic?> OverrideAsyncEnumerableMethod() => throw new NotSupportedException();
+    [Template( IsEmpty = true )]
+    public virtual IAsyncEnumerable<dynamic?> OverrideAsyncEnumerableMethod() => throw new NotSupportedException();
 
-        [Template( IsEmpty = true )]
-        public virtual IAsyncEnumerator<dynamic?> OverrideAsyncEnumeratorMethod() => throw new NotSupportedException();
+    [Template( IsEmpty = true )]
+    public virtual IAsyncEnumerator<dynamic?> OverrideAsyncEnumeratorMethod() => throw new NotSupportedException();
 #endif
 
     /// <summary>
