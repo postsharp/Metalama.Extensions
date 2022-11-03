@@ -87,6 +87,12 @@ internal class MulticastAttributeInfo : IComparable<MulticastAttributeInfo>
             case DeclarationKind.Parameter:
                 return this.IsParameterMatch( (IParameter) declaration );
 
+            case DeclarationKind.Field:
+                return this.IsFieldMatch( (IField) declaration );
+
+            case DeclarationKind.Method:
+                return this.IsMethodMatch( (IMethod) declaration );
+
             default:
                 return this.IsMemberMatch( (IMember) declaration );
         }
@@ -103,10 +109,15 @@ internal class MulticastAttributeInfo : IComparable<MulticastAttributeInfo>
         => DoMemberOrNamedTypeAttributesMatch( type, this.Attribute.AttributeTargetTypeAttributes )
            && DoesFullNameMatch( type, this.AttributeTargetTypesRegex );
 
+    private bool IsFieldMatch( IField field ) => this.IsMemberMatch( field ) && DoesLiteralMatch( field, this.Attribute.AttributeTargetMemberAttributes );
+
+    private bool IsMethodMatch( IMethod method ) => this.IsMemberMatch( method ) && DoesManagedMatch( method, this.Attribute.AttributeTargetMemberAttributes );
+
     private static bool DoMemberOrNamedTypeAttributesMatch( IMemberOrNamedType member, MulticastAttributes attributes )
         => DoesAccessibilityMatch( member, attributes ) &&
            DoesAbstractionMatch( member, attributes ) &&
-           DoesScopeMatch( member, attributes );
+           DoesScopeMatch( member, attributes ) &&
+           DoesCompilerGeneratedMatch( member, attributes );
 
     private static bool DoMemberAttributesMatch( IMember member, MulticastAttributes attributes )
         => DoMemberOrNamedTypeAttributesMatch( member, attributes ) &&
@@ -151,6 +162,63 @@ internal class MulticastAttributeInfo : IComparable<MulticastAttributeInfo>
 
                 default:
                     throw new ArgumentOutOfRangeException( $"Unexpected accessibility: {member.Accessibility}." );
+            }
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    private static bool DoesLiteralMatch( IField member, MulticastAttributes attributes )
+    {
+        if ( (attributes & MulticastAttributes.AnyLiterality) != 0 )
+        {
+            if ( member.Writeability == Writeability.None )
+            {
+                return attributes.HasFlagFast( MulticastAttributes.Literal );
+            }
+            else
+            {
+                return attributes.HasFlagFast( MulticastAttributes.NonLiteral );
+            }
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    private static bool DoesManagedMatch( IMethod member, MulticastAttributes attributes )
+    {
+        if ( (attributes & MulticastAttributes.AnyImplementation) != 0 )
+        {
+            if ( member.IsExtern )
+            {
+                return attributes.HasFlagFast( MulticastAttributes.NonManaged );
+            }
+            else
+            {
+                return attributes.HasFlagFast( MulticastAttributes.Managed );
+            }
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    private static bool DoesCompilerGeneratedMatch( IDeclaration member, MulticastAttributes attributes )
+    {
+        if ( (attributes & MulticastAttributes.AnyGeneration) != 0 )
+        {
+            if ( member.Origin.IsCompilerGenerated )
+            {
+                return attributes.HasFlagFast( MulticastAttributes.CompilerGenerated );
+            }
+            else
+            {
+                return attributes.HasFlagFast( MulticastAttributes.UserGenerated );
             }
         }
         else

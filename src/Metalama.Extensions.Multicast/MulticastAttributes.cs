@@ -2,7 +2,6 @@
 
 using Metalama.Framework.Aspects;
 using System;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Metalama.Extensions.Multicast;
 
@@ -130,37 +129,31 @@ public enum MulticastAttributes
     /// <summary>
     ///   Managed code implementation.
     /// </summary>
-    [Obsolete( "This flag is not implemented.", true )]
     Managed = 1 << 13,
 
     /// <summary>
     ///   Non-managed code implementation (external or system).
     /// </summary>
-    [Obsolete( "This flag is not implemented.", true )]
     NonManaged = 1 << 14,
 
     /// <summary>
     ///   Any implementation (<see cref = "Managed" /> | <see cref = "NonManaged" />).
     /// </summary>
-    [Obsolete( "This flag is not implemented.", true )]
     AnyImplementation = Managed | NonManaged,
 
     /// <summary>
     ///   Literal fields.
     /// </summary>
-    [Obsolete( "This flag is not implemented.", true )]
     Literal = 1 << 15,
 
     /// <summary>
     ///   Non-literal fields.
     /// </summary>
-    [Obsolete( "This flag is not implemented.", true )]
     NonLiteral = 1 << 16,
 
     /// <summary>
     ///   Any field literality (<see cref = "Literal" /> | <see cref = "NonLiteral" />).
     /// </summary>
-    [Obsolete( "This flag is not implemented.", true )]
     AnyLiterality = Literal | NonLiteral,
 
     /// <summary>
@@ -171,19 +164,16 @@ public enum MulticastAttributes
     /// <summary>
     ///   Compiler-generated code.
     /// </summary>
-    [Obsolete( "This flag is not implemented.", true )]
     CompilerGenerated = 1 << 18,
 
     /// <summary>
     ///   User-generated code (anything expected <see cref = "CompilerGenerated" />).
     /// </summary>
-    [Obsolete( "This flag is not implemented.", true )]
     UserGenerated = 1 << 19,
 
     /// <summary>
     ///   Any code generation (<see cref = "CompilerGenerated" /> | <see cref = "UserGenerated" />)l
     /// </summary>
-    [Obsolete( "This flag is not implemented.", true )]
     AnyGeneration = CompilerGenerated | UserGenerated,
 
     /// <summary>
