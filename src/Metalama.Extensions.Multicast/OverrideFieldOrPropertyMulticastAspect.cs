@@ -1,5 +1,6 @@
 ﻿// Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
+using Metalama.Framework.Advising;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 using Metalama.Framework.Eligibility;
@@ -16,9 +17,7 @@ public abstract class OverrideFieldOrPropertyMulticastAspect : MulticastAspect, 
     {
         this.BuildEligibility( builder.DeclaringType() );
 
-        builder.ExceptForInheritance().MustBeNonAbstract();
-        builder.MustBeExplicitlyDeclared();
-        builder.MustSatisfy( d => d is not IField { Writeability: Writeability.None }, d => $"{d} must not be a constant" );
+        builder.AddRule( EligibilityRuleFactory.GetAdviceEligibilityRule( AdviceKind.OverrideFieldOrProperty ) );
     }
 
     public void BuildAspect( IAspectBuilder<IFieldOrProperty> builder )

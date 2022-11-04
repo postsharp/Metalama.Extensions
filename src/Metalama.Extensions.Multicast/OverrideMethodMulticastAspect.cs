@@ -1,5 +1,6 @@
 ﻿// Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
+using Metalama.Framework.Advising;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 using Metalama.Framework.Eligibility;
@@ -83,8 +84,8 @@ public abstract class OverrideMethodMulticastAspect : MulticastAspect, IAspect<I
 
     public virtual void BuildEligibility( IEligibilityBuilder<IMethod> builder )
     {
-        builder.ExceptForInheritance().MustBeNonAbstract();
-        builder.MustBeExplicitlyDeclared();
+        this.BuildEligibility( builder.DeclaringType() );
+       builder.AddRule( EligibilityRuleFactory.GetAdviceEligibilityRule( AdviceKind.OverrideMethod ) );
     }
 
     [Template( IsEmpty = true )]

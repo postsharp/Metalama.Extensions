@@ -24,10 +24,10 @@ public sealed class MulticastImplementation : IMulticastImplementation<ICompilat
     }
 
     private static bool Filter( IDeclaration declaration, MulticastAttributeGroup attributeGroup )
-        => attributeGroup.IsMatch( declaration ) && declaration.IsEligible( attributeGroup.AspectClass.Type );
+        => attributeGroup.IsMatch( declaration ) && declaration.IsAspectEligible( attributeGroup.AspectClass.Type );
 
     private bool FilterType( INamedType type, MulticastAttributeGroup attributeGroup )
-        => this.MatchesTypeKind( type ) && attributeGroup.IsMatch( type ) && type.IsEligible( attributeGroup.AspectClass.Type );
+        => this.MatchesTypeKind( type ) && attributeGroup.IsMatch( type ) && type.IsAspectEligible( attributeGroup.AspectClass.Type );
 
     private bool MatchesTypeKind( INamedType namedType )
         => namedType.TypeKind switch
@@ -46,7 +46,7 @@ public sealed class MulticastImplementation : IMulticastImplementation<ICompilat
 
         if ( this._concreteTargets.HasFlagFast( MulticastTargets.Assembly ) )
         {
-            rules.Add( builder => builder.MustBe<ICompilation>() );
+            rules.Add( builder => builder.MustBeOfType( typeof(ICompilation) ) );
         }
 
         if ( this._concreteTargets.HasFlagFast( MulticastTargets.Class ) )
@@ -67,12 +67,12 @@ public sealed class MulticastImplementation : IMulticastImplementation<ICompilat
 
         if ( this._concreteTargets.HasFlagFast( MulticastTargets.Method ) )
         {
-            rules.Add( builder => builder.MustBe<IMethod>() );
+            rules.Add( builder => builder.MustBeOfType( typeof(IMethod) ) );
         }
 
         if ( this._concreteTargets.HasFlagFast( MulticastTargets.InstanceConstructor ) )
         {
-            rules.Add( builder => builder.Convert().To<IConstructor>().MustBeNonStatic() );
+            rules.Add( builder => builder.Convert().To<IConstructor>().MustNotBeStatic() );
         }
 
         if ( this._concreteTargets.HasFlagFast( MulticastTargets.StaticConstructor ) )
@@ -86,13 +86,13 @@ public sealed class MulticastImplementation : IMulticastImplementation<ICompilat
                 builder =>
                 {
                     builder.MustBeExplicitlyDeclared();
-                    builder.MustBe<IProperty>();
+                    builder.MustBeOfType( typeof(IProperty) );
                 } );
         }
 
         if ( this._concreteTargets.HasFlagFast( MulticastTargets.Event ) )
         {
-            rules.Add( builder => builder.MustBe<IEvent>() );
+            rules.Add( builder => builder.MustBeOfType( typeof(IEvent) ) );
         }
 
         if ( this._concreteTargets.HasFlagFast( MulticastTargets.Field ) )
@@ -101,7 +101,7 @@ public sealed class MulticastImplementation : IMulticastImplementation<ICompilat
                 builder =>
                 {
                     builder.MustBeExplicitlyDeclared();
-                    builder.MustBe<IEvent>();
+                    builder.MustBeOfType( typeof(IField) );
                 } );
         }
 
