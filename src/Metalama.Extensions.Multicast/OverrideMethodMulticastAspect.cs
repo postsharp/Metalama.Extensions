@@ -10,13 +10,21 @@ using System.Threading.Tasks;
 
 namespace Metalama.Extensions.Multicast;
 
+[AttributeUsage(
+    AttributeTargets.Method | AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Property | AttributeTargets.Event,
+    AllowMultiple = true )]
 public abstract class OverrideMethodMulticastAspect : MulticastAspect, IAspect<IProperty>,
-                                                      IAspect<IEvent>
+                                                      IAspect<IEvent>, IAspect<IMethod>
 {
     protected OverrideMethodMulticastAspect() : base( MulticastTargets.Method ) { }
 
     public virtual void BuildAspect( IAspectBuilder<IMethod> builder )
     {
+        if ( this.Implementation.SkipIfExcluded( builder ) )
+        {
+            return;
+        }
+
         if ( !builder.VerifyEligibility( this.Implementation.EligibilityRule ) )
         {
             return;
@@ -85,7 +93,7 @@ public abstract class OverrideMethodMulticastAspect : MulticastAspect, IAspect<I
     public virtual void BuildEligibility( IEligibilityBuilder<IMethod> builder )
     {
         this.BuildEligibility( builder.DeclaringType() );
-       builder.AddRule( EligibilityRuleFactory.GetAdviceEligibilityRule( AdviceKind.OverrideMethod ) );
+        builder.AddRule( EligibilityRuleFactory.GetAdviceEligibilityRule( AdviceKind.OverrideMethod ) );
     }
 
     [Template( IsEmpty = true )]

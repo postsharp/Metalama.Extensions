@@ -183,7 +183,6 @@ public enum MulticastAttributes
     /// <summary>
     ///   All members.
     /// </summary>
-    [Obsolete( "Some flags are not implemented.", true )]
     All =
         AnyVisibility | AnyVirtuality | AnyScope | AnyImplementation | AnyLiterality | AnyAbstraction |
         AnyGeneration | AnyParameter

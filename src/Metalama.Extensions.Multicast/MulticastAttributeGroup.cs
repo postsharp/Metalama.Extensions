@@ -2,6 +2,7 @@
 
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -16,10 +17,7 @@ internal class MulticastAttributeGroup
 
     public MulticastAttributeGroup( IAspectBuilder builder )
     {
-        this._attributes = new List<MulticastAttributeInfo>( builder.AspectInstance.SecondaryInstances.Length + 1 )
-        {
-            new MulticastAttributeInfo( builder.AspectInstance, builder )
-        };
+        this._attributes = new List<MulticastAttributeInfo>( builder.AspectInstance.SecondaryInstances.Length + 1 ) { new( builder.AspectInstance, builder ) };
         this.AspectClass = builder.AspectInstance.AspectClass;
 
         foreach ( var instance in builder.AspectInstance.SecondaryInstances )
@@ -30,7 +28,7 @@ internal class MulticastAttributeGroup
         this._attributes.Sort();
     }
 
-    public bool IsExcludeOnly => this._attributes.Count == 0 && this._attributes[0].Attribute.AttributeExclude;
+    public bool IsExcludeOnly => this._attributes.Count == 1 && this._attributes[0].Attribute.AttributeExclude;
 
     public bool IsMatch( IDeclaration declaration )
     {
@@ -70,5 +68,18 @@ internal class MulticastAttributeGroup
         return false;
     }
 
-    public IAspect Aspect => this._attributes[this._attributes.Count - 1].Attribute;
+    public IAspect GetAspect( IDeclaration declaration )
+    {
+        for ( var i = this._attributes.Count - 1; i >= 0; i-- )
+        {
+            var attribute = this._attributes[i];
+
+            if ( attribute.IsMatch( declaration ) )
+            {
+                return attribute.Attribute;
+            }
+        }
+
+        throw new InvalidOperationException( $"There is no matching aspect." );
+    }
 }

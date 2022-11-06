@@ -9,6 +9,9 @@ using System.Collections.Generic;
 
 namespace Metalama.Extensions.Multicast;
 
+[AttributeUsage(
+    AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Property | AttributeTargets.Field,
+    AllowMultiple = true )]
 public abstract class OverrideFieldOrPropertyMulticastAspect : MulticastAspect, IAspect<IFieldOrProperty>
 {
     protected OverrideFieldOrPropertyMulticastAspect() : base( MulticastTargets.Field | MulticastTargets.Property ) { }
@@ -22,6 +25,11 @@ public abstract class OverrideFieldOrPropertyMulticastAspect : MulticastAspect, 
 
     public void BuildAspect( IAspectBuilder<IFieldOrProperty> builder )
     {
+        if ( this.Implementation.SkipIfExcluded( builder ) )
+        {
+            return;
+        }
+
         var getterTemplateSelector = new GetterTemplateSelector(
             "get_" + nameof(this.OverrideProperty),
             "get_" + nameof(this.OverrideEnumerableProperty),

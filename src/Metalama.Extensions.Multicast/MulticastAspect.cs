@@ -8,7 +8,7 @@ using System;
 
 namespace Metalama.Extensions.Multicast;
 
-public abstract class MulticastAspect : IMulticastAttribute, IAspect<ICompilation>, IAspect<INamedType>
+public abstract class MulticastAspect : Aspect, IMulticastAttribute, IAspect<ICompilation>, IAspect<INamedType>
 {
     internal static readonly DiagnosticDefinition<(string PropertyName, string AspectName, DeclarationKind DeclarationKind, IDeclaration Declaration, string
             Message)>

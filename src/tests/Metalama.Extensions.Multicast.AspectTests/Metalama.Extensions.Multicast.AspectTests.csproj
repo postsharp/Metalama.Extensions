@@ -1,0 +1,68 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <RootNamespace>Metalama.Extensions.Multicast.AspectTests</RootNamespace>
+        <NoWarn>IDE0051,CS8618,CS0169</NoWarn>
+        <Configurations>Debug;Release;LamaDebug</Configurations>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Compile Remove="AttributePriority - Copy.t.cs" />
+      <Compile Remove="HelloWorld - Copy.t.cs" />
+      <Compile Remove="Replace_IntermediateNode - Copy.t.cs" />
+      <Compile Remove="Replace_LeafNode - Copy.t.cs" />
+      <Compile Remove="Replace_Priority - Copy.t.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="AttributePriority_Remove.t.cs">
+        <SubType>Code</SubType>
+        <DependentUpon>AttributePriority_Remove.cs</DependentUpon>
+      </None>
+      <None Include="Exclude_IntermediateNode.t.cs">
+        <SubType>Code</SubType>
+        <DependentUpon>Exclude_IntermediateNode.cs</DependentUpon>
+      </None>
+      <None Include="Exclude_LeafNode.t.cs">
+        <SubType>Code</SubType>
+        <DependentUpon>Exclude_LeafNode.cs</DependentUpon>
+      </None>
+      <None Include="AttributePriority.t.cs">
+        <SubType>Code</SubType>
+        <DependentUpon>AttributePriority.cs</DependentUpon>
+      </None>
+      <None Include="Replace_LeafNode.t.cs">
+        <SubType>Code</SubType>
+        <DependentUpon>Replace_LeafNode.cs</DependentUpon>
+      </None>
+      <None Include="Replace_IntermediateNode.t.cs">
+        <SubType>Code</SubType>
+        <DependentUpon>Replace_IntermediateNode.cs</DependentUpon>
+      </None>
+      <None Include="Replace_Priority.t.cs">
+        <SubType>Code</SubType>
+        <DependentUpon>Replace_Priority.cs</DependentUpon>
+      </None>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
+        <PackageReference Include="xunit" Version="2.4.1" />
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="coverlet.collector" Version="3.1.2">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="Metalama.TestFramework" Version="$(MetalamaVersion)" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\Metalama.Extensions.Multicast\Metalama.Extensions.Multicast.csproj" />
+    </ItemGroup>
+
+</Project>

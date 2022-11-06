@@ -22,7 +22,7 @@ internal class EarlyServiceLocatorDependencyInjectionStrategy : DefaultDependenc
     }
 
     [Template]
-    public void InitializerTemplate<T>( IFieldOrProperty fieldOrProperty )
+    public void InitializerTemplate<[CompileTime] T>( IFieldOrProperty fieldOrProperty )
     {
         var isRequired = this.Context.DependencyAttribute.GetIsRequired()
             .GetValueOrDefault( this.Context.Project.DependencyInjectionOptions().IsRequiredByDefault );

@@ -11,34 +11,53 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metalama.Extensions.Depende
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metalama.Extensions.DependencyInjection.ServiceLocator.AspectTests", "src\tests\Metalama.Extensions.DependencyInjection.ServiceLocator.AspectTests\Metalama.Extensions.DependencyInjection.ServiceLocator.AspectTests.csproj", "{BE2C078A-5AB6-4927-83EC-70D099471688}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metalama.Extensions.Multicast", "src\Metalama.Extensions.Multicast\Metalama.Extensions.Multicast.csproj", "{66170BA3-19B6-4BA8-B654-4F153ACB90FC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metalama.Extensions.Multicast", "src\Metalama.Extensions.Multicast\Metalama.Extensions.Multicast.csproj", "{66170BA3-19B6-4BA8-B654-4F153ACB90FC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metalama.Extensions.Multicast.AspectTests", "src\tests\Metalama.Extensions.Multicast.AspectTests\Metalama.Extensions.Multicast.AspectTests.csproj", "{BE81D9A0-308D-44CD-9513-9E56FED265CB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		LamaDebug|Any CPU = LamaDebug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{45EC025C-8C55-4FB4-B63C-5EF3EA1BD1D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{45EC025C-8C55-4FB4-B63C-5EF3EA1BD1D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45EC025C-8C55-4FB4-B63C-5EF3EA1BD1D2}.LamaDebug|Any CPU.ActiveCfg = LamaDebug|Any CPU
+		{45EC025C-8C55-4FB4-B63C-5EF3EA1BD1D2}.LamaDebug|Any CPU.Build.0 = LamaDebug|Any CPU
 		{45EC025C-8C55-4FB4-B63C-5EF3EA1BD1D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{45EC025C-8C55-4FB4-B63C-5EF3EA1BD1D2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{848DBD9D-1ED2-4A27-B4F9-B0D33727EBF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{848DBD9D-1ED2-4A27-B4F9-B0D33727EBF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{848DBD9D-1ED2-4A27-B4F9-B0D33727EBF8}.LamaDebug|Any CPU.ActiveCfg = LamaDebug|Any CPU
+		{848DBD9D-1ED2-4A27-B4F9-B0D33727EBF8}.LamaDebug|Any CPU.Build.0 = LamaDebug|Any CPU
 		{848DBD9D-1ED2-4A27-B4F9-B0D33727EBF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{848DBD9D-1ED2-4A27-B4F9-B0D33727EBF8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{62F91CB4-7A7E-4BCF-9906-3B5F0DA9DD9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{62F91CB4-7A7E-4BCF-9906-3B5F0DA9DD9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62F91CB4-7A7E-4BCF-9906-3B5F0DA9DD9C}.LamaDebug|Any CPU.ActiveCfg = LamaDebug|Any CPU
+		{62F91CB4-7A7E-4BCF-9906-3B5F0DA9DD9C}.LamaDebug|Any CPU.Build.0 = LamaDebug|Any CPU
 		{62F91CB4-7A7E-4BCF-9906-3B5F0DA9DD9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{62F91CB4-7A7E-4BCF-9906-3B5F0DA9DD9C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BE2C078A-5AB6-4927-83EC-70D099471688}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BE2C078A-5AB6-4927-83EC-70D099471688}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE2C078A-5AB6-4927-83EC-70D099471688}.LamaDebug|Any CPU.ActiveCfg = LamaDebug|Any CPU
+		{BE2C078A-5AB6-4927-83EC-70D099471688}.LamaDebug|Any CPU.Build.0 = LamaDebug|Any CPU
 		{BE2C078A-5AB6-4927-83EC-70D099471688}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BE2C078A-5AB6-4927-83EC-70D099471688}.Release|Any CPU.Build.0 = Release|Any CPU
 		{66170BA3-19B6-4BA8-B654-4F153ACB90FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{66170BA3-19B6-4BA8-B654-4F153ACB90FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66170BA3-19B6-4BA8-B654-4F153ACB90FC}.LamaDebug|Any CPU.ActiveCfg = LamaDebug|Any CPU
+		{66170BA3-19B6-4BA8-B654-4F153ACB90FC}.LamaDebug|Any CPU.Build.0 = LamaDebug|Any CPU
 		{66170BA3-19B6-4BA8-B654-4F153ACB90FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{66170BA3-19B6-4BA8-B654-4F153ACB90FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE81D9A0-308D-44CD-9513-9E56FED265CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE81D9A0-308D-44CD-9513-9E56FED265CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE81D9A0-308D-44CD-9513-9E56FED265CB}.LamaDebug|Any CPU.ActiveCfg = LamaDebug|Any CPU
+		{BE81D9A0-308D-44CD-9513-9E56FED265CB}.LamaDebug|Any CPU.Build.0 = LamaDebug|Any CPU
+		{BE81D9A0-308D-44CD-9513-9E56FED265CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE81D9A0-308D-44CD-9513-9E56FED265CB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
