@@ -1,4 +1,4 @@
-[assembly: Metalama.Extensions.Multicast.AspectTests.Replace_LeafNode.MyAspect("1")]
+[assembly: MyAspect("1")]
 public class C
 {
   [MyAspect("2")]

@@ -1,4 +1,4 @@
-[assembly: Metalama.Extensions.Multicast.AspectTests.HelloWorld.MyAspect("Hello, world.")]
+[assembly: MyAspect("Hello, world.")]
 public class C
 {
   public void M()

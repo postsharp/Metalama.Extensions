@@ -1,5 +1,5 @@
-[assembly: Metalama.Extensions.Multicast.AspectTests.AttributePriority.MyAspect("1", AttributePriority = 1)]
-[assembly: Metalama.Extensions.Multicast.AspectTests.AttributePriority.MyAspect("2", AttributePriority = 2)]
+[assembly: MyAspect("1", AttributePriority = 1)]
+[assembly: MyAspect("2", AttributePriority = 2)]
 public class C
 {
   public void M()
