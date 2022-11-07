@@ -1,6 +1,7 @@
 // Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
 using Metalama.Framework.Aspects;
+using Metalama.Framework.Code;
 using System;
 
 #pragma warning disable CA1008 // Enums should have zero value named None.
@@ -34,13 +35,11 @@ public enum MulticastTargets
     /// <summary>
     ///   Enumeration.
     /// </summary>
-    [Obsolete( "Targeting enums is not supported in Metalama.", true )]
     Enum = 4,
 
     /// <summary>
     ///   Delegate.
     /// </summary>
-    [Obsolete( "Targeting delegates is not supported in Metalama.", true )]
     Delegate = 8,
 
     /// <summary>
@@ -52,7 +51,6 @@ public enum MulticastTargets
     ///   Any type (<see cref = "Class" />, <see cref = "Struct" />, <see cref = "Enum" />,
     ///   <see cref = "Delegate" /> or <see cref = "Interface" />).
     /// </summary>
-    [Obsolete( "Targeting enums and delegates is not supported.", true )]
     AnyType = Class | Struct | Enum | Delegate | Interface,
 
     /// <summary>
@@ -110,6 +108,5 @@ public enum MulticastTargets
     /// <summary>
     ///   All element kinds.
     /// </summary>
-    [Obsolete( "Some flags are not supported in Metalama.", true )]
     All = Assembly | AnyMember | AnyType | Parameter | ReturnValue
 }

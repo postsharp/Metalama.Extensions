@@ -4,6 +4,7 @@ using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 using Metalama.Framework.Diagnostics;
 using Metalama.Framework.Eligibility;
+using Metalama.Framework.Serialization;
 using System;
 
 namespace Metalama.Extensions.Multicast;
@@ -16,11 +17,20 @@ public abstract class MulticastAspect : Aspect, IMulticastAttribute, IAspect<ICo
             = new( "PS0093", Severity.Error, "Invalid expression for property {0} of custom attribute {1} on {2} {3}: {4}", "Invalid regular expression." );
 
     private readonly MulticastTargets _targets;
+    private readonly bool _multicastOnInheritance;
+
+    [LamaNonSerialized]
     private MulticastImplementation? _implementation;
 
-    protected MulticastAspect( MulticastTargets targets )
+    protected MulticastAspect( MulticastTargets targets, bool multicastOnInheritance = false )
     {
         this._targets = targets;
+        this._multicastOnInheritance = multicastOnInheritance;
+    }
+
+    protected MulticastAspect()
+    {
+        // TODO: remove.
     }
 
     public virtual void BuildEligibility( IEligibilityBuilder<ICompilation> builder ) { }
@@ -37,7 +47,7 @@ public abstract class MulticastAspect : Aspect, IMulticastAttribute, IAspect<ICo
         this.Implementation.AddAspects( builder );
     }
 
-    protected MulticastImplementation Implementation => this._implementation ??= new MulticastImplementation( this._targets );
+    protected MulticastImplementation Implementation => this._implementation ??= new MulticastImplementation( this._targets, this._multicastOnInheritance );
 
     public MulticastTargets AttributeTargetElements { get; set; }
 
