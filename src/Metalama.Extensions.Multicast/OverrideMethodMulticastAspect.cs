@@ -10,70 +10,76 @@ using System.Threading.Tasks;
 
 namespace Metalama.Extensions.Multicast;
 
+/// <summary>
+/// An aspect equivalent to <see cref="OverrideMethodAspect"/> that also implements multicasting for backward compatibility with PostSharp.
+/// </summary>
 [AttributeUsage(
     AttributeTargets.Method | AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Property | AttributeTargets.Event,
     AllowMultiple = true )]
 public abstract class OverrideMethodMulticastAspect : MulticastAspect, IAspect<IProperty>,
                                                       IAspect<IEvent>, IAspect<IMethod>
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OverrideMethodMulticastAspect"/> class.
+    /// </summary>
     protected OverrideMethodMulticastAspect() : base( MulticastTargets.Method ) { }
 
+    /// <inheritdoc />
     public virtual void BuildAspect( IAspectBuilder<IMethod> builder )
     {
-        if ( this.Implementation.SkipIfExcluded( builder ) )
-        {
-            return;
-        }
-
-        if ( !builder.VerifyEligibility( this.Implementation.EligibilityRule ) )
-        {
-            return;
-        }
-
+        this.Implementation.BuildAspect(
+            builder,
+            b =>
+            {
 #if NET5_0_OR_GREATER
-        var templates = new MethodTemplateSelector(
-            nameof(this.OverrideMethod),
-            nameof(this.OverrideAsyncMethod),
-            nameof(this.OverrideEnumerableMethod),
-            nameof(this.OverrideEnumeratorMethod),
-            nameof(this.OverrideAsyncEnumerableMethod),
-            nameof(this.OverrideAsyncEnumeratorMethod),
-            this.UseAsyncTemplateForAnyAwaitable,
-            this.UseEnumerableTemplateForAnyEnumerable );
+                                                var templates = new MethodTemplateSelector(
+                                                    nameof(this.OverrideMethod),
+                                                    nameof(this.OverrideAsyncMethod),
+                                                    nameof(this.OverrideEnumerableMethod),
+                                                    nameof(this.OverrideEnumeratorMethod),
+                                                    nameof(this.OverrideAsyncEnumerableMethod),
+                                                    nameof(this.OverrideAsyncEnumeratorMethod),
+                                                    this.UseAsyncTemplateForAnyAwaitable,
+                                                    this.UseEnumerableTemplateForAnyEnumerable );
 #else
-        var templates = new MethodTemplateSelector(
-            nameof( this.OverrideMethod ),
-            nameof( this.OverrideAsyncMethod ),
-            nameof( this.OverrideEnumerableMethod ),
-            nameof( this.OverrideEnumeratorMethod ),
-            null,
-            null,
-            this.UseAsyncTemplateForAnyAwaitable,
-            this.UseEnumerableTemplateForAnyEnumerable );
+                var templates = new MethodTemplateSelector(
+                    nameof(this.OverrideMethod),
+                    nameof(this.OverrideAsyncMethod),
+                    nameof(this.OverrideEnumerableMethod),
+                    nameof(this.OverrideEnumeratorMethod),
+                    null,
+                    null,
+                    this.UseAsyncTemplateForAnyAwaitable,
+                    this.UseEnumerableTemplateForAnyEnumerable );
 #endif
 
-        builder.Advice.Override( builder.Target, templates );
+                b.Advice.Override( b.Target, templates );
+            } );
     }
 
+    /// <inheritdoc />
     public virtual void BuildEligibility( IEligibilityBuilder<IProperty> builder )
     {
         builder.MustBeExplicitlyDeclared();
         this.BuildEligibility( builder.DeclaringType() );
     }
 
+    /// <inheritdoc />
     public virtual void BuildAspect( IAspectBuilder<IProperty> builder )
     {
-        this.Implementation.AddAspects( builder );
+        this.Implementation.BuildAspect( builder );
     }
 
+    /// <inheritdoc />
     public virtual void BuildEligibility( IEligibilityBuilder<IEvent> builder )
     {
         this.BuildEligibility( builder.DeclaringType() );
     }
 
+    /// <inheritdoc />
     public virtual void BuildAspect( IAspectBuilder<IEvent> builder )
     {
-        this.Implementation.AddAspects( builder );
+        this.Implementation.BuildAspect( builder );
     }
 
     /// <summary>

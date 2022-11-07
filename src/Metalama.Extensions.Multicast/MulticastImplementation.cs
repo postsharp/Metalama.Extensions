@@ -5,46 +5,116 @@ using Metalama.Framework.Code;
 using Metalama.Framework.Eligibility;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Metalama.Extensions.Multicast;
 
+/// <summary>
+/// A reusable implementation of the multicasting logic. Each multicast-enabled aspect must contain an instance of the <see cref="MulticastImplementation"/>
+/// class and should call its <see cref="BuildAspect{T}"/> method.
+/// to perform multicasting.
+/// </summary>
 [CompileTime]
-public sealed class MulticastImplementation : IMulticastImplementation<ICompilation>, IMulticastImplementation<INamedType>,
-                                              IMulticastImplementation<IProperty>,
-                                              IMulticastImplementation<IEvent>, IMulticastImplementation<IMethod>
+public sealed class MulticastImplementation
 {
-    private readonly MulticastTargets _concreteTargets;
+    /// <summary>
+    /// Gets the kind of declarations to which the aspect can be applied. This property is set from the class constructor.
+    /// </summary>
+    public MulticastTargets ConcreteTargets { get; }
+
     private readonly bool _multicastOnInheritance;
     private IEligibilityRule<IDeclaration>? _eligibilityRule;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MulticastImplementation"/> class.
+    /// </summary>
+    /// <param name="concreteTargets">The set of targets to which concrete instances of the aspect can be applied. The aspect must implement the corresponding
+    /// <see cref="IAspect{T}"/> generic interfaces.</param>
+    /// <param name="multicastOnInheritance">A value indicating whether an aspect instance, when it is inherited, should also multicast to children. The default is <c>false</c>.
+    /// It corresponds to the <see cref="MulticastInheritance.Strict"/> multicast inheritance mode in PostSharp. When set to <c>true</c>, the behavior is equivalent to <see cref="MulticastInheritance.Multicast"/>.
+    /// </param>
     public MulticastImplementation( MulticastTargets concreteTargets, bool multicastOnInheritance = false )
     {
-        this._concreteTargets = concreteTargets;
+        this.ConcreteTargets = concreteTargets;
         this._multicastOnInheritance = multicastOnInheritance;
         this._eligibilityRule = null;
     }
 
-    public IEligibilityRule<IDeclaration> EligibilityRule => this._eligibilityRule ??= this.CreateEligibilityRule();
+    private IEligibilityRule<IDeclaration> EligibilityRule => this._eligibilityRule ??= this.CreateEligibilityRule();
 
     private bool MustMulticast( IAspectBuilder<IDeclaration> builder )
         => this._multicastOnInheritance || builder.AspectInstance.Predecessors[0].Kind != AspectPredecessorKind.Inherited;
 
+    /// <summary>
+    /// This method must be called from the <see cref="IAspect{T}.BuildAspect"/> method of the aspect class. It adds the
+    /// aspect to child declarations that match the <see cref="IMulticastAttribute"/> properties. 
+    /// If the aspect is applied to a potential concrete target declaration (see <see cref="ConcreteTargets"/>), it calls
+    /// an optional delegate that should provide advice to this target. 
+    /// </summary>
+    /// <param name="builder">The <see cref="IAspectBuilder{T}"/></param>
+    /// <param name="implementConcreteAspect">An action called when the aspect is applied on a concrete target declaration (see <see cref="ConcreteTargets"/>).</param>
 #pragma warning disable CA1822
-    public bool SkipIfExcluded( IAspectBuilder<IDeclaration> builder )
+    public void BuildAspect<T>( IAspectBuilder<T> builder, Action<IAspectBuilder<T>>? implementConcreteAspect = null )
+        where T : class, IDeclaration
 #pragma warning restore CA1822
     {
-        var attributeGroup = new MulticastAttributeGroup( builder, MulticastTargets.All );
+        /*
+        // Verifies the eligibility (implicitly reports an error if any).
+        if ( !builder.VerifyEligibility( this.EligibilityRule ) )
+        {
+            return;
+        }
+        */
+
+        // Checks if there is anything to do anyway.
+        var attributeGroup = new MulticastAttributeGroup( builder, this.ConcreteTargets );
 
         if ( attributeGroup.IsExcludeOnly )
         {
             builder.SkipAspect();
 
-            return true;
+            return;
         }
-        else
+
+        // Check if any concrete instance of the aspect should be implemented.
+        if ( attributeGroup.IsMatch( builder.Target, MulticastTargetsHelper.GetMulticastTargets( builder.Target ) ) )
         {
-            return false;
+            implementConcreteAspect?.Invoke( builder );
+        }
+
+        // Multicast to children.
+        if ( !builder.IsAspectSkipped )
+        {
+            if ( !this.MustMulticast( builder ) )
+            {
+                return;
+            }
+
+            Debugger.Break();
+
+            switch ( builder )
+            {
+                case IAspectBuilder<ICompilation> compilationAspectBuilder:
+                    this.AddChildAspects( compilationAspectBuilder, attributeGroup );
+
+                    break;
+
+                case IAspectBuilder<IMethod> methodAspectBuilder:
+                    this.AddChildAspects( methodAspectBuilder, attributeGroup );
+
+                    break;
+
+                case IAspectBuilder<IMemberWithAccessors> propertyOrEventAspectBuilder:
+                    this.AddChildAspects( propertyOrEventAspectBuilder, attributeGroup );
+
+                    break;
+
+                case IAspectBuilder<INamedType> namedTypeAspectBuilder:
+                    this.AddChildAspects( namedTypeAspectBuilder, attributeGroup );
+
+                    break;
+            }
         }
     }
 
@@ -55,13 +125,11 @@ public sealed class MulticastImplementation : IMulticastImplementation<ICompilat
         => attributeGroup.IsMatch( type, targets ) && type.IsAspectEligible( attributeGroup.AspectClass.Type );
 
     private bool FilterType( INamedType type, MulticastAttributeGroup attributeGroup, MulticastTargets targets )
-    {
-        return this.MatchesTypeKind( type, targets ) && attributeGroup.IsMatch( type, targets );
-    }
+        => this.MatchesTypeKind( type, targets ) && attributeGroup.IsMatch( type, targets );
 
     private bool MatchesTypeKind( INamedType namedType, MulticastTargets targets )
     {
-        var resultingTargets = targets == 0 ? this._concreteTargets : targets & this._concreteTargets;
+        var resultingTargets = targets == 0 ? this.ConcreteTargets : targets & this.ConcreteTargets;
 
         return namedType.TypeKind switch
         {
@@ -78,12 +146,12 @@ public sealed class MulticastImplementation : IMulticastImplementation<ICompilat
     {
         List<Action<IEligibilityBuilder<IDeclaration>>> rules = new();
 
-        if ( this._concreteTargets.HasFlagFast( MulticastTargets.Assembly ) )
+        if ( this.ConcreteTargets.HasFlagFast( MulticastTargets.Assembly ) )
         {
             rules.Add( builder => builder.MustBeOfType( typeof(ICompilation) ) );
         }
 
-        if ( this._concreteTargets.HasFlagFast( MulticastTargets.Class ) )
+        if ( this.ConcreteTargets.HasFlagFast( MulticastTargets.Class ) )
         {
             rules.Add(
                 builder => builder.Convert()
@@ -91,7 +159,7 @@ public sealed class MulticastImplementation : IMulticastImplementation<ICompilat
                     .MustSatisfy( t => t.TypeKind is TypeKind.RecordClass or TypeKind.Class, t => $"{t} is not a class or record class" ) );
         }
 
-        if ( this._concreteTargets.HasFlagFast( MulticastTargets.Struct ) )
+        if ( this.ConcreteTargets.HasFlagFast( MulticastTargets.Struct ) )
         {
             rules.Add(
                 builder => builder.Convert()
@@ -99,22 +167,22 @@ public sealed class MulticastImplementation : IMulticastImplementation<ICompilat
                     .MustSatisfy( t => t.TypeKind is TypeKind.RecordStruct or TypeKind.Struct, t => $"{t} is not a struct or record struct" ) );
         }
 
-        if ( this._concreteTargets.HasFlagFast( MulticastTargets.Method ) )
+        if ( this.ConcreteTargets.HasFlagFast( MulticastTargets.Method ) )
         {
             rules.Add( builder => builder.MustBeOfType( typeof(IMethod) ) );
         }
 
-        if ( this._concreteTargets.HasFlagFast( MulticastTargets.InstanceConstructor ) )
+        if ( this.ConcreteTargets.HasFlagFast( MulticastTargets.InstanceConstructor ) )
         {
             rules.Add( builder => builder.Convert().To<IConstructor>().MustNotBeStatic() );
         }
 
-        if ( this._concreteTargets.HasFlagFast( MulticastTargets.StaticConstructor ) )
+        if ( this.ConcreteTargets.HasFlagFast( MulticastTargets.StaticConstructor ) )
         {
             rules.Add( builder => builder.Convert().To<IConstructor>().MustBeStatic() );
         }
 
-        if ( this._concreteTargets.HasFlagFast( MulticastTargets.Property ) )
+        if ( this.ConcreteTargets.HasFlagFast( MulticastTargets.Property ) )
         {
             rules.Add(
                 builder =>
@@ -124,12 +192,12 @@ public sealed class MulticastImplementation : IMulticastImplementation<ICompilat
                 } );
         }
 
-        if ( this._concreteTargets.HasFlagFast( MulticastTargets.Event ) )
+        if ( this.ConcreteTargets.HasFlagFast( MulticastTargets.Event ) )
         {
             rules.Add( builder => builder.MustBeOfType( typeof(IEvent) ) );
         }
 
-        if ( this._concreteTargets.HasFlagFast( MulticastTargets.Field ) )
+        if ( this.ConcreteTargets.HasFlagFast( MulticastTargets.Field ) )
         {
             rules.Add(
                 builder =>
@@ -139,7 +207,7 @@ public sealed class MulticastImplementation : IMulticastImplementation<ICompilat
                 } );
         }
 
-        if ( this._concreteTargets.HasFlagFast( MulticastTargets.Parameter ) )
+        if ( this.ConcreteTargets.HasFlagFast( MulticastTargets.Parameter ) )
         {
             rules.Add(
                 builder =>
@@ -150,7 +218,7 @@ public sealed class MulticastImplementation : IMulticastImplementation<ICompilat
                 } );
         }
 
-        if ( this._concreteTargets.HasFlagFast( MulticastTargets.ReturnValue ) )
+        if ( this.ConcreteTargets.HasFlagFast( MulticastTargets.ReturnValue ) )
         {
             rules.Add(
                 builder =>
@@ -164,23 +232,15 @@ public sealed class MulticastImplementation : IMulticastImplementation<ICompilat
         return EligibilityRuleFactory.CreateRule<IDeclaration>( builder => builder.MustSatisfyAny( rules.ToArray() ) );
     }
 
-    public void AddAspects( IAspectBuilder<ICompilation> builder )
+    private void AddChildAspects( IAspectBuilder<ICompilation> builder, MulticastAttributeGroup attributeGroup )
     {
         var implementation = this;
-        var attributeGroup = new MulticastAttributeGroup( builder, this._concreteTargets );
-
-        if ( attributeGroup.IsExcludeOnly )
-        {
-            builder.SkipAspect();
-
-            return;
-        }
 
         if ( attributeGroup.TargetsAnyDeclarationKind( MulticastTargets.AnyType ) )
         {
             builder
                 .With( c => c.AllTypes.Where( t => implementation.FilterType( t, attributeGroup, MulticastTargets.AnyType ) ) )
-                .AddAspectIfEligible( attributeGroup.AspectClass.Type, d => attributeGroup.GetAspect( d, MulticastTargets.AnyType ) );
+                .AddAspectIfEligible( attributeGroup.AspectClass.Type, attributeGroup.GetMatchingAspect );
         }
 
         if ( attributeGroup.TargetsAnyDeclarationKind( MulticastTargets.StaticConstructor ) )
@@ -189,7 +249,7 @@ public sealed class MulticastImplementation : IMulticastImplementation<ICompilat
                 .With(
                     c => c.AllTypes.Where( t => FilterDeclaringType( t, attributeGroup, MulticastTargets.StaticConstructor ) && t.StaticConstructor != null )
                         .Select( t => t.StaticConstructor! ) )
-                .AddAspectIfEligible( attributeGroup.AspectClass.Type, d => attributeGroup.GetAspect( d, MulticastTargets.StaticConstructor ) );
+                .AddAspectIfEligible( attributeGroup.AspectClass.Type, attributeGroup.GetMatchingAspect );
         }
 
         if ( attributeGroup.TargetsAnyDeclarationKind( MulticastTargets.InstanceConstructor ) )
@@ -199,7 +259,7 @@ public sealed class MulticastImplementation : IMulticastImplementation<ICompilat
                     compilation => compilation.AllTypes
                         .Where( t => FilterDeclaringType( t, attributeGroup, MulticastTargets.InstanceConstructor ) )
                         .SelectMany( t => t.Constructors.Where( constructor => Filter( constructor, attributeGroup, MulticastTargets.InstanceConstructor ) ) ) )
-                .AddAspectIfEligible( attributeGroup.AspectClass.Type, d => attributeGroup.GetAspect( d, MulticastTargets.InstanceConstructor ) );
+                .AddAspectIfEligible( attributeGroup.AspectClass.Type, attributeGroup.GetMatchingAspect );
         }
 
         if ( attributeGroup.TargetsAnyDeclarationKind( MulticastTargets.Method ) )
@@ -210,7 +270,7 @@ public sealed class MulticastImplementation : IMulticastImplementation<ICompilat
                         .Where( t => FilterDeclaringType( t, attributeGroup, MulticastTargets.Method ) )
                         .SelectMany(
                             t => t.MethodsAndAccessors().Where( m => !m.IsImplicitlyDeclared && Filter( m, attributeGroup, MulticastTargets.Method ) ) ) )
-                .AddAspectIfEligible( attributeGroup.AspectClass.Type, d => attributeGroup.GetAspect( d, MulticastTargets.Method ) );
+                .AddAspectIfEligible( attributeGroup.AspectClass.Type, attributeGroup.GetMatchingAspect );
         }
 
         if ( attributeGroup.TargetsAnyDeclarationKind( MulticastTargets.Parameter ) )
@@ -222,7 +282,7 @@ public sealed class MulticastImplementation : IMulticastImplementation<ICompilat
                         .SelectMany(
                             t => t.MethodsAndAccessors().Where( m => !m.IsImplicitlyDeclared && Filter( m, attributeGroup, MulticastTargets.Method ) ) )
                         .SelectMany( m => m.Parameters.Where( p => Filter( p, attributeGroup, MulticastTargets.Method ) ) ) )
-                .AddAspectIfEligible( attributeGroup.AspectClass.Type, d => attributeGroup.GetAspect( d, MulticastTargets.Method ) );
+                .AddAspectIfEligible( attributeGroup.AspectClass.Type, attributeGroup.GetMatchingAspect );
         }
 
         if ( attributeGroup.TargetsAnyDeclarationKind( MulticastTargets.ReturnValue ) )
@@ -237,7 +297,7 @@ public sealed class MulticastImplementation : IMulticastImplementation<ICompilat
                                     m => !m.IsImplicitlyDeclared && Filter( m, attributeGroup, MulticastTargets.ReturnValue )
                                                                  && !m.ReturnType.Is( SpecialType.Void ) ) )
                         .Select( m => m.ReturnParameter ) )
-                .AddAspectIfEligible( attributeGroup.AspectClass.Type, d => attributeGroup.GetAspect( d, MulticastTargets.ReturnValue ) );
+                .AddAspectIfEligible( attributeGroup.AspectClass.Type, attributeGroup.GetMatchingAspect );
         }
 
         if ( attributeGroup.TargetsAnyDeclarationKind( MulticastTargets.Field ) )
@@ -246,7 +306,7 @@ public sealed class MulticastImplementation : IMulticastImplementation<ICompilat
                 .With(
                     c => c.AllTypes.Where( t => FilterDeclaringType( t, attributeGroup, MulticastTargets.Field ) )
                         .SelectMany( t => t.Fields.Where( f => !f.IsImplicitlyDeclared && Filter( f, attributeGroup, MulticastTargets.Field ) ) ) )
-                .AddAspectIfEligible( attributeGroup.AspectClass.Type, d => attributeGroup.GetAspect( d, MulticastTargets.Field ) );
+                .AddAspectIfEligible( attributeGroup.AspectClass.Type, attributeGroup.GetMatchingAspect );
         }
 
         if ( attributeGroup.TargetsAnyDeclarationKind( MulticastTargets.Property ) )
@@ -255,7 +315,7 @@ public sealed class MulticastImplementation : IMulticastImplementation<ICompilat
                 .With(
                     c => c.AllTypes.Where( t => FilterDeclaringType( t, attributeGroup, MulticastTargets.Property ) )
                         .SelectMany( t => t.Properties.Where( p => !p.IsImplicitlyDeclared && Filter( p, attributeGroup, MulticastTargets.Property ) ) ) )
-                .AddAspectIfEligible( attributeGroup.AspectClass.Type, d => attributeGroup.GetAspect( d, MulticastTargets.Property ) );
+                .AddAspectIfEligible( attributeGroup.AspectClass.Type, attributeGroup.GetMatchingAspect );
         }
 
         if ( attributeGroup.TargetsAnyDeclarationKind( MulticastTargets.Event ) )
@@ -264,48 +324,32 @@ public sealed class MulticastImplementation : IMulticastImplementation<ICompilat
                 .With(
                     c => c.AllTypes.Where( t => FilterDeclaringType( t, attributeGroup, MulticastTargets.Event ) )
                         .SelectMany( t => t.Events.Where( e => !e.IsImplicitlyDeclared && Filter( e, attributeGroup, MulticastTargets.Event ) ) ) )
-                .AddAspectIfEligible( attributeGroup.AspectClass.Type, e => attributeGroup.GetAspect( e, MulticastTargets.Event ) );
+                .AddAspectIfEligible( attributeGroup.AspectClass.Type, attributeGroup.GetMatchingAspect );
         }
     }
 
-    public void AddAspects( IAspectBuilder<INamedType> builder )
+    private void AddChildAspects( IAspectBuilder<INamedType> builder, MulticastAttributeGroup attributeGroup )
     {
-        if ( !this.MustMulticast( builder ) )
-        {
-            return;
-        }
-
-        // It seems that PostSharp did not multicast from a declaring type to nested types, so we don't implement it in Metalama.
-
-        var attributeGroup = new MulticastAttributeGroup( builder, this._concreteTargets );
-
-        if ( attributeGroup.IsExcludeOnly )
-        {
-            builder.SkipAspect();
-
-            return;
-        }
-
         // Multicast to children.
         if ( attributeGroup.TargetsAnyDeclarationKind( MulticastTargets.StaticConstructor ) )
         {
             builder
                 .With( t => t.StaticConstructor != null ? new[] { t.StaticConstructor } : Enumerable.Empty<IConstructor>() )
-                .AddAspectIfEligible( attributeGroup.AspectClass.Type, d => attributeGroup.GetAspect( d, MulticastTargets.StaticConstructor ) );
+                .AddAspectIfEligible( attributeGroup.AspectClass.Type, attributeGroup.GetMatchingAspect );
         }
 
         if ( attributeGroup.TargetsAnyDeclarationKind( MulticastTargets.InstanceConstructor ) )
         {
             builder
                 .With( t => t.Constructors.Where( c => Filter( c, attributeGroup, MulticastTargets.InstanceConstructor ) ) )
-                .AddAspectIfEligible( attributeGroup.AspectClass.Type, d => attributeGroup.GetAspect( d, MulticastTargets.InstanceConstructor ) );
+                .AddAspectIfEligible( attributeGroup.AspectClass.Type, attributeGroup.GetMatchingAspect );
         }
 
         if ( attributeGroup.TargetsAnyDeclarationKind( MulticastTargets.Method ) )
         {
             builder
                 .With( t => t.MethodsAndAccessors().Where( m => !m.IsImplicitlyDeclared && Filter( m, attributeGroup, MulticastTargets.Method ) ) )
-                .AddAspectIfEligible( attributeGroup.AspectClass.Type, d => attributeGroup.GetAspect( d, MulticastTargets.Method ) );
+                .AddAspectIfEligible( attributeGroup.AspectClass.Type, attributeGroup.GetMatchingAspect );
         }
 
         if ( attributeGroup.TargetsAnyDeclarationKind( MulticastTargets.Parameter ) )
@@ -315,7 +359,7 @@ public sealed class MulticastImplementation : IMulticastImplementation<ICompilat
                     t => t.MethodsAndAccessors()
                         .Where( m => !m.IsImplicitlyDeclared && Filter( m, attributeGroup, MulticastTargets.Parameter ) )
                         .SelectMany( m => m.Parameters.Where( p => Filter( p, attributeGroup, MulticastTargets.Parameter ) ) ) )
-                .AddAspectIfEligible( attributeGroup.AspectClass.Type, d => attributeGroup.GetAspect( d, MulticastTargets.Parameter ) );
+                .AddAspectIfEligible( attributeGroup.AspectClass.Type, attributeGroup.GetMatchingAspect );
         }
 
         if ( attributeGroup.TargetsAnyDeclarationKind( MulticastTargets.ReturnValue ) )
@@ -326,58 +370,38 @@ public sealed class MulticastImplementation : IMulticastImplementation<ICompilat
                         .Where(
                             m => !m.IsImplicitlyDeclared && Filter( m, attributeGroup, MulticastTargets.ReturnValue ) && !m.ReturnType.Is( SpecialType.Void ) )
                         .Select( m => m.ReturnParameter ) )
-                .AddAspectIfEligible( attributeGroup.AspectClass.Type, d => attributeGroup.GetAspect( d, MulticastTargets.ReturnValue ) );
+                .AddAspectIfEligible( attributeGroup.AspectClass.Type, attributeGroup.GetMatchingAspect );
         }
 
         if ( attributeGroup.TargetsAnyDeclarationKind( MulticastTargets.Field ) )
         {
             builder
                 .With( t => t.Fields.Where( f => !f.IsImplicitlyDeclared && Filter( f, attributeGroup, MulticastTargets.Field ) ) )
-                .AddAspectIfEligible( attributeGroup.AspectClass.Type, d => attributeGroup.GetAspect( d, MulticastTargets.Field ) );
+                .AddAspectIfEligible( attributeGroup.AspectClass.Type, attributeGroup.GetMatchingAspect );
         }
 
         if ( attributeGroup.TargetsAnyDeclarationKind( MulticastTargets.Property ) )
         {
             builder
                 .With( t => t.Properties.Where( p => !p.IsImplicitlyDeclared && Filter( p, attributeGroup, MulticastTargets.Property ) ) )
-                .AddAspectIfEligible( attributeGroup.AspectClass.Type, d => attributeGroup.GetAspect( d, MulticastTargets.Property ) );
+                .AddAspectIfEligible( attributeGroup.AspectClass.Type, attributeGroup.GetMatchingAspect );
         }
 
         if ( attributeGroup.TargetsAnyDeclarationKind( MulticastTargets.Event ) )
         {
             builder
                 .With( t => t.Properties.Where( p => !p.IsImplicitlyDeclared && Filter( p, attributeGroup, MulticastTargets.Event ) ) )
-                .AddAspectIfEligible( attributeGroup.AspectClass.Type, d => attributeGroup.GetAspect( d, MulticastTargets.Event ) );
+                .AddAspectIfEligible( attributeGroup.AspectClass.Type, attributeGroup.GetMatchingAspect );
         }
     }
 
-    public void AddAspects( IAspectBuilder<IProperty> builder ) => this.AddAspectsToEventOrProperty( builder );
-
-    private void AddAspectsToEventOrProperty( IAspectBuilder<IMemberWithAccessors> builder )
+    private void AddChildAspects( IAspectBuilder<IMemberWithAccessors> builder, MulticastAttributeGroup attributeGroup )
     {
-        if ( !this.MustMulticast( builder ) )
-        {
-            return;
-        }
-
-        // It seems that PostSharp did not multicast from a declaring type to nested types, so we don't implement it in Metalama.
-
-        var attributeGroup = new MulticastAttributeGroup( builder, this._concreteTargets );
-
-        if ( attributeGroup.IsExcludeOnly )
-        {
-            builder.SkipAspect();
-
-            return;
-        }
-
-        // Multicast to children.
-
         if ( attributeGroup.TargetsAnyDeclarationKind( MulticastTargets.Method ) )
         {
             builder
                 .With( t => t.Accessors.Where( m => !m.IsImplicitlyDeclared && Filter( m, attributeGroup, MulticastTargets.Method ) ) )
-                .AddAspectIfEligible( attributeGroup.AspectClass.Type, d => attributeGroup.GetAspect( d, MulticastTargets.Method ) );
+                .AddAspectIfEligible( attributeGroup.AspectClass.Type, attributeGroup.GetMatchingAspect );
         }
 
         if ( attributeGroup.TargetsAnyDeclarationKind( MulticastTargets.Parameter ) )
@@ -387,7 +411,7 @@ public sealed class MulticastImplementation : IMulticastImplementation<ICompilat
                     t => t.Accessors
                         .Where( m => !m.IsImplicitlyDeclared && Filter( m, attributeGroup, MulticastTargets.Parameter ) )
                         .SelectMany( m => m.Parameters.Where( p => Filter( p, attributeGroup, MulticastTargets.Parameter ) ) ) )
-                .AddAspectIfEligible( attributeGroup.AspectClass.Type, d => attributeGroup.GetAspect( d, MulticastTargets.Parameter ) );
+                .AddAspectIfEligible( attributeGroup.AspectClass.Type, attributeGroup.GetMatchingAspect );
         }
 
         if ( attributeGroup.TargetsAnyDeclarationKind( MulticastTargets.ReturnValue ) )
@@ -398,70 +422,24 @@ public sealed class MulticastImplementation : IMulticastImplementation<ICompilat
                         .Where(
                             m => !m.IsImplicitlyDeclared && Filter( m, attributeGroup, MulticastTargets.ReturnValue ) && !m.ReturnType.Is( SpecialType.Void ) )
                         .Select( m => m.ReturnParameter ) )
-                .AddAspectIfEligible( attributeGroup.AspectClass.Type, d => attributeGroup.GetAspect( d, MulticastTargets.ReturnValue ) );
+                .AddAspectIfEligible( attributeGroup.AspectClass.Type, attributeGroup.GetMatchingAspect );
         }
     }
 
-    public void AddAspects( IAspectBuilder<IEvent> builder ) => this.AddAspectsToEventOrProperty( builder );
-
-    public void AddAspects( IAspectBuilder<IMethod> builder )
+    private void AddChildAspects( IAspectBuilder<IMethod> builder, MulticastAttributeGroup attributeGroup )
     {
-        if ( !this.MustMulticast( builder ) )
-        {
-            return;
-        }
-
-        // It seems that PostSharp did not multicast from a declaring type to nested types, so we don't implement it in Metalama.
-
-        var attributeGroup = new MulticastAttributeGroup( builder, this._concreteTargets );
-
-        if ( attributeGroup.IsExcludeOnly )
-        {
-            builder.SkipAspect();
-
-            return;
-        }
-
-        // Multicast to children.
-
         if ( attributeGroup.TargetsAnyDeclarationKind( MulticastTargets.Parameter ) )
         {
             builder
                 .With( m => m.Parameters.Where( p => Filter( p, attributeGroup, MulticastTargets.Method ) ) )
-                .AddAspectIfEligible( attributeGroup.AspectClass.Type, d => attributeGroup.GetAspect( d, MulticastTargets.Method ) );
+                .AddAspectIfEligible( attributeGroup.AspectClass.Type, attributeGroup.GetMatchingAspect );
         }
 
         if ( attributeGroup.TargetsAnyDeclarationKind( MulticastTargets.ReturnValue ) )
         {
             builder
                 .With( m => m.ReturnParameter.Type.Is( SpecialType.Void ) ? Enumerable.Empty<IParameter>() : new[] { m.ReturnParameter } )
-                .AddAspectIfEligible( attributeGroup.AspectClass.Type, d => attributeGroup.GetAspect( d, MulticastTargets.ReturnValue ) );
+                .AddAspectIfEligible( attributeGroup.AspectClass.Type, attributeGroup.GetMatchingAspect );
         }
-    }
-
-    public void AddAspects( IAspectBuilder<IFieldOrProperty> builder )
-    {
-        switch ( builder )
-        {
-            case IAspectBuilder<IField>:
-                // There is nothing to do because we cannot multicast from a field.
-                break;
-
-            case IAspectBuilder<IProperty> propertyAspectBuilder:
-                this.AddAspects( propertyAspectBuilder );
-
-                break;
-
-            default:
-                throw new ArgumentOutOfRangeException( nameof(builder) );
-        }
-    }
-
-    public List<T> GetAspects<T>( IAspectBuilder<IDeclaration> builder )
-        where T : IAspect
-    {
-        var attributeGroup = new MulticastAttributeGroup( builder, this._concreteTargets );
-
-        return attributeGroup.GetMatchingAspects<T>( builder.Target, MulticastTargetsHelper.GetMulticastTargets( builder.Target ) );
     }
 }

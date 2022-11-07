@@ -1,6 +1,13 @@
-﻿using Metalama.Framework.Aspects;
+﻿// Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
-[assembly: Metalama.Extensions.Multicast.AspectTests.HelloWorld.MyAspect( "Hello, world." )]
+using Metalama.Extensions.Multicast.AspectTests.HelloWorld;
+using Metalama.Framework.Aspects;
+
+#if TEST_OPTIONS
+// @Include(_Tagging.cs)
+#endif
+
+[assembly: MyAspect( "Hello, world." )]
 
 namespace Metalama.Extensions.Multicast.AspectTests.HelloWorld
 {
@@ -15,20 +22,15 @@ namespace Metalama.Extensions.Multicast.AspectTests.HelloWorld
 
         public override dynamic? OverrideMethod()
         {
-            Console.WriteLine($"Overridden: {this._tag}");
+            Console.WriteLine( $"Overridden: {this._tag}" );
 
             return meta.Proceed();
         }
     }
 
-
     // <target>
     public class C
     {
-        public void M()
-        {
-            
-        }
+        public void M() { }
     }
-
 }

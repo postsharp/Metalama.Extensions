@@ -9,33 +9,41 @@ using System.Collections.Generic;
 
 namespace Metalama.Extensions.Multicast;
 
+/// <summary>
+/// An aspect equivalent to <see cref="OverrideFieldOrPropertyAspect"/> that also implements multicasting for backward compatibility with PostSharp.
+/// </summary>
 [AttributeUsage(
     AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Property | AttributeTargets.Field,
     AllowMultiple = true )]
 public abstract class OverrideFieldOrPropertyMulticastAspect : MulticastAspect, IAspect<IFieldOrProperty>
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OverrideFieldOrPropertyMulticastAspect"/> class.
+    /// </summary>
     protected OverrideFieldOrPropertyMulticastAspect() : base( MulticastTargets.Field | MulticastTargets.Property ) { }
 
-    public void BuildEligibility( IEligibilityBuilder<IFieldOrProperty> builder )
+    /// <inheritdoc />
+    public virtual void BuildEligibility( IEligibilityBuilder<IFieldOrProperty> builder )
     {
         this.BuildEligibility( builder.DeclaringType() );
 
         builder.AddRule( EligibilityRuleFactory.GetAdviceEligibilityRule( AdviceKind.OverrideFieldOrProperty ) );
     }
 
-    public void BuildAspect( IAspectBuilder<IFieldOrProperty> builder )
+    /// <inheritdoc />
+    public virtual void BuildAspect( IAspectBuilder<IFieldOrProperty> builder )
     {
-        if ( this.Implementation.SkipIfExcluded( builder ) )
-        {
-            return;
-        }
+        this.Implementation.BuildAspect(
+            builder,
+            b =>
+            {
+                var getterTemplateSelector = new GetterTemplateSelector(
+                    "get_" + nameof(this.OverrideProperty),
+                    "get_" + nameof(this.OverrideEnumerableProperty),
+                    "get_" + nameof(this.OverrideEnumeratorProperty) );
 
-        var getterTemplateSelector = new GetterTemplateSelector(
-            "get_" + nameof(this.OverrideProperty),
-            "get_" + nameof(this.OverrideEnumerableProperty),
-            "get_" + nameof(this.OverrideEnumeratorProperty) );
-
-        builder.Advice.OverrideAccessors( builder.Target, getterTemplateSelector, "set_" + nameof(this.OverrideProperty) );
+                b.Advice.OverrideAccessors( b.Target, getterTemplateSelector, "set_" + nameof(this.OverrideProperty) );
+            } );
     }
 
     [Template]

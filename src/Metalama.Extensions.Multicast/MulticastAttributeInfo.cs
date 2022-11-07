@@ -3,11 +3,13 @@
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 using System;
-using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 namespace Metalama.Extensions.Multicast;
 
+/// <summary>
+/// Encapsulates an <see cref="IMulticastAttribute"/> and provides matching methods for it.
+/// </summary>
 [CompileTime]
 internal class MulticastAttributeInfo : IComparable<MulticastAttributeInfo>
 {
@@ -97,6 +99,9 @@ internal class MulticastAttributeInfo : IComparable<MulticastAttributeInfo>
 
         switch ( declaration.DeclarationKind )
         {
+            case DeclarationKind.Compilation:
+                return true;
+
             case DeclarationKind.NamedType:
                 return this.IsNamedTypeMatch( (INamedType) declaration );
 
@@ -174,22 +179,22 @@ internal class MulticastAttributeInfo : IComparable<MulticastAttributeInfo>
             switch ( member.Accessibility )
             {
                 case Accessibility.Private:
-                    return attributes.HasFlag( MulticastAttributes.Private );
+                    return attributes.HasFlagFast( MulticastAttributes.Private );
 
                 case Accessibility.PrivateProtected:
-                    return attributes.HasFlag( MulticastAttributes.InternalAndProtected );
+                    return attributes.HasFlagFast( MulticastAttributes.InternalAndProtected );
 
                 case Accessibility.Protected:
-                    return attributes.HasFlag( MulticastAttributes.Protected );
+                    return attributes.HasFlagFast( MulticastAttributes.Protected );
 
                 case Accessibility.Internal:
-                    return attributes.HasFlag( MulticastAttributes.Internal );
+                    return attributes.HasFlagFast( MulticastAttributes.Internal );
 
                 case Accessibility.ProtectedInternal:
-                    return attributes.HasFlag( MulticastAttributes.InternalOrProtected );
+                    return attributes.HasFlagFast( MulticastAttributes.InternalOrProtected );
 
                 case Accessibility.Public:
-                    return attributes.HasFlag( MulticastAttributes.Public );
+                    return attributes.HasFlagFast( MulticastAttributes.Public );
 
                 default:
                     throw new ArgumentOutOfRangeException( $"Unexpected accessibility: {member.Accessibility}." );
@@ -264,11 +269,11 @@ internal class MulticastAttributeInfo : IComparable<MulticastAttributeInfo>
         {
             if ( member.IsStatic )
             {
-                return attributes.HasFlag( MulticastAttributes.Static );
+                return attributes.HasFlagFast( MulticastAttributes.Static );
             }
             else
             {
-                return attributes.HasFlag( MulticastAttributes.Instance );
+                return attributes.HasFlagFast( MulticastAttributes.Instance );
             }
         }
         else
@@ -283,11 +288,11 @@ internal class MulticastAttributeInfo : IComparable<MulticastAttributeInfo>
         {
             if ( member.IsAbstract )
             {
-                return attributes.HasFlag( MulticastAttributes.Abstract );
+                return attributes.HasFlagFast( MulticastAttributes.Abstract );
             }
             else
             {
-                return attributes.HasFlag( MulticastAttributes.NonAbstract );
+                return attributes.HasFlagFast( MulticastAttributes.NonAbstract );
             }
         }
         else
@@ -302,11 +307,11 @@ internal class MulticastAttributeInfo : IComparable<MulticastAttributeInfo>
         {
             if ( member.IsVirtual )
             {
-                return attributes.HasFlag( MulticastAttributes.Virtual );
+                return attributes.HasFlagFast( MulticastAttributes.Virtual );
             }
             else
             {
-                return attributes.HasFlag( MulticastAttributes.NonVirtual );
+                return attributes.HasFlagFast( MulticastAttributes.NonVirtual );
             }
         }
         else
@@ -321,9 +326,9 @@ internal class MulticastAttributeInfo : IComparable<MulticastAttributeInfo>
         {
             return parameter.RefKind switch
             {
-                RefKind.Out => attributes.HasFlag( MulticastAttributes.OutParameter ),
-                RefKind.Ref => attributes.HasFlag( MulticastAttributes.RefParameter ),
-                _ => attributes.HasFlag( MulticastAttributes.InParameter )
+                RefKind.Out => attributes.HasFlagFast( MulticastAttributes.OutParameter ),
+                RefKind.Ref => attributes.HasFlagFast( MulticastAttributes.RefParameter ),
+                _ => attributes.HasFlagFast( MulticastAttributes.InParameter )
             };
         }
         else

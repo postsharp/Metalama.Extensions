@@ -19,55 +19,53 @@ namespace Metalama.Extensions.Multicast.AspectTests
             this._tag = tag;
         }
 
-        private void AddAttributes( IAspectBuilder<IDeclaration> builder )
+        private void Implement<T>( IAspectBuilder<T> builder )
+            where T : class, IDeclaration
         {
-            Debugger.Break();
-
-            foreach ( var aspect in this.Implementation.GetAspects<AddTagAttribute>( builder ) )
-            {
-                builder.Advice.IntroduceAttribute( builder.Target, AttributeConstruction.Create( typeof(TagAttribute), new[] { aspect._tag } ) );
-            }
+            this.Implementation.BuildAspect(
+                builder,
+                b =>
+                {
+                    b.Advice.IntroduceAttribute( b.Target, AttributeConstruction.Create( typeof(TagAttribute), new[] { this._tag } ) );
+                } );
         }
 
         public void BuildAspect( IAspectBuilder<IMethod> builder )
         {
-            this.AddAttributes( builder );
+            this.Implement( builder );
         }
 
         public void BuildEligibility( IEligibilityBuilder<IMethod> eligibility ) { }
 
         public void BuildAspect( IAspectBuilder<IConstructor> builder )
         {
-            this.AddAttributes( builder );
+            this.Implement( builder );
         }
 
         public override void BuildAspect( IAspectBuilder<INamedType> builder )
         {
-            base.BuildAspect( builder );
-            this.AddAttributes( builder );
+            this.Implement( builder );
         }
 
         public void BuildEligibility( IEligibilityBuilder<IConstructor> eligibility ) { }
 
         public void BuildAspect( IAspectBuilder<IFieldOrProperty> builder )
         {
-            this.Implementation.AddAspects( builder );
-            this.AddAttributes( builder );
+            this.Implement( builder );
         }
 
         public void BuildEligibility( IEligibilityBuilder<IFieldOrProperty> eligibility ) { }
 
         public void BuildAspect( IAspectBuilder<IEvent> builder )
         {
-            this.Implementation.AddAspects( builder );
-            this.AddAttributes( builder );
+            this.Implement( builder );
         }
 
         public void BuildEligibility( IEligibilityBuilder<IEvent> eligibility ) { }
 
         public void BuildAspect( IAspectBuilder<IParameter> builder )
         {
-            this.AddAttributes( builder );
+            this.Implement( builder );
         }
 
         public void BuildEligibility( IEligibilityBuilder<IParameter> eligibility ) { }
@@ -91,39 +89,44 @@ namespace Metalama.Extensions.Multicast.AspectTests
 
         public override void BuildAspect( IAspectBuilder<INamedType> builder )
         {
-            base.BuildAspect( builder );
-            this.AddAttribute( builder );
+            this.Implement( builder );
         }
 
-        private void AddAttribute( IAspectBuilder<IDeclaration> builder )
+        private void Implement<T>( IAspectBuilder<T> builder )
+            where T : class, IDeclaration
         {
-            builder.Advice.IntroduceAttribute( builder.Target, AttributeConstruction.Create( typeof(TagAttribute), new[] { this._tag } ) );
+            this.Implementation.BuildAspect(
+                builder,
+                b =>
+                {
+                    b.Advice.IntroduceAttribute( b.Target, AttributeConstruction.Create( typeof(TagAttribute), new[] { this._tag } ) );
+                } );
         }
 
         public void BuildAspect( IAspectBuilder<IMethod> builder )
         {
-            this.AddAttribute( builder );
+            this.Implement( builder );
         }
 
         public void BuildEligibility( IEligibilityBuilder<IMethod> eligibility ) { }
 
         public void BuildAspect( IAspectBuilder<IConstructor> builder )
         {
-            this.AddAttribute( builder );
+            this.Implement( builder );
         }
 
         public void BuildEligibility( IEligibilityBuilder<IConstructor> eligibility ) { }
 
         public void BuildAspect( IAspectBuilder<IFieldOrProperty> builder )
         {
-            this.AddAttribute( builder );
+            this.Implement( builder );
         }
 
         public void BuildEligibility( IEligibilityBuilder<IFieldOrProperty> eligibility ) { }
 
         public void BuildAspect( IAspectBuilder<IEvent> builder )
         {
-            this.AddAttribute( builder );
+            this.Implement( builder );
         }
 
         public void BuildEligibility( IEligibilityBuilder<IEvent> eligibility ) { }

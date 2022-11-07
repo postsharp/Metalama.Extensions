@@ -1,11 +1,18 @@
-﻿using Metalama.Framework.Aspects;
+﻿// Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
-[assembly: Metalama.Extensions.Multicast.AspectTests.Replace_Priority.MyAspect( "1", AttributePriority = 1 )]
-[assembly: Metalama.Extensions.Multicast.AspectTests.Replace_Priority.MyAspect( "2", AttributePriority = 2 )]
+using Metalama.Extensions.Multicast.AspectTests.Replace_Priority;
+using Metalama.Framework.Aspects;
+
+#if TEST_OPTIONS
+// @Include(_Tagging.cs)
+#endif
+
+[assembly: MyAspect( "1", AttributePriority = 1 )]
+[assembly: MyAspect( "2", AttributePriority = 2 )]
 
 namespace Metalama.Extensions.Multicast.AspectTests.Replace_Priority
 {
-    [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true )]
+    [AttributeUsage( AttributeTargets.Assembly, AllowMultiple = true )]
     public class MyAspect : OverrideMethodMulticastAspect
     {
         private readonly string _tag;
@@ -17,20 +24,15 @@ namespace Metalama.Extensions.Multicast.AspectTests.Replace_Priority
 
         public override dynamic? OverrideMethod()
         {
-            Console.WriteLine($"Overridden: {this._tag}");
+            Console.WriteLine( $"Overridden: {this._tag}" );
 
             return meta.Proceed();
         }
     }
 
-
     // <target>
     public class C
     {
-        public void M()
-        {
-            
-        }
+        public void M() { }
     }
-
 }

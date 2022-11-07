@@ -2,7 +2,8 @@ public class AClass
 {
     [AddTag( "Tagged" )]
     [Tag( "Tagged" )]
-    public int Method( int p ) => 0;
+    [return: Tag( "Tagged" )]
+    public int Method( [Tag( "Tagged" )] int p ) => 0;
     [AddTag( "Tagged" )]
     [Tag( "Tagged" )]
     public int Property

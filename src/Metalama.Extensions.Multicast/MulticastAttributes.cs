@@ -17,7 +17,7 @@ namespace Metalama.Extensions.Multicast;
 /// </para>
 /// <para>
 /// The categories are visibility (public, private, ...); scope (static or instance); abstraction (abstract or non-abstract); virtuality (virtual
-/// or non-virtual); implementation (managed or unmanaged); literality (literal or nonliteral); generation (compiler-generated or user-created); and
+/// or non-virtual); implementation (managed or unmanaged); literality (literal or non-literal); generation (compiler-generated or user-created); and
 /// parameter (in, ref, or out).
 /// </para>
 /// <para>

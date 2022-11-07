@@ -5,35 +5,33 @@ using System;
 
 namespace Metalama.Extensions.Multicast;
 
-// [Obsolete] cannot be an error because it is used from the compile-time compilation, which does not copy [Obsolete].
-
 /// <summary>
-///   Kind of inheritance of <see cref = "IMulticastAttribute" />.
+///   In Metalama, aspect inheritance is ruled at the class level by the <see cref="InheritedAttribute"/> custom attribute. In Metalama itself, only
+/// <c>Strict</c> inheritance is implemented.  <see cref="MulticastAspect"/> and <see cref="MulticastImplementation"/> implement an emulation of the <c>Multicast</c>
+/// inheritance mode by passing the proper parameter to the constructor.
 /// </summary>
-[Obsolete( "Inheritance is Metalama is implemented at the aspect class level with the [Inherited] attribute." )]
+[Obsolete(
+    "Inheritance is Metalama is implemented at the aspect class level with the [Inherited] attribute, and the difference between Strict and " +
+    "Multicast is made by an argument passed to the MulticastImplementation constructor." )]
 [RunTimeOrCompileTime]
 public enum MulticastInheritance
 {
     /// <summary>
-    ///   No inheritance.
+    /// No inheritance.
     /// </summary>
     None,
 
     /// <summary>
-    ///   The instance is inherited to children of the original element,
-    ///   but multicasting is not applied to members of children.
+    /// This is the default inheritance mode when <see cref="InheritedAttribute"/> is added to an aspect class.
+    /// It means that multicasting is performed before inheritance, but not after. There is no need of <see cref="IMulticastAttribute"/> to enable
+    /// this kind of inheritance with Metalama.
     /// </summary>
-    /// <remarks>
-    ///   See https://doc.postsharp.net/multicast-inheritance.
-    /// </remarks>
     Strict,
 
     /// <summary>
-    ///   The instance is inherited to children of the original element
-    ///   and multicasting is applied to members of children.
+    /// This inheritance mode means that multicasting is also performed after inheritance. To enable this inheritance mode with Metalama, the aspect
+    /// must implement multicasting using <see cref="MulticastAspect"/> or <see cref="IMulticastAttribute"/> and <see cref="MulticastImplementation"/>,
+    /// and must pass the adequate value to the constructor of these classes. 
     /// </summary>
-    /// <remarks>
-    ///   See https://doc.postsharp.net/multicast-inheritance.
-    /// </remarks>
     Multicast
 }

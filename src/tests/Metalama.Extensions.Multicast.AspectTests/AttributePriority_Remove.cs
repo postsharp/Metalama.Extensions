@@ -1,7 +1,14 @@
-﻿using Metalama.Framework.Aspects;
+﻿// Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
-[assembly: Metalama.Extensions.Multicast.AspectTests.AttributePriority_Remove.MyAspect( "1", AttributePriority = 1 )]
-[assembly: Metalama.Extensions.Multicast.AspectTests.AttributePriority_Remove.MyAspect( "2", AttributePriority = 2, AttributeExclude = true )]
+using Metalama.Extensions.Multicast.AspectTests.AttributePriority_Remove;
+using Metalama.Framework.Aspects;
+
+#if TEST_OPTIONS
+// @Include(_Tagging.cs)
+#endif
+
+[assembly: MyAspect( "1", AttributePriority = 1 )]
+[assembly: MyAspect( "2", AttributePriority = 2, AttributeExclude = true )]
 
 namespace Metalama.Extensions.Multicast.AspectTests.AttributePriority_Remove
 {
@@ -16,20 +23,15 @@ namespace Metalama.Extensions.Multicast.AspectTests.AttributePriority_Remove
 
         public override dynamic? OverrideMethod()
         {
-            Console.WriteLine($"Overridden: {this._tag}");
+            Console.WriteLine( $"Overridden: {this._tag}" );
 
             return meta.Proceed();
         }
     }
 
-
     // <target>
     public class C
     {
-        public void M()
-        {
-            
-        }
+        public void M() { }
     }
-
 }
