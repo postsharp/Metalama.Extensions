@@ -32,15 +32,15 @@ public abstract class OverrideMethodMulticastAspect : MulticastAspect, IAspect<I
             b =>
             {
 #if NET5_0_OR_GREATER
-                                                var templates = new MethodTemplateSelector(
-                                                    nameof(this.OverrideMethod),
-                                                    nameof(this.OverrideAsyncMethod),
-                                                    nameof(this.OverrideEnumerableMethod),
-                                                    nameof(this.OverrideEnumeratorMethod),
-                                                    nameof(this.OverrideAsyncEnumerableMethod),
-                                                    nameof(this.OverrideAsyncEnumeratorMethod),
-                                                    this.UseAsyncTemplateForAnyAwaitable,
-                                                    this.UseEnumerableTemplateForAnyEnumerable );
+                var templates = new MethodTemplateSelector(
+                    nameof(this.OverrideMethod),
+                    nameof(this.OverrideAsyncMethod),
+                    nameof(this.OverrideEnumerableMethod),
+                    nameof(this.OverrideEnumeratorMethod),
+                    nameof(this.OverrideAsyncEnumerableMethod),
+                    nameof(this.OverrideAsyncEnumeratorMethod),
+                    this.UseAsyncTemplateForAnyAwaitable,
+                    this.UseEnumerableTemplateForAnyEnumerable );
 #else
                 var templates = new MethodTemplateSelector(
                     nameof(this.OverrideMethod),
@@ -94,7 +94,6 @@ public abstract class OverrideMethodMulticastAspect : MulticastAspect, IAspect<I
     /// a compatible return type, instead of only to methods using the <c>yield</c> statement.
     /// </summary>
     protected bool UseAsyncTemplateForAnyAwaitable { get; init; }
-#pragma warning restore SA1623
 
     public virtual void BuildEligibility( IEligibilityBuilder<IMethod> builder )
     {

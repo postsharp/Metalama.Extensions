@@ -3,8 +3,6 @@
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 
-#pragma warning disable CA1008 // Enums should have zero value named None.
-
 namespace Metalama.Extensions.Multicast;
 
 [CompileTime]

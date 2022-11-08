@@ -14,7 +14,8 @@ var product = new Product( Dependencies.MetalamaExtensions )
     Solutions = new[] { new DotNetSolution( "Metalama.Extensions.sln" ) { CanFormatCode = true } },
     PublicArtifacts = Pattern.Create(
         "Metalama.Extensions.DependencyInjection.$(PackageVersion).nupkg",
-        "Metalama.Extensions.DependencyInjection.ServiceLocator.$(PackageVersion).nupkg" ),
+        "Metalama.Extensions.DependencyInjection.ServiceLocator.$(PackageVersion).nupkg",
+        "Metalama.Extensions.Multicast.$(PackageVersion).nupkg" ),
     Dependencies = new[] { Dependencies.PostSharpEngineering, Dependencies.Metalama },
     MainVersionDependency = Dependencies.Metalama,
     Configurations = Product.DefaultConfigurations

@@ -52,12 +52,10 @@ public sealed class MulticastImplementation
     /// If the aspect is applied to a potential concrete target declaration (see <see cref="ConcreteTargets"/>), it calls
     /// an optional delegate that should provide advice to this target. 
     /// </summary>
-    /// <param name="builder">The <see cref="IAspectBuilder{T}"/></param>
+    /// <param name="builder">The <see cref="IAspectBuilder{T}"/>.</param>
     /// <param name="implementConcreteAspect">An action called when the aspect is applied on a concrete target declaration (see <see cref="ConcreteTargets"/>).</param>
-#pragma warning disable CA1822
     public void BuildAspect<T>( IAspectBuilder<T> builder, Action<IAspectBuilder<T>>? implementConcreteAspect = null )
         where T : class, IDeclaration
-#pragma warning restore CA1822
     {
         /*
         // Verifies the eligibility (implicitly reports an error if any).
@@ -101,17 +99,18 @@ public sealed class MulticastImplementation
                     break;
 
                 case IAspectBuilder<IMethod> methodAspectBuilder:
-                    this.AddChildAspects( methodAspectBuilder, attributeGroup );
+                    AddChildAspects( methodAspectBuilder, attributeGroup );
 
                     break;
 
                 case IAspectBuilder<IMemberWithAccessors> propertyOrEventAspectBuilder:
-                    this.AddChildAspects( propertyOrEventAspectBuilder, attributeGroup );
+
+                    AddChildAspects( propertyOrEventAspectBuilder, attributeGroup );
 
                     break;
 
                 case IAspectBuilder<INamedType> namedTypeAspectBuilder:
-                    this.AddChildAspects( namedTypeAspectBuilder, attributeGroup );
+                    AddChildAspects( namedTypeAspectBuilder, attributeGroup );
 
                     break;
             }
@@ -328,7 +327,7 @@ public sealed class MulticastImplementation
         }
     }
 
-    private void AddChildAspects( IAspectBuilder<INamedType> builder, MulticastAttributeGroup attributeGroup )
+    private static void AddChildAspects( IAspectBuilder<INamedType> builder, MulticastAttributeGroup attributeGroup )
     {
         // Multicast to children.
         if ( attributeGroup.TargetsAnyDeclarationKind( MulticastTargets.StaticConstructor ) )
@@ -395,7 +394,7 @@ public sealed class MulticastImplementation
         }
     }
 
-    private void AddChildAspects( IAspectBuilder<IMemberWithAccessors> builder, MulticastAttributeGroup attributeGroup )
+    private static void AddChildAspects( IAspectBuilder<IMemberWithAccessors> builder, MulticastAttributeGroup attributeGroup )
     {
         if ( attributeGroup.TargetsAnyDeclarationKind( MulticastTargets.Method ) )
         {
@@ -426,7 +425,7 @@ public sealed class MulticastImplementation
         }
     }
 
-    private void AddChildAspects( IAspectBuilder<IMethod> builder, MulticastAttributeGroup attributeGroup )
+    private static void AddChildAspects( IAspectBuilder<IMethod> builder, MulticastAttributeGroup attributeGroup )
     {
         if ( attributeGroup.TargetsAnyDeclarationKind( MulticastTargets.Parameter ) )
         {

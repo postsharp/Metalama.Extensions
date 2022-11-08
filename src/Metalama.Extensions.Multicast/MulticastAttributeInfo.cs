@@ -168,7 +168,7 @@ internal class MulticastAttributeInfo : IComparable<MulticastAttributeInfo>
         }
         else
         {
-            return regex.IsMatch( namedType.FullMetadataName );
+            return regex.IsMatch( namedType.GetFullMetadataName() );
         }
     }
 

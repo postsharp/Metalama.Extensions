@@ -4,7 +4,6 @@
 // @Include(_Tagging.cs)
 #endif
 
-using Metalama.Extensions.Multicast;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 

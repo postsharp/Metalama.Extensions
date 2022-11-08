@@ -8,8 +8,6 @@ using Metalama.Extensions.DependencyInjection.Tests.Advice.EarlyRequired;
 
 namespace Metalama.Extensions.DependencyInjection.Tests.Advice.EarlyRequired;
 
-#pragma warning disable CS1591, CS8618
-
 public class MyAspect : TypeAspect
 {
     [IntroduceDependency]
