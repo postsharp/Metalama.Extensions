@@ -1,29 +1,25 @@
 public class TargetClass
 {
-    [Dependency(IsLazy = true, IsRequired = false)]
-    private IFormatProvider _formatProvider
+  [Dependency(IsLazy = true, IsRequired = false)]
+  private IFormatProvider _formatProvider
+  {
+    get
     {
-        get
-        {
-            return _formatProviderCache ??= (IFormatProvider)_serviceProvider.GetService(typeof(IFormatProvider));
-        }
-
-        init
-        {
-            throw new NotSupportedException("Cannot set '_formatProvider' because of the dependency aspect.");
-        }
+      return _formatProviderCache ??= (IFormatProvider)_serviceProvider.GetService(typeof(IFormatProvider));
     }
-
-    public TargetClass()
+    init
     {
-        this._serviceProvider = ServiceProviderProvider.ServiceProvider();
+      throw new NotSupportedException("Cannot set '_formatProvider' because of the dependency aspect.");
     }
-
-    public TargetClass(int x, IFormatProvider existingParameter)
-    {
-        this._serviceProvider = ServiceProviderProvider.ServiceProvider();
-    }
-
-    private IFormatProvider? _formatProviderCache;
-    private IServiceProvider _serviceProvider;
+  }
+  public TargetClass()
+  {
+    this._serviceProvider = ServiceProviderProvider.ServiceProvider();
+  }
+  public TargetClass(int x, IFormatProvider existingParameter)
+  {
+    this._serviceProvider = ServiceProviderProvider.ServiceProvider();
+  }
+  private IFormatProvider? _formatProviderCache;
+  private IServiceProvider _serviceProvider;
 }

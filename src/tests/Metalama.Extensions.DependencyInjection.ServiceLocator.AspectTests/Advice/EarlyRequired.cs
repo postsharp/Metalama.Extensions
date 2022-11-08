@@ -1,14 +1,12 @@
 ﻿// Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
 using Metalama.Extensions.DependencyInjection;
-using Metalama.Extensions.DependencyInjection.DotNet.Tests.Advice.EarlyRequired;
+using Metalama.Extensions.DependencyInjection.ServiceLocator.AspectTests.Advice.EarlyRequired;
 using Metalama.Framework.Aspects;
 
 [assembly: AspectOrder( typeof(DependencyAttribute), typeof(MyAspect) )]
 
-namespace Metalama.Extensions.DependencyInjection.DotNet.Tests.Advice.EarlyRequired;
-
-#pragma warning disable CS1591, CS8618
+namespace Metalama.Extensions.DependencyInjection.ServiceLocator.AspectTests.Advice.EarlyRequired;
 
 public class MyAspect : TypeAspect
 {

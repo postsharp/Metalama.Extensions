@@ -2,17 +2,26 @@
 
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
-using Metalama.Framework.Diagnostics;
 using System;
-using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 
 namespace Metalama.Extensions.Multicast;
 
+/// <summary>
+/// Encapsulates an <see cref="IMulticastAttribute"/> and provides matching methods for it.
+/// </summary>
 [CompileTime]
 internal class MulticastAttributeInfo : IComparable<MulticastAttributeInfo>
 {
     public IMulticastAttribute Attribute { get; }
+
+    public bool HasError { get; private set; }
+
+    public Regex? AttributeTargetParametersRegex { get; }
+
+    public Regex? AttributeTargetMembersRegex { get; }
+
+    public Regex? AttributeTargetTypesRegex { get; }
 
     public MulticastAttributeInfo( IAspectInstance aspectInstance, IAspectBuilder aspectBuilder )
     {
@@ -45,22 +54,16 @@ internal class MulticastAttributeInfo : IComparable<MulticastAttributeInfo>
                     return null;
                 }
             }
-
+            else
             {
+#pragma warning disable CA1307
                 return new Regex(
-                    "^" + Regex.Escape( filter ).Replace( "\\*", ".*" ).Replace( "<", "\\<" ).Replace( ">", "\\>" ) + "$",
+                    "^" + Regex.Escape( filter ).Replace( "\\*", ".*" ) + "$",
                     RegexOptions.IgnoreCase );
+#pragma warning restore CA1307
             }
         }
     }
-
-    public bool HasError { get; private set; }
-
-    public Regex? AttributeTargetParametersRegex { get; }
-
-    public Regex? AttributeTargetMembersRegex { get; }
-
-    public Regex? AttributeTargetTypesRegex { get; }
 
     public int CompareTo( MulticastAttributeInfo? other )
         => other == null ? 1 : this.Attribute.AttributePriority.CompareTo( other.Attribute.AttributePriority );
@@ -77,42 +80,87 @@ internal class MulticastAttributeInfo : IComparable<MulticastAttributeInfo>
         }
     }
 
-    public bool IsMatch( IDeclaration declaration )
+    public bool IsMatch( IDeclaration declaration, MulticastTargets targets, bool testContainingDeclarations = false )
     {
+        if ( this.Attribute.AttributeTargetElements != 0 && !this.Attribute.AttributeTargetElements.HasAnyFlag( targets ) )
+        {
+            return false;
+        }
+
+        return this.IsMatchCore( declaration, testContainingDeclarations, false );
+    }
+
+    private bool IsMatchCore( IDeclaration declaration, bool testContainingDeclarations, bool testDeclarationKind )
+    {
+        if ( testDeclarationKind && !this.DoesDeclarationKindMatch( declaration ) )
+        {
+            return false;
+        }
+
         switch ( declaration.DeclarationKind )
         {
+            case DeclarationKind.Compilation:
+                return true;
+
             case DeclarationKind.NamedType:
                 return this.IsNamedTypeMatch( (INamedType) declaration );
 
             case DeclarationKind.Parameter:
-                return this.IsParameterMatch( (IParameter) declaration );
+                return this.IsParameterMatch( (IParameter) declaration, testContainingDeclarations );
+
+            case DeclarationKind.Field:
+                return this.IsFieldMatch( (IField) declaration, testContainingDeclarations );
+
+            case DeclarationKind.Method:
+                return this.IsMethodMatch( (IMethod) declaration, testContainingDeclarations );
 
             default:
-                return this.IsMemberMatch( (IMember) declaration );
+                return this.IsMemberMatch( (IMember) declaration, testContainingDeclarations );
         }
     }
 
-    private bool IsMemberMatch( IMember member )
-        => DoMemberAttributesMatch( member, this.Attribute.AttributeTargetMemberAttributes ) && DoesNameMatch( member, this.AttributeTargetMembersRegex );
+    private bool IsMemberMatch( IMember member, bool testDeclaringType )
+    {
+        if ( testDeclaringType && !this.IsNamedTypeMatch( member.DeclaringType ) )
+        {
+            return false;
+        }
 
-    private bool IsParameterMatch( IParameter parameter )
-        => DoesParameterDirectionMatch( parameter, this.Attribute.AttributeTargetParameterAttributes )
-           && DoesNameMatch( parameter, this.AttributeTargetParametersRegex );
+        return DoMemberAttributesMatch( member, this.Attribute.AttributeTargetMemberAttributes ) && DoesNameMatch( member, this.AttributeTargetMembersRegex );
+    }
+
+    private bool IsParameterMatch( IParameter parameter, bool testContainingDeclarations )
+    {
+        if ( testContainingDeclarations && !this.IsMatchCore( parameter.DeclaringMember, true, false ) )
+        {
+            return false;
+        }
+
+        return DoesParameterDirectionMatch( parameter, this.Attribute.AttributeTargetParameterAttributes )
+               && DoesNameMatch( parameter, this.AttributeTargetParametersRegex );
+    }
 
     private bool IsNamedTypeMatch( INamedType type )
         => DoMemberOrNamedTypeAttributesMatch( type, this.Attribute.AttributeTargetTypeAttributes )
            && DoesFullNameMatch( type, this.AttributeTargetTypesRegex );
 
+    private bool IsFieldMatch( IField field, bool testDeclaringType )
+        => this.IsMemberMatch( field, testDeclaringType ) && DoesLiteralMatch( field, this.Attribute.AttributeTargetMemberAttributes );
+
+    private bool IsMethodMatch( IMethod method, bool testDeclaringType )
+        => this.IsMemberMatch( method, testDeclaringType ) && DoesManagedMatch( method, this.Attribute.AttributeTargetMemberAttributes );
+
     private static bool DoMemberOrNamedTypeAttributesMatch( IMemberOrNamedType member, MulticastAttributes attributes )
         => DoesAccessibilityMatch( member, attributes ) &&
            DoesAbstractionMatch( member, attributes ) &&
-           DoesScopeMatch( member, attributes );
+           DoesScopeMatch( member, attributes ) &&
+           DoesCompilerGeneratedMatch( member, attributes );
 
     private static bool DoMemberAttributesMatch( IMember member, MulticastAttributes attributes )
         => DoMemberOrNamedTypeAttributesMatch( member, attributes ) &&
            DoesVirtualityMatch( member, attributes );
 
-    private static bool DoesFullNameMatch( INamedType named, Regex? regex )
+    private static bool DoesFullNameMatch( INamedType namedType, Regex? regex )
     {
         if ( regex == null )
         {
@@ -120,8 +168,7 @@ internal class MulticastAttributeInfo : IComparable<MulticastAttributeInfo>
         }
         else
         {
-            // TODO: Not sure if PostSharp has the same name rendering in case of generics, nested types, and so on.
-            return regex.IsMatch( named.FullName );
+            return regex.IsMatch( namedType.GetFullMetadataName() );
         }
     }
 
@@ -132,25 +179,82 @@ internal class MulticastAttributeInfo : IComparable<MulticastAttributeInfo>
             switch ( member.Accessibility )
             {
                 case Accessibility.Private:
-                    return attributes.HasFlag( MulticastAttributes.Private );
+                    return attributes.HasFlagFast( MulticastAttributes.Private );
 
                 case Accessibility.PrivateProtected:
-                    return attributes.HasFlag( MulticastAttributes.InternalAndProtected );
+                    return attributes.HasFlagFast( MulticastAttributes.InternalAndProtected );
 
                 case Accessibility.Protected:
-                    return attributes.HasFlag( MulticastAttributes.Protected );
+                    return attributes.HasFlagFast( MulticastAttributes.Protected );
 
                 case Accessibility.Internal:
-                    return attributes.HasFlag( MulticastAttributes.Internal );
+                    return attributes.HasFlagFast( MulticastAttributes.Internal );
 
                 case Accessibility.ProtectedInternal:
-                    return attributes.HasFlag( MulticastAttributes.InternalOrProtected );
+                    return attributes.HasFlagFast( MulticastAttributes.InternalOrProtected );
 
                 case Accessibility.Public:
-                    return attributes.HasFlag( MulticastAttributes.Public );
+                    return attributes.HasFlagFast( MulticastAttributes.Public );
 
                 default:
                     throw new ArgumentOutOfRangeException( $"Unexpected accessibility: {member.Accessibility}." );
+            }
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    private static bool DoesLiteralMatch( IField member, MulticastAttributes attributes )
+    {
+        if ( (attributes & MulticastAttributes.AnyLiterality) != 0 )
+        {
+            if ( member.Writeability == Writeability.None )
+            {
+                return attributes.HasFlagFast( MulticastAttributes.Literal );
+            }
+            else
+            {
+                return attributes.HasFlagFast( MulticastAttributes.NonLiteral );
+            }
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    private static bool DoesManagedMatch( IMethod member, MulticastAttributes attributes )
+    {
+        if ( (attributes & MulticastAttributes.AnyImplementation) != 0 )
+        {
+            if ( member.IsExtern )
+            {
+                return attributes.HasFlagFast( MulticastAttributes.NonManaged );
+            }
+            else
+            {
+                return attributes.HasFlagFast( MulticastAttributes.Managed );
+            }
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    private static bool DoesCompilerGeneratedMatch( IDeclaration member, MulticastAttributes attributes )
+    {
+        if ( (attributes & MulticastAttributes.AnyGeneration) != 0 )
+        {
+            if ( member.Origin.IsCompilerGenerated )
+            {
+                return attributes.HasFlagFast( MulticastAttributes.CompilerGenerated );
+            }
+            else
+            {
+                return attributes.HasFlagFast( MulticastAttributes.UserGenerated );
             }
         }
         else
@@ -165,11 +269,11 @@ internal class MulticastAttributeInfo : IComparable<MulticastAttributeInfo>
         {
             if ( member.IsStatic )
             {
-                return attributes.HasFlag( MulticastAttributes.Static );
+                return attributes.HasFlagFast( MulticastAttributes.Static );
             }
             else
             {
-                return attributes.HasFlag( MulticastAttributes.Instance );
+                return attributes.HasFlagFast( MulticastAttributes.Instance );
             }
         }
         else
@@ -184,11 +288,11 @@ internal class MulticastAttributeInfo : IComparable<MulticastAttributeInfo>
         {
             if ( member.IsAbstract )
             {
-                return attributes.HasFlag( MulticastAttributes.Abstract );
+                return attributes.HasFlagFast( MulticastAttributes.Abstract );
             }
             else
             {
-                return attributes.HasFlag( MulticastAttributes.NonAbstract );
+                return attributes.HasFlagFast( MulticastAttributes.NonAbstract );
             }
         }
         else
@@ -203,11 +307,11 @@ internal class MulticastAttributeInfo : IComparable<MulticastAttributeInfo>
         {
             if ( member.IsVirtual )
             {
-                return attributes.HasFlag( MulticastAttributes.Virtual );
+                return attributes.HasFlagFast( MulticastAttributes.Virtual );
             }
             else
             {
-                return attributes.HasFlag( MulticastAttributes.NonVirtual );
+                return attributes.HasFlagFast( MulticastAttributes.NonVirtual );
             }
         }
         else
@@ -222,14 +326,26 @@ internal class MulticastAttributeInfo : IComparable<MulticastAttributeInfo>
         {
             return parameter.RefKind switch
             {
-                RefKind.Out => attributes.HasFlag( MulticastAttributes.OutParameter ),
-                RefKind.Ref => attributes.HasFlag( MulticastAttributes.RefParameter ),
-                _ => attributes.HasFlag( MulticastAttributes.InParameter )
+                RefKind.Out => attributes.HasFlagFast( MulticastAttributes.OutParameter ),
+                RefKind.Ref => attributes.HasFlagFast( MulticastAttributes.RefParameter ),
+                _ => attributes.HasFlagFast( MulticastAttributes.InParameter )
             };
         }
         else
         {
             return true;
         }
+    }
+
+    private bool DoesDeclarationKindMatch( IDeclaration declaration )
+    {
+        var targets = this.Attribute.AttributeTargetElements;
+
+        if ( targets == 0 )
+        {
+            return true;
+        }
+
+        return targets.HasFlagFast( MulticastTargetsHelper.GetMulticastTargets( declaration ) );
     }
 }

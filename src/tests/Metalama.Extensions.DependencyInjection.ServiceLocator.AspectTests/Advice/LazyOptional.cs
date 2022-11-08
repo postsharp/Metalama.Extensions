@@ -8,8 +8,6 @@ using Metalama.Framework.Aspects;
 
 namespace Metalama.Extensions.DependencyInjection.DotNet.Tests.Advice.LazyOptional;
 
-#pragma warning disable CS1591, CS8618
-
 public class MyAspect : TypeAspect
 {
     [IntroduceDependency( IsLazy = true, IsRequired = false )]

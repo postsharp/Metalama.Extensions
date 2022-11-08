@@ -2,26 +2,14 @@
 
 using Metalama.Framework.Aspects;
 using System;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Metalama.Extensions.Multicast;
 
 /// <summary>
-///   Attributes of elements to which multicast custom attributes (<see cref = "MulticastAttribute" />)
+///   Attributes (i.e. in C# terms, modifiers) of elements to which multicast custom attributes (<see cref = "IMulticastAttribute" />)
 ///   apply.
 /// </summary>
 /// <remarks>
-/// <para>
-/// If you specify this in a <see cref="MulticastAttributeUsageAttribute"/>, then the annotated attribute can only be multicast
-/// to elements that have these attributes. For example, if you create an aspect and annotate it with <c>[MulticastAttributeUsage(TargetMemberAttributes=MulticastAttributes.Protected)]</c>,
-/// then multicasting will never apply the aspect to any type member that isn't <c>protected</c>.
-/// </para>
-/// <para>
-/// If you specify this in a property of <see cref="MulticastAttribute" />, then that specific
-/// multicast will be even more narrowed just to elements that have these attributes. For example, if you annotate a class with the aspect from the previous
-/// paragraph with <c>[MyAspect(TargetMemberAttributes=MulticastAttributes.Virtual)]</c>, then it will only apply to that class's members that are both
-/// protected and, for methods, virtual.
-/// </para>
 /// <para>
 /// There are 8 categories of flags. If you specify at least one flag for a category, you narrow the multicast just to elements
 /// that have one of the flags you specified in the category. For example, if you specify <c>Public | Protected</c>, you multicast
@@ -29,7 +17,7 @@ namespace Metalama.Extensions.Multicast;
 /// </para>
 /// <para>
 /// The categories are visibility (public, private, ...); scope (static or instance); abstraction (abstract or non-abstract); virtuality (virtual
-/// or non-virtual); implementation (managed or unmanaged); literality (literal or nonliteral); generation (compiler-generated or user-created); and
+/// or non-virtual); implementation (managed or unmanaged); literality (literal or non-literal); generation (compiler-generated or user-created); and
 /// parameter (in, ref, or out).
 /// </para>
 /// <para>
@@ -130,37 +118,31 @@ public enum MulticastAttributes
     /// <summary>
     ///   Managed code implementation.
     /// </summary>
-    [Obsolete( "This flag is not implemented.", true )]
     Managed = 1 << 13,
 
     /// <summary>
     ///   Non-managed code implementation (external or system).
     /// </summary>
-    [Obsolete( "This flag is not implemented.", true )]
     NonManaged = 1 << 14,
 
     /// <summary>
     ///   Any implementation (<see cref = "Managed" /> | <see cref = "NonManaged" />).
     /// </summary>
-    [Obsolete( "This flag is not implemented.", true )]
     AnyImplementation = Managed | NonManaged,
 
     /// <summary>
     ///   Literal fields.
     /// </summary>
-    [Obsolete( "This flag is not implemented.", true )]
     Literal = 1 << 15,
 
     /// <summary>
     ///   Non-literal fields.
     /// </summary>
-    [Obsolete( "This flag is not implemented.", true )]
     NonLiteral = 1 << 16,
 
     /// <summary>
     ///   Any field literality (<see cref = "Literal" /> | <see cref = "NonLiteral" />).
     /// </summary>
-    [Obsolete( "This flag is not implemented.", true )]
     AnyLiterality = Literal | NonLiteral,
 
     /// <summary>
@@ -171,19 +153,16 @@ public enum MulticastAttributes
     /// <summary>
     ///   Compiler-generated code.
     /// </summary>
-    [Obsolete( "This flag is not implemented.", true )]
     CompilerGenerated = 1 << 18,
 
     /// <summary>
     ///   User-generated code (anything expected <see cref = "CompilerGenerated" />).
     /// </summary>
-    [Obsolete( "This flag is not implemented.", true )]
     UserGenerated = 1 << 19,
 
     /// <summary>
-    ///   Any code generation (<see cref = "CompilerGenerated" /> | <see cref = "UserGenerated" />)l
+    ///   Any code generation (<see cref = "CompilerGenerated" /> | <see cref = "UserGenerated" />).
     /// </summary>
-    [Obsolete( "This flag is not implemented.", true )]
     AnyGeneration = CompilerGenerated | UserGenerated,
 
     /// <summary>
@@ -204,7 +183,6 @@ public enum MulticastAttributes
     /// <summary>
     ///   All members.
     /// </summary>
-    [Obsolete( "Some flags are not implemented.", true )]
     All =
         AnyVisibility | AnyVirtuality | AnyScope | AnyImplementation | AnyLiterality | AnyAbstraction |
         AnyGeneration | AnyParameter

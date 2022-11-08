@@ -3,13 +3,10 @@
 using Metalama.Framework.Aspects;
 using System;
 
-#pragma warning disable CA1008 // Enums should have zero value named None.
-
 namespace Metalama.Extensions.Multicast;
 
 /// <summary>
-///   Kinds of targets to which multicast custom attributes (<see cref = "MulticastAttribute" />)
-///   can apply.
+///   Kinds of targets to which multicast aspects (<see cref = "IMulticastAttribute" />) can be applied.
 /// </summary>
 [Flags]
 [RunTimeOrCompileTime]
@@ -34,13 +31,11 @@ public enum MulticastTargets
     /// <summary>
     ///   Enumeration.
     /// </summary>
-    [Obsolete( "Targeting enums is not supported in Metalama.", true )]
     Enum = 4,
 
     /// <summary>
     ///   Delegate.
     /// </summary>
-    [Obsolete( "Targeting delegates is not supported in Metalama.", true )]
     Delegate = 8,
 
     /// <summary>
@@ -52,7 +47,6 @@ public enum MulticastTargets
     ///   Any type (<see cref = "Class" />, <see cref = "Struct" />, <see cref = "Enum" />,
     ///   <see cref = "Delegate" /> or <see cref = "Interface" />).
     /// </summary>
-    [Obsolete( "Targeting enums and delegates is not supported.", true )]
     AnyType = Class | Struct | Enum | Delegate | Interface,
 
     /// <summary>
@@ -110,6 +104,5 @@ public enum MulticastTargets
     /// <summary>
     ///   All element kinds.
     /// </summary>
-    [Obsolete( "Some flags are not supported in Metalama.", true )]
     All = Assembly | AnyMember | AnyType | Parameter | ReturnValue
 }

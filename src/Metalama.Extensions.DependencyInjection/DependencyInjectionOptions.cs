@@ -14,7 +14,7 @@ namespace Metalama.Extensions.DependencyInjection;
 /// </summary>
 public sealed class DependencyInjectionOptions : ProjectExtension
 {
-    private Func<DependencyContext, ImmutableArray<IDependencyInjectionFramework>, IDependencyInjectionFramework?> _selector = ( context, frameworks )
+    private Func<DependencyContext, ImmutableArray<IDependencyInjectionFramework>, IDependencyInjectionFramework?> _selector = ( _, frameworks )
         => frameworks[0];
 
     private ImmutableArray<IDependencyInjectionFramework> _registeredFrameworks =

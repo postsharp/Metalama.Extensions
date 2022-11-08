@@ -4,7 +4,8 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <RootNamespace>Metalama.Extensions.DependencyInjection.ServiceLocator.Tests</RootNamespace>
-        <NoWarn>IDE0051,CS8618,CS0169</NoWarn>
+        <NoWarn>IDE0051,CS8618,CS0169,CS8618</NoWarn>
+        <Configurations>Debug;Release;LamaDebug</Configurations>
     </PropertyGroup>
 
     <ItemGroup>
