@@ -1,7 +1,7 @@
 {
   "sdk": {
     "version": "6.0.401",
-    "rollForward": "major"
+    "rollForward": "minor"
   },
   "msbuild-sdks": {
     "PostSharp.Engineering.Sdk": "1.0.101-preview"

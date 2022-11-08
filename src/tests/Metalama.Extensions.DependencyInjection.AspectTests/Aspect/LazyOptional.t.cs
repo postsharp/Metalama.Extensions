@@ -1,29 +1,25 @@
 public class TargetClass
 {
-    [Dependency(IsLazy = true, IsRequired = false)]
-    private IFormatProvider _formatProvider
+  [Dependency(IsLazy = true, IsRequired = false)]
+  private IFormatProvider _formatProvider
+  {
+    get
     {
-        get
-        {
-            return _formatProviderCache ??= _formatProviderFunc.Invoke();
-        }
-
-        init
-        {
-            throw new NotSupportedException("Cannot set '_formatProvider' because of the dependency aspect.");
-        }
+      return _formatProviderCache ??= _formatProviderFunc.Invoke();
     }
-
-    public TargetClass(Func<IFormatProvider>? formatProvider = default)
+    init
     {
-        this._formatProviderFunc = formatProvider;
+      throw new NotSupportedException("Cannot set '_formatProvider' because of the dependency aspect.");
     }
-
-    public TargetClass(int x, IFormatProvider existingParameter, Func<IFormatProvider>? formatProvider = default)
-    {
-        this._formatProviderFunc = formatProvider;
-    }
-
-    private IFormatProvider? _formatProviderCache;
-    private Func<IFormatProvider> _formatProviderFunc;
+  }
+  public TargetClass(Func<IFormatProvider>? formatProvider = default)
+  {
+    this._formatProviderFunc = formatProvider;
+  }
+  public TargetClass(int x, IFormatProvider existingParameter, Func<IFormatProvider>? formatProvider = default)
+  {
+    this._formatProviderFunc = formatProvider;
+  }
+  private IFormatProvider? _formatProviderCache;
+  private Func<IFormatProvider> _formatProviderFunc;
 }

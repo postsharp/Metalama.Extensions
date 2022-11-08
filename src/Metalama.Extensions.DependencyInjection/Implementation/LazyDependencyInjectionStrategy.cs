@@ -27,7 +27,7 @@ public partial class LazyDependencyInjectionStrategy : DefaultDependencyInjectio
             .IntroduceProperty(
                 builder.Target,
                 aspectFieldOrProperty.Name,
-                nameof(this.GetDependencyTemplate),
+                nameof(GetDependencyTemplate),
                 null,
                 IntroductionScope.Instance,
                 OverrideStrategy.Ignore,
@@ -90,7 +90,7 @@ public partial class LazyDependencyInjectionStrategy : DefaultDependencyInjectio
             .WithTemplateProvider( this )
             .OverrideAccessors(
                 builder.Target,
-                nameof(this.GetDependencyTemplate),
+                nameof(GetDependencyTemplate),
                 builder.Target.Writeability != Writeability.None ? nameof(this.SetDependencyTemplate) : null,
                 args: new { args = templateArgs } );
 

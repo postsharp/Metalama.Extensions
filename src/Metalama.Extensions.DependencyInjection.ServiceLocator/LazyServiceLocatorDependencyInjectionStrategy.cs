@@ -122,13 +122,13 @@ internal class LazyServiceLocatorDependencyInjectionStrategy : DefaultDependency
     }
 
     [Template] // Bug: Cannot be private!
-    public static T GetDependencyTemplate<T>( PropertyArgs args )
+    public static T GetDependencyTemplate<[CompileTime] T>( PropertyArgs args )
     {
         return args.CacheField.ToExpression().Value ??= (T) args.ServiceProviderField!.ToExpression().Value!.GetService( typeof(T) );
     }
 
     [Template]
-    public void SetDependencyTemplate<T>( PropertyArgs args )
+    public void SetDependencyTemplate<[CompileTime] T>( PropertyArgs args )
     {
         throw new NotSupportedException( $"Cannot set '{this.Context.FieldOrProperty.Name}' because of the dependency aspect." );
     }
