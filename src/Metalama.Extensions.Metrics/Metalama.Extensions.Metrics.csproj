@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <PackageId>Metalama.Extensions.Metrics</PackageId>
+        <IncludeBuildOutput>false</IncludeBuildOutput>
+        <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_AddPackageContent</TargetsForTfmSpecificContentInPackage>
+        <RootNamespace>Metalama.Extensions.Metrics.Package</RootNamespace>
+
+        <!-- Disable some warnings due to atypical NuGet packaging. -->
+        <NoWarn>NU5100;NU5128</NoWarn>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Metalama.Extensions.Metrics.Impl\Metalama.Extensions.Metrics.Impl.csproj" PrivateAssets="all" />
+      <ProjectReference Include="..\Metalama.Extensions.Metrics.Redist\Metalama.Extensions.Metrics.Redist.csproj" />
+        <PackageReference Include="Metalama.Framework" Version="$(MetalamaVersion)" />
+    </ItemGroup>
+
+    <Target Name="_AddPackageContent">
+        <ItemGroup>
+            <TfmSpecificPackageFile Include="$(OutputPath)\Metalama.Extensions.Metrics.Impl.dll" PackagePath="metalama" />
+        </ItemGroup>
+    </Target>
+
+
+</Project>

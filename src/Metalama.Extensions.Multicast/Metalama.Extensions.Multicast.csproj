@@ -11,4 +11,10 @@
     </ItemGroup>
 
     <Import Sdk="PostSharp.Engineering.Sdk" Project="SystemTypes.props" />
+
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
 </Project>

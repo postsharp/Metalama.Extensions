@@ -17,7 +17,6 @@
     <ItemGroup>
         <None Include="$(AssetsDirectory)\metalama.png" Visible="false" Pack="true" PackagePath="" />
         <None Include="$(MSBuildThisFileDirectory)..\LICENSE.md" Visible="false" Pack="true" PackagePath="" />
-		<None Include="$(MSBuildThisFileDirectory)..\README.md" Visible="false" Pack="true" PackagePath="" />
         <None Include="$(MSBuildThisFileDirectory)..\THIRD-PARTY-NOTICES.TXT" Visible="false" Pack="true" PackagePath="" />
     </ItemGroup>
 
