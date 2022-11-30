@@ -6,6 +6,7 @@
         <Nullable>enable</Nullable>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <NoWarn>$(NoWarn),IDE0051,IDE0052</NoWarn>
+        <LangVersion>10.0</LangVersion>
     </PropertyGroup>
 
     <Import Project="eng\Versions.props"/>
@@ -14,6 +15,5 @@
     <Import Sdk="PostSharp.Engineering.Sdk" Project="TeamCity.props"/>
     <Import Sdk="PostSharp.Engineering.Sdk" Project="StrongName.props"/>
     <Import Sdk="PostSharp.Engineering.Sdk" Project="SourceLink.props"/>
-
 
 </Project>

@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Metalama.Extensions.DependencyInjection.ServiceLocator" Version="$(MetalamaExtensionsVersion)" />
+    <PackageReference Include="Metalama.Extensions.Metrics" Version="$(MetalamaExtensionsVersion)" />
+  </ItemGroup>
+
+</Project>

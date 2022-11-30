@@ -1,0 +1,1 @@
+The `Metalama.Extensions.DependencyInjection.ServiceLocator` implements an adapter for the _service locator_ dependency injection pattern, in which all services are provided by a global service locator. This 

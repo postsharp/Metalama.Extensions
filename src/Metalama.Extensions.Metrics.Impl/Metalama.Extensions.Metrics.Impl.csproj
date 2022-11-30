@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <PackageId>Metalama.Extensions.Metrics</PackageId>
+        <RootNamespace>Metalama.Extensions.Metrics</RootNamespace>
+        <IsPackable>true</IsPackable>
+        <!-- TODO: Move these NoWarn to Metalama.Framework.Sdk.targets -->
+        <NoWarn>NU5100;NU5128</NoWarn>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Metalama.Framework.Sdk" Version="$(MetalamaVersion)" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Metalama.Extensions.Metrics.Redist\Metalama.Extensions.Metrics.Redist.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="README.md">
+        <Pack>true</Pack>
+        <PackagePath>\</PackagePath>
+      </None>
+    </ItemGroup>
+
+</Project>

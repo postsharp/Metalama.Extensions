@@ -15,7 +15,9 @@ var product = new Product( Dependencies.MetalamaExtensions )
     PublicArtifacts = Pattern.Create(
         "Metalama.Extensions.DependencyInjection.$(PackageVersion).nupkg",
         "Metalama.Extensions.DependencyInjection.ServiceLocator.$(PackageVersion).nupkg",
-        "Metalama.Extensions.Multicast.$(PackageVersion).nupkg" ),
+        "Metalama.Extensions.Multicast.$(PackageVersion).nupkg",
+        "Metalama.Extensions.Metrics.Redist.$(PackageVersion).nupkg",
+        "Metalama.Extensions.Metrics.$(PackageVersion).nupkg" ),
     Dependencies = new[] { Dependencies.PostSharpEngineering, Dependencies.Metalama },
     MainVersionDependency = Dependencies.Metalama,
     Configurations = Product.DefaultConfigurations
