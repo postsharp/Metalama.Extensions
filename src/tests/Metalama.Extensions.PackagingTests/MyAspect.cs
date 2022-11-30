@@ -14,7 +14,7 @@ public class MyAspect : OverrideMethodAspect
     
     public override dynamic? OverrideMethod()
     {
-        var statementCount = meta.Target.Method.Metrics().Get<StatementNumber>();
+        var statementCount = meta.Target.Method.Metrics().Get<StatementsCount>();
         this._textWriter.WriteLine($"Method '{meta.Target.Method.ToDisplayString(  )}' has {statementCount.Value} statement(s) plus this one.");
 
         return meta.Proceed();

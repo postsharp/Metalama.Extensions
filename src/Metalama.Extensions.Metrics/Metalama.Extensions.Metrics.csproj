@@ -2,26 +2,21 @@
 
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
-        <PackageId>Metalama.Extensions.Metrics</PackageId>
-        <IncludeBuildOutput>false</IncludeBuildOutput>
-        <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_AddPackageContent</TargetsForTfmSpecificContentInPackage>
-        <RootNamespace>Metalama.Extensions.Metrics.Package</RootNamespace>
-
-        <!-- Disable some warnings due to atypical NuGet packaging. -->
-        <NoWarn>NU5100;NU5128</NoWarn>
+        <Nullable>enable</Nullable>
+        <PackageId>Metalama.Extensions.Metrics.Redist</PackageId>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Metalama.Extensions.Metrics.Impl\Metalama.Extensions.Metrics.Impl.csproj" PrivateAssets="all" />
-      <ProjectReference Include="..\Metalama.Extensions.Metrics.Redist\Metalama.Extensions.Metrics.Redist.csproj" />
-        <PackageReference Include="Metalama.Framework" Version="$(MetalamaVersion)" />
+        <PackageReference Include="Metalama.Framework.Redist" Version="$(MetalamaVersion)" />
+    </ItemGroup>
+    
+    <ItemGroup>
+        <InternalsVisibleTo Include="Metalama.Extensions.Metrics.Impl" />
     </ItemGroup>
 
-    <Target Name="_AddPackageContent">
-        <ItemGroup>
-            <TfmSpecificPackageFile Include="$(OutputPath)\Metalama.Extensions.Metrics.Impl.dll" PackagePath="metalama" />
-        </ItemGroup>
-    </Target>
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
 
 
 </Project>
