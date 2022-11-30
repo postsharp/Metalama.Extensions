@@ -4,14 +4,14 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Metalama.Extensions.Metrics
 {
-    public partial class StatementNumberMetricProvider
+    public partial class StatementsCountMetricProvider
     {
         /// <summary>
         /// A visitor that counts the syntax nodes.
         /// </summary>
         private class Visitor : BaseVisitor
         {
-            public override StatementNumber VisitIfStatement( IfStatementSyntax node )
+            public override StatementsCount VisitIfStatement( IfStatementSyntax node )
             {
                 var metric = this.Visit( node.Statement );
 
@@ -25,9 +25,9 @@ namespace Metalama.Extensions.Metrics
                 return metric;
             }
 
-            public override StatementNumber VisitSwitchStatement( SwitchStatementSyntax node )
+            public override StatementsCount VisitSwitchStatement( SwitchStatementSyntax node )
             {
-                var metric = default(StatementNumber);
+                var metric = default(StatementsCount);
 
                 metric.Value++;
 
@@ -42,9 +42,9 @@ namespace Metalama.Extensions.Metrics
                 return metric;
             }
 
-            public override StatementNumber VisitBlock( BlockSyntax node )
+            public override StatementsCount VisitBlock( BlockSyntax node )
             {
-                var metric = default(StatementNumber);
+                var metric = default(StatementsCount);
 
                 foreach ( var statement in node.Statements )
                 {
@@ -54,7 +54,7 @@ namespace Metalama.Extensions.Metrics
                 return metric;
             }
 
-            public override StatementNumber VisitWhileStatement( WhileStatementSyntax node )
+            public override StatementsCount VisitWhileStatement( WhileStatementSyntax node )
             {
                 var metric = this.Visit( node.Statement );
 
@@ -63,7 +63,7 @@ namespace Metalama.Extensions.Metrics
                 return metric;
             }
 
-            public override StatementNumber VisitDoStatement( DoStatementSyntax node )
+            public override StatementsCount VisitDoStatement( DoStatementSyntax node )
             {
                 var metric = this.Visit( node.Statement );
 
@@ -72,7 +72,7 @@ namespace Metalama.Extensions.Metrics
                 return metric;
             }
 
-            public override StatementNumber VisitForStatement( ForStatementSyntax node )
+            public override StatementsCount VisitForStatement( ForStatementSyntax node )
             {
                 // We intentionally ignore the assignment and increment statements because we don't want to count in trivial increments and initializations.
 
@@ -83,13 +83,13 @@ namespace Metalama.Extensions.Metrics
                 return metric;
             }
 
-            public override StatementNumber VisitExpressionStatement( ExpressionStatementSyntax node ) => new() { Value = 1 };
+            public override StatementsCount VisitExpressionStatement( ExpressionStatementSyntax node ) => new() { Value = 1 };
 
-            public override StatementNumber VisitVariableDeclarator( VariableDeclaratorSyntax node )
+            public override StatementsCount VisitVariableDeclarator( VariableDeclaratorSyntax node )
             {
                 if ( node.Initializer != null )
                 {
-                    return new StatementNumber { Value = 1 };
+                    return new StatementsCount { Value = 1 };
                 }
                 else
                 {
@@ -97,19 +97,19 @@ namespace Metalama.Extensions.Metrics
                 }
             }
 
-            public override StatementNumber VisitBreakStatement( BreakStatementSyntax node ) => new() { Value = 1 };
+            public override StatementsCount VisitBreakStatement( BreakStatementSyntax node ) => new() { Value = 1 };
 
-            public override StatementNumber VisitContinueStatement( ContinueStatementSyntax node ) => new() { Value = 1 };
+            public override StatementsCount VisitContinueStatement( ContinueStatementSyntax node ) => new() { Value = 1 };
 
-            public override StatementNumber VisitGotoStatement( GotoStatementSyntax node ) => new() { Value = 1 };
+            public override StatementsCount VisitGotoStatement( GotoStatementSyntax node ) => new() { Value = 1 };
 
-            public override StatementNumber VisitThrowStatement( ThrowStatementSyntax node ) => new() { Value = 1 };
+            public override StatementsCount VisitThrowStatement( ThrowStatementSyntax node ) => new() { Value = 1 };
 
-            public override StatementNumber VisitReturnStatement( ReturnStatementSyntax node ) => new() { Value = 1 };
+            public override StatementsCount VisitReturnStatement( ReturnStatementSyntax node ) => new() { Value = 1 };
 
-            public override StatementNumber VisitLabeledStatement( LabeledStatementSyntax node ) => this.Visit( node.Statement );
+            public override StatementsCount VisitLabeledStatement( LabeledStatementSyntax node ) => this.Visit( node.Statement );
 
-            public override StatementNumber VisitLockStatement( LockStatementSyntax node )
+            public override StatementsCount VisitLockStatement( LockStatementSyntax node )
             {
                 var metric = this.Visit( node.Statement );
 
@@ -118,9 +118,9 @@ namespace Metalama.Extensions.Metrics
                 return metric;
             }
 
-            public override StatementNumber VisitUnsafeStatement( UnsafeStatementSyntax node ) => this.Visit( node.Block );
+            public override StatementsCount VisitUnsafeStatement( UnsafeStatementSyntax node ) => this.Visit( node.Block );
 
-            public override StatementNumber VisitTryStatement( TryStatementSyntax node )
+            public override StatementsCount VisitTryStatement( TryStatementSyntax node )
             {
                 var metric = this.Visit( node.Block );
 
@@ -137,7 +137,7 @@ namespace Metalama.Extensions.Metrics
                 return metric;
             }
 
-            public override StatementNumber VisitUsingStatement( UsingStatementSyntax node )
+            public override StatementsCount VisitUsingStatement( UsingStatementSyntax node )
             {
                 var metric = this.Visit( node.Statement );
 
@@ -146,7 +146,7 @@ namespace Metalama.Extensions.Metrics
                 return metric;
             }
 
-            public override StatementNumber VisitForEachStatement( ForEachStatementSyntax node )
+            public override StatementsCount VisitForEachStatement( ForEachStatementSyntax node )
             {
                 var metric = this.Visit( node.Statement );
 
@@ -155,7 +155,7 @@ namespace Metalama.Extensions.Metrics
                 return metric;
             }
 
-            public override StatementNumber VisitYieldStatement( YieldStatementSyntax node ) => new() { Value = 1 };
+            public override StatementsCount VisitYieldStatement( YieldStatementSyntax node ) => new() { Value = 1 };
         }
     }
 }

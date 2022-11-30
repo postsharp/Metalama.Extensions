@@ -11,7 +11,7 @@ namespace Metalama.Extensions.Metrics.UnitTests
         [Fact]
         public void SimpleTest()
         {
-            var services = new AdditionalServiceCollection( new StatementNumberMetricProvider() );
+            var services = new AdditionalServiceCollection( new StatementsCountMetricProvider() );
             using var testContext = this.CreateTestContext( services );
 
             var code = @"
@@ -32,12 +32,12 @@ class C
             var type = compilation.Types.OfName( "C" ).Single();
             
             var m1 = type.Methods.OfName( "M1" ).Single();
-            Assert.Equal( 0, m1.Metrics().Get<StatementNumber>().Value );
+            Assert.Equal( 0, m1.Metrics().Get<StatementsCount>().Value );
 
             var m2 = type.Methods.OfName( "M2" ).Single();
-            Assert.Equal( 2, m2.Metrics().Get<StatementNumber>().Value );
+            Assert.Equal( 2, m2.Metrics().Get<StatementsCount>().Value );
             
-            Assert.Equal( 2, type.Metrics().Get<StatementNumber>().Value );
+            Assert.Equal( 2, type.Metrics().Get<StatementsCount>().Value );
         }
     }
 }

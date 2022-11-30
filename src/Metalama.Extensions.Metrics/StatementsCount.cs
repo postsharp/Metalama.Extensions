@@ -2,6 +2,7 @@
 
 using Metalama.Framework.Code;
 using Metalama.Framework.Metrics;
+using System.Globalization;
 
 namespace Metalama.Extensions.Metrics
 {
@@ -12,16 +13,18 @@ namespace Metalama.Extensions.Metrics
     /// Counting statements is more relevant than counting lines of code. However, modern C# is more expression-oriented than
     /// earlier versions of the language. Counting expression nodes has become a more relevant metric.
     /// </remarks>
-    public struct StatementNumber : IMetric<IMethodBase>, IMetric<INamedType>, IMetric<INamespace>, IMetric<ICompilation>
+    public struct StatementsCount : IMetric<IMethodBase>, IMetric<INamedType>, IMetric<INamespace>, IMetric<ICompilation>
     {
         /// <summary>
         /// Gets the total number of statements.
         /// </summary>
         public int Value { get; internal set; }
 
-        internal void Add( in StatementNumber other )
+        internal void Add( in StatementsCount other )
         {
             this.Value += other.Value;
         }
+        
+        public override string ToString() => this.Value.ToString( CultureInfo.InvariantCulture );
     }
 }

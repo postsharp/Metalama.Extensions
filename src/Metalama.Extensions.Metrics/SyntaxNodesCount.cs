@@ -2,22 +2,25 @@
 
 using Metalama.Framework.Code;
 using Metalama.Framework.Metrics;
+using System.Globalization;
 
 namespace Metalama.Extensions.Metrics
 {
     /// <summary>
     /// A metric that counts the number of syntax nodes in a declaration.
     /// </summary>
-    public struct SyntaxNodeNumber : IMetric<IMethodBase>, IMetric<INamedType>, IMetric<INamespace>, IMetric<ICompilation>
+    public struct SyntaxNodesCount : IMetric<IMethodBase>, IMetric<INamedType>, IMetric<INamespace>, IMetric<ICompilation>
     {
         /// <summary>
         /// Gets the total number of statements.
         /// </summary>
         public int Value { get; internal set; }
 
-        internal void Add( in SyntaxNodeNumber other )
+        internal void Add( in SyntaxNodesCount other )
         {
             this.Value += other.Value;
         }
+
+        public override string ToString() => this.Value.ToString( CultureInfo.InvariantCulture );
     }
 }

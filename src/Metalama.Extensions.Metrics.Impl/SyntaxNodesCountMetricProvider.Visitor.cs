@@ -4,16 +4,16 @@ using Microsoft.CodeAnalysis;
 
 namespace Metalama.Extensions.Metrics
 {
-    public partial class SyntaxNodeNumberMetricProvider
+    public partial class SyntaxNodesCountMetricProvider
     {
         /// <summary>
         /// A visitor that counts the syntax nodes.
         /// </summary>
         private class Visitor : BaseVisitor
         {
-            public override SyntaxNodeNumber DefaultVisit( SyntaxNode node )
+            public override SyntaxNodesCount DefaultVisit( SyntaxNode node )
             {
-                var metric = new SyntaxNodeNumber { Value = 1 };
+                var metric = new SyntaxNodesCount { Value = 1 };
 
                 foreach ( var child in node.ChildNodes() )
                 {

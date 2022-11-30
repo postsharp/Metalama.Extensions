@@ -15,7 +15,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Metalama.Extensions.Metrics.Redist\Metalama.Extensions.Metrics.Redist.csproj" />
+      <ProjectReference Include="..\Metalama.Extensions.Metrics\Metalama.Extensions.Metrics.csproj" />
     </ItemGroup>
 
     <ItemGroup>
