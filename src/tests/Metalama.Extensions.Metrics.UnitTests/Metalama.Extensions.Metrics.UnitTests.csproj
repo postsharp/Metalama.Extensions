@@ -19,7 +19,7 @@
     
     <ItemGroup>
       <ProjectReference Include="..\..\Metalama.Extensions.Metrics.Impl\Metalama.Extensions.Metrics.Impl.csproj" />
-      <PackageReference Include="Metalama.Framework.Engine" Version="$(MetalamaVersion)" />
+       <PackageReference Include="Metalama.Testing.UnitTesting" Version="$(MetalamaVersion)" />
     </ItemGroup>
 
 </Project>
