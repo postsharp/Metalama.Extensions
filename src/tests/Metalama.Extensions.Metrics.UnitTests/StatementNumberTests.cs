@@ -1,17 +1,16 @@
-﻿using Metalama.Framework.Engine.Services;
-using Metalama.Framework.Engine.Testing;
-using Metalama.Framework.Metrics;
+﻿using Metalama.Framework.Metrics;
+using Metalama.Testing.UnitTesting;
 using System.Linq;
 using Xunit;
 
 namespace Metalama.Extensions.Metrics.UnitTests
 {
-    public class StatementNumberTests : TestBase
+    public class StatementNumberTests : UnitTestClass
     {
         [Fact]
         public void SimpleTest()
         {
-            var services = new AdditionalServiceCollection( new StatementsCountMetricProvider() );
+            var services = CreateAdditionalServiceCollection( new StatementsCountMetricProvider() );
             using var testContext = this.CreateTestContext( services );
 
             var code = @"
@@ -27,7 +26,7 @@ class C
 
 ";
 
-            var compilation = testContext.CreateCompilationModel( code );
+            var compilation = testContext.CreateCompilation( code );
 
             var type = compilation.Types.OfName( "C" ).Single();
             
