@@ -23,7 +23,7 @@ namespace Metalama.Extensions.Multicast.AspectTests
         {
             this.Implementation.BuildAspect(
                 builder,
-                b => b.Advice.IntroduceAttribute( b.Target, AttributeConstruction.Create( typeof( TagAttribute ), new[] { this._tag } ) ) );
+                b => b.Advice.IntroduceAttribute( b.Target, AttributeConstruction.Create( typeof(TagAttribute), new[] { this._tag } ) ) );
         }
 
         public void BuildAspect( IAspectBuilder<IMethod> builder )
@@ -93,7 +93,7 @@ namespace Metalama.Extensions.Multicast.AspectTests
         {
             this.Implementation.BuildAspect(
                 builder,
-                b => b.Advice.IntroduceAttribute( b.Target, AttributeConstruction.Create( typeof( TagAttribute ), new[] { this._tag } ) ) );
+                b => b.Advice.IntroduceAttribute( b.Target, AttributeConstruction.Create( typeof(TagAttribute), new[] { this._tag } ) ) );
         }
 
         public void BuildAspect( IAspectBuilder<IMethod> builder )

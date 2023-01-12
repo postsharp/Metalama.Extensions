@@ -27,7 +27,7 @@ public abstract class OverrideFieldOrPropertyMulticastAspect : MulticastAspect, 
     {
         this.BuildEligibility( builder.DeclaringType() );
 
-        builder.AddRule( EligibilityRuleFactory.GetAdviceEligibilityRule( AdviceKind.OverrideFieldOrPropertyOrIndexer) );
+        builder.AddRule( EligibilityRuleFactory.GetAdviceEligibilityRule( AdviceKind.OverrideFieldOrPropertyOrIndexer ) );
     }
 
     /// <inheritdoc />

@@ -1,0 +1,1 @@
+// Warning LAMA0905 at line 23: `The 'TheClass' type cannot be used from this context because of the 'CanOnlyBeUsedFromAttribute' constraint.`
