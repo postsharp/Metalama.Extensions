@@ -1,3 +1,3 @@
-// Warning LAMA0905 at line 8: `The 'ConstrainedClass' type cannot be used from this context because of the 'CanOnlyBeUsedFromAttribute' constraint.`
-// Warning LAMA0905 at line 22: `The 'ConstrainedClass' type cannot be used from this context because of the 'CanOnlyBeUsedFromAttribute' constraint.`
-// Warning LAMA0905 at line 26: `The 'ConstrainedClass' type cannot be used from this context because of the 'CanOnlyBeUsedFromAttribute' constraint.`
+// Warning LAMA0905 at line 10: `The 'ConstrainedClass' type cannot be used from this context because of the 'CanOnlyBeUsedFromAttribute' constraint.`
+// Warning LAMA0905 at line 24: `The 'ConstrainedClass' type cannot be used from this context because of the 'CanOnlyBeUsedFromAttribute' constraint.`
+// Warning LAMA0905 at line 28: `The 'ConstrainedClass' type cannot be used from this context because of the 'CanOnlyBeUsedFromAttribute' constraint.`

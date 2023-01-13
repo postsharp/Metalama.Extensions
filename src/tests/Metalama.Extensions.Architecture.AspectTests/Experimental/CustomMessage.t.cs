@@ -1,1 +1,1 @@
-// Warning LAMA0900 at line 14: `The 'C' type is experimental. This is the custom message.`
+// Warning LAMA0900 at line 15: `The 'C' type is experimental. This is the custom message.`
