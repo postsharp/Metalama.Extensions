@@ -10,11 +10,3 @@ To use a metric in an aspect, use for instance:
 ```csharp
 method.Metrics().Get<StatementNumber>().Value
 ```
-
-
-## Backward Compatibility Promise
-
-All public APIs are guaranteed to be backward compatible within the current major version.
-
-The promise does not apply to any preview build of this package.
-

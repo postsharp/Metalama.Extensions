@@ -1,0 +1,4 @@
+// Warning LAMA0905 at line 44: `The 'ConstrainedClass.InternalMethod()' method cannot be used from this context because of the 'InternalsCanOnlyBeUsedFromAttribute' constraint.`
+// Warning LAMA0905 at line 45: `The 'ConstrainedClass.InternalProtectedMethod()' method cannot be used from this context because of the 'InternalsCanOnlyBeUsedFromAttribute' constraint.`
+// Warning LAMA0905 at line 54: `The 'ConstrainedClass.InternalMethod()' method cannot be used from this context because of the 'InternalsCanOnlyBeUsedFromAttribute' constraint.`
+// Warning LAMA0905 at line 55: `The 'ConstrainedClass.PrivateProtectedMethod()' method cannot be used from this context because of the 'InternalsCanOnlyBeUsedFromAttribute' constraint.`
