@@ -3,7 +3,7 @@
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Fabrics;
 
-namespace Metalama.Extensions.Architecture
+namespace Metalama.Extensions.Architecture.Fabrics
 {
     /// <summary>
     /// Extension methods for <see cref="IProjectAmender"/>, <see cref="INamespaceAmender"/> and <see cref="ITypeAmender"/>. Entry point

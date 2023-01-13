@@ -7,7 +7,7 @@ using Metalama.Framework.Serialization;
 using System.Collections.Immutable;
 using System.Text;
 
-namespace Metalama.Extensions.Architecture;
+namespace Metalama.Extensions.Architecture.Aspects;
 
 [CompileTime]
 internal class SerializableAccessibilityRule : IAspectState

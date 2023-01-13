@@ -89,8 +89,6 @@ public sealed class MulticastImplementation
                 return;
             }
 
-            Debugger.Break();
-
             switch ( builder )
             {
                 case IAspectBuilder<ICompilation> compilationAspectBuilder:

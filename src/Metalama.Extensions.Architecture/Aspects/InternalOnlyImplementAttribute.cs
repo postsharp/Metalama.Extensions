@@ -5,9 +5,8 @@ using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 using Metalama.Framework.Eligibility;
 using Metalama.Framework.Validation;
-using System.Diagnostics;
 
-namespace Metalama.Extensions.Architecture
+namespace Metalama.Extensions.Architecture.Aspects
 {
     /// <summary>
     /// Aspect that, when applied to an interface, reports a warning whenever a type attempts to implement this interface,
@@ -24,8 +23,6 @@ namespace Metalama.Extensions.Architecture
 
         private void ValidateReference( in ReferenceValidationContext context )
         {
-            Debugger.Break();
-
             if ( context.ReferencedDeclaration.DeclaringAssembly.AreInternalsVisibleFrom( context.ReferencingDeclaration.DeclaringAssembly ) )
             {
                 return;

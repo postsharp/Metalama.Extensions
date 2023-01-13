@@ -3,7 +3,7 @@
     <PropertyGroup>
         <TargetFrameworks>netstandard2.0;net5.0</TargetFrameworks>
         <Nullable>enable</Nullable>
-        <PackageDescription>Emulates PostSharp multicasting in Metalama.</PackageDescription>
+        <PackageDescription>An official and open-source Metalama extension that emulates PostSharp multicasting.</PackageDescription>
     </PropertyGroup>
 
     <ItemGroup>
