@@ -1,9 +1,10 @@
 ﻿// Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
+using Metalama.Extensions.Architecture.Aspects;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 
-namespace Metalama.Extensions.Architecture
+namespace Metalama.Extensions.Architecture.Fabrics
 {
     /// <summary>
     /// Extension methods that verify the architecture. These methods extend the <see cref="ArchitectureAmender"/> class, which is returned

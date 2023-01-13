@@ -6,6 +6,7 @@
         <PackageId>Metalama.Extensions.Metrics</PackageId>
         <RootNamespace>Metalama.Extensions.Metrics</RootNamespace>
         <IsPackable>true</IsPackable>
+        <PackageDescription>An official and open-source Metalama extension that exposes code metrics to the code model.</PackageDescription>
         <!-- TODO: Move these NoWarn to Metalama.Framework.Sdk.targets -->
         <NoWarn>NU5100;NU5128</NoWarn>
     </PropertyGroup>

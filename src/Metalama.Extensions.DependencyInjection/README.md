@@ -9,10 +9,3 @@ It has two major features:
 
 * [Conceptual Documentation](https://doc.metalama.net/aspects/dependency-injection)
 * [API Documentation](https://doc.metalama.net/api/metalama_extensions_dependencyinjection)
-
-## Backward Compatibility Promise
-
-All public APIs are guaranteed to be backward compatible within the current major version.
-
-The promise does not apply to any preview build of this package.
-

@@ -7,15 +7,15 @@ using Metalama.Framework.Eligibility;
 using Metalama.Framework.Validation;
 using System.Linq;
 
-namespace Metalama.Extensions.Architecture;
+namespace Metalama.Extensions.Architecture.Aspects;
 
 /// <summary>
 /// Aspect that, when applied to a public type, reports a warning whenever any member of the target type is used from
-/// from any type specified by the <see cref="BaseUsageValidationAttribute.Types"/>, <see cref="BaseUsageValidationAttribute.Namespaces"/>,
+/// from a different type than the ones specified by the <see cref="BaseUsageValidationAttribute.Types"/>, <see cref="BaseUsageValidationAttribute.Namespaces"/>,
 /// <see cref="BaseUsageValidationAttribute.NamespaceOfTypes"/> or <see cref="BaseUsageValidationAttribute.CurrentNamespace"/> properties.
 /// </summary>
 [PublicAPI]
-public class InternalsCannotBeUsedFromFromAttribute : BaseUsageValidationAttribute, IAspect<INamedType>
+public class InternalsCanOnlyBeUsedFromAttribute : BaseUsageValidationAttribute, IAspect<INamedType>
 {
     public void BuildAspect( IAspectBuilder<INamedType> builder )
     {
@@ -34,15 +34,14 @@ public class InternalsCannotBeUsedFromFromAttribute : BaseUsageValidationAttribu
     {
         // Do not validate if we have visibility through inheritance.
         // TODO: take nested types into account.
-        if ( context.ReferencingType.Is( context.ReferencedDeclaration.GetClosestNamedType()! ) )
+        if ( ((IMember) context.ReferencedDeclaration).Accessibility is Accessibility.ProtectedInternal &&
+             context.ReferencingType.Is( context.ReferencedDeclaration.GetClosestNamedType()! ) )
         {
             return;
         }
 
         base.ValidateReference( context );
     }
-
-    private protected override bool IsMatch( in ReferenceValidationContext context ) => !base.IsMatch( in context );
 
     public void BuildEligibility( IEligibilityBuilder<INamedType> builder ) => builder.MustHaveAccessibility( Accessibility.Public );
 }

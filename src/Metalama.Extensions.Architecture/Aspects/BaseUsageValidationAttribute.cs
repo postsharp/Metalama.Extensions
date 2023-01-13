@@ -7,7 +7,7 @@ using Metalama.Framework.Validation;
 using System;
 using System.Text.RegularExpressions;
 
-namespace Metalama.Extensions.Architecture;
+namespace Metalama.Extensions.Architecture.Aspects;
 
 /// <summary>
 /// The base class for all attributes that validate usage.

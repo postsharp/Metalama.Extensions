@@ -6,18 +6,18 @@ using Metalama.Framework.Fabrics;
 using System;
 using System.Linq;
 
-namespace Metalama.Extensions.Architecture
+namespace Metalama.Extensions.Architecture.Fabrics
 {
-    internal class TypeArchitectureAmender : ArchitectureAmender
+    internal class ProjectArchitectureAmender : ArchitectureAmender
     {
-        private readonly ITypeAmender _amender;
+        private readonly IProjectAmender _amender;
 
-        public TypeArchitectureAmender( ITypeAmender amender )
+        public ProjectArchitectureAmender( IProjectAmender amender )
         {
             this._amender = amender;
         }
 
         public override IAspectReceiver<INamedType> WithTypes( Func<INamedType, bool>? filter )
-            => this._amender.With( type => new[] { type }.Where( type => filter == null || filter( type ) ) );
+            => this._amender.With( compilation => compilation.Types.Where( type => filter == null || filter( type ) ) );
     }
 }

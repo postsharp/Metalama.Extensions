@@ -5,7 +5,6 @@ using Metalama.Framework.Code;
 using Metalama.Framework.Eligibility;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 namespace Metalama.Extensions.Multicast;
@@ -88,8 +87,6 @@ public sealed class MulticastImplementation
             {
                 return;
             }
-
-            Debugger.Break();
 
             switch ( builder )
             {

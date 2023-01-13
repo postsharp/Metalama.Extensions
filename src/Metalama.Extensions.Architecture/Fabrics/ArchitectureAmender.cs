@@ -2,9 +2,10 @@
 
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
+using Metalama.Framework.Fabrics;
 using System;
 
-namespace Metalama.Extensions.Architecture
+namespace Metalama.Extensions.Architecture.Fabrics
 {
     /// <summary>
     /// Exposes, as extension methods, the fluent API for architecture validation from fabrics. Standard extension methods are exposed by the <see cref="ArchitectureAmenderExtensions"/> class.
@@ -14,7 +15,7 @@ namespace Metalama.Extensions.Architecture
     public abstract class ArchitectureAmender
     {
         /// <summary>
-        /// Gets the <see cref="IAspectReceiver{TDeclaration}"/> for the upstream <see cref="IAmemder"/>. This method should be used
+        /// Gets the <see cref="IAspectReceiver{TDeclaration}"/> for the upstream <see cref="IAmender{T}"/>. This method should be used
         /// only when you want to extend the architecture validation API.
         /// </summary>
         public abstract IAspectReceiver<INamedType> WithTypes( Func<INamedType, bool>? filter = null );

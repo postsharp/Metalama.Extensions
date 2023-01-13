@@ -8,7 +8,7 @@ using Metalama.Framework.Validation;
 using System;
 using System.Linq;
 
-namespace Metalama.Extensions.Architecture
+namespace Metalama.Extensions.Architecture.Aspects
 {
     /// <summary>
     /// Aspect that, when applied to a declaration, reports a warning when any other declaration tries to use it, unless the using declaration

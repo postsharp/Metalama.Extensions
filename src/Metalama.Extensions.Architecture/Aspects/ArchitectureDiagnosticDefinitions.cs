@@ -5,7 +5,7 @@ using Metalama.Framework.Code;
 using Metalama.Framework.Diagnostics;
 using System;
 
-namespace Metalama.Extensions.Architecture;
+namespace Metalama.Extensions.Architecture.Aspects;
 
 #pragma warning disable SA1401
 

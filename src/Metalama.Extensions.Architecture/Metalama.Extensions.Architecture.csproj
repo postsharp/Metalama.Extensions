@@ -2,10 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <!-- TODO:
-    <PackageDescription>TODO</PackageDescription>
+    <PackageDescription>An official and open-source Metalama extension that allows to verify the code against architecture rules.</PackageDescription>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageLicenseFile>LICENSE.md</PackageLicenseFile> -->
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,9 +15,8 @@
   <Import Project="SystemTypes.props" Sdk="PostSharp.Engineering.Sdk" />
 
   <!-- Packaging -->
-  <!-- <ItemGroup>
+  <ItemGroup>
       <None Include="README.md" Pack="true" PackagePath="\" />
-      <None Include="$(MSBuildThisFileDirectory)..\LICENSE.md" Visible="false" Pack="true" PackagePath="" />
-  </ItemGroup> -->
+  </ItemGroup>
 
 </Project>

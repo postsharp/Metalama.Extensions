@@ -1,1 +1,1 @@
-// Error LAMA0902 at line 6: `The string `(` is not a valid regular expression: Invalid pattern '(' at offset 1. Not enough )'s.`
+// Error LAMA0902 at line 8: `The string `(` is not a valid regular expression: Invalid pattern '(' at offset 1. Not enough )'s.`

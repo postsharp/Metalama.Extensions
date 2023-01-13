@@ -6,7 +6,7 @@ using Metalama.Framework.Fabrics;
 using System;
 using System.Linq;
 
-namespace Metalama.Extensions.Architecture
+namespace Metalama.Extensions.Architecture.Fabrics
 {
     internal class NamespaceArchitectureAmender : ArchitectureAmender
     {

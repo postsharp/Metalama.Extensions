@@ -5,7 +5,7 @@ using Metalama.Framework.Aspects;
 using System;
 using System.Text.RegularExpressions;
 
-namespace Metalama.Extensions.Architecture;
+namespace Metalama.Extensions.Architecture.Aspects;
 
 /// <summary>
 /// Aspect that, when applied to a type, reports a warning for any derived type that does not respect a naming convention

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
 using Metalama.Extensions.Architecture.AspectTests.InternalsOnlyAccessibleFrom.FromNamespaceFabric.ConstrainedNs;
+using Metalama.Extensions.Architecture.Fabrics;
 using Metalama.Framework.Fabrics;
 
 namespace Metalama.Extensions.Architecture.AspectTests.InternalsOnlyAccessibleFrom.FromNamespaceFabric
