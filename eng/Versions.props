@@ -14,7 +14,7 @@
     <PropertyGroup>
         <PostSharpEngineeringVersion>1.0.112-preview</PostSharpEngineeringVersion>
 		<MetalamaVersion>branch:master</MetalamaVersion>
-        <MetalamaVersion Condition="$(VcsBranch.StartsWith('master'))">0.5.79-preview</MetalamaVersion>
+        <MetalamaVersion Condition="$(VcsBranch.StartsWith('master'))">0.5.80-preview</MetalamaVersion>
     </PropertyGroup>
 
     <!-- Override versions (both this product and dependencies) for the local build -->
