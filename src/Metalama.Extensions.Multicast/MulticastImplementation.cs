@@ -23,7 +23,7 @@ public sealed class MulticastImplementation
     public MulticastTargets ConcreteTargets { get; }
 
     private readonly bool _multicastOnInheritance;
-    private IEligibilityRule<IDeclaration>? _eligibilityRule;
+    private readonly IEligibilityRule<IDeclaration>? _eligibilityRule;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MulticastImplementation"/> class.
@@ -39,9 +39,7 @@ public sealed class MulticastImplementation
         this._multicastOnInheritance = multicastOnInheritance;
         this._eligibilityRule = null;
     }
-
-    private IEligibilityRule<IDeclaration> EligibilityRule => this._eligibilityRule ??= this.CreateEligibilityRule();
-
+    
     private bool MustMulticast( IAspectBuilder<IDeclaration> builder )
         => this._multicastOnInheritance || builder.AspectInstance.Predecessors[0].Kind != AspectPredecessorKind.Inherited;
 

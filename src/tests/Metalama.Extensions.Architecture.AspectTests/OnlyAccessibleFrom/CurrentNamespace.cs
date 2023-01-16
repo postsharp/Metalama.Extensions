@@ -6,20 +6,20 @@ using Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.CurrentNam
 namespace Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.CurrentNamespace
 {
     [CanOnlyBeUsedFrom( CurrentNamespace = true )]
-    internal class TheClass { }
+    internal class ConstrainedClass { }
 
     // Valid because of same namespace.
-    internal class ClassInSameNamespace : TheClass { }
+    internal class ClassInSameNamespace : ConstrainedClass { }
 
     namespace ChildNamespace
     {
         // Valid because in child namespace.
-        internal class ClassInChildNamespace : TheClass { }
+        internal class AllowedClass : ConstrainedClass { }
     }
 }
 
 namespace Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.CurrentNamespace_Other
 {
     // Invalid because in other namespace.
-    internal class ClassInOtherNamespace : TheClass { }
+    internal class ForbiddenClass : ConstrainedClass { }
 }

@@ -1,6 +1,5 @@
 ﻿// Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
-using Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.FromProjectFabric.Allowed;
 using Metalama.Extensions.Architecture.Fabrics;
 using Metalama.Framework.Fabrics;
 
@@ -10,7 +9,7 @@ namespace Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.FromPr
     {
         public override void AmendProject( IProjectAmender amender )
         {
-            amender.Verify().CanOnlyBeUsedFrom( UsageRule.Namespace( typeof(AllowedClass).Namespace! ) );
+            amender.Verify().CanOnlyBeUsedFrom( UsageRule.Namespace( typeof(Allowed.AllowedClass).Namespace! ) );
         }
     }
 

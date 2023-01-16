@@ -1,1 +1,1 @@
-// Warning LAMA0905 at line 21: `The 'ConstrainedClass' type cannot be used from this context because of the 'CanOnlyBeUsedFromAttribute' constraint.`
+// Warning LAMA0905 on `ConstrainedClass`: `The 'Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.FromNamespaceFabric' namespace cannot be used by the 'Forbidden' type because of the 'CanOnlyBeUsedFromValidator' constraint.`

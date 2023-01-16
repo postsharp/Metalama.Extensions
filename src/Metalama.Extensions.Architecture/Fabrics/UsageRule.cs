@@ -5,7 +5,6 @@ using Metalama.Framework.Aspects;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 
 namespace Metalama.Extensions.Architecture.Fabrics
 {
@@ -24,6 +23,8 @@ namespace Metalama.Extensions.Architecture.Fabrics
 
         public static UsageRule OwnNamespace { get; } = new() { AllowCurrentNamespace = true };
 
+        public static UsageRule Empty { get; } = new();
+
         public static UsageRule Namespace( string ns ) => new() { AllowedNamespaces = ImmutableArray.Create( ns ) };
 
         public static UsageRule Namespaces( IEnumerable<string> namespaces ) => new() { AllowedNamespaces = namespaces.ToImmutableArray() };
@@ -36,6 +37,14 @@ namespace Metalama.Extensions.Architecture.Fabrics
 
         public static UsageRule NamespaceOfTypes( IEnumerable<Type> types ) => new() { AllowedNamespaceOfTypes = types.ToImmutableArray() };
 
+        internal UsageRule( BaseUsageValidationAttribute attribute )
+        {
+            this.AllowedNamespaces = ImmutableArray.Create( attribute.Namespaces );
+            this.AllowCurrentNamespace = this.AllowCurrentNamespace;
+            this.AllowedTypes = ImmutableArray.Create( attribute.Types );
+            this.AllowedNamespaceOfTypes = ImmutableArray.Create( attribute.NamespaceOfTypes );
+        }
+
         public UsageRule Or( UsageRule rule )
             => new()
             {
@@ -44,17 +53,5 @@ namespace Metalama.Extensions.Architecture.Fabrics
                 AllowedNamespaceOfTypes = this.AllowedNamespaceOfTypes.AddRange( rule.AllowedNamespaceOfTypes ),
                 AllowCurrentNamespace = this.AllowCurrentNamespace || rule.AllowCurrentNamespace
             };
-
-        internal T ToAttribute<T>()
-            where T : BaseUsageValidationAttribute, new()
-        {
-            return new T()
-            {
-                CurrentNamespace = this.AllowCurrentNamespace,
-                Types = this.AllowedTypes.ToArray(),
-                Namespaces = this.AllowedNamespaces.ToArray(),
-                NamespaceOfTypes = this.AllowedNamespaceOfTypes.ToArray()
-            };
-        }
     }
 }

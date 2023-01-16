@@ -1,6 +1,7 @@
 ﻿// Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
 using Metalama.Extensions.Architecture.Aspects;
+using Metalama.Extensions.Architecture.Validators;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 
@@ -21,27 +22,30 @@ namespace Metalama.Extensions.Architecture.Fabrics
         /// <summary>
         /// Reports a warning when any type in the current scope is used from a different context than the ones matching the specified <see cref="UsageRule"/>. 
         /// </summary>
-        public static void CanOnlyBeUsedFrom( this ArchitectureAmender amender, UsageRule rule )
+        public static void CanOnlyBeUsedFrom( this ArchitectureAmender amender, UsageRule rule, bool appliesToDerivedTypes = false )
         {
-            amender.WithTypes( _ => true ).AddAspect( _ => rule.ToAttribute<CanOnlyBeUsedFromAttribute>() );
+            amender.ValidatorReceiver.ValidateReferences( new CanOnlyBeUsedFromValidator( rule, amender.Namespace ) );
         }
 
         /// <summary>
         /// Reports a warning when any type in the current scope is used from the context matching the specified <see cref="UsageRule"/>.
         /// </summary>
-        public static void CannotBeUsedFrom( this ArchitectureAmender amender, UsageRule rule )
+        public static void CannotBeUsedFrom( this ArchitectureAmender amender, UsageRule rule, bool appliesToDerivedTypes = false )
         {
-            amender.WithTypes( _ => true ).AddAspect( _ => rule.ToAttribute<CannotBeUsedFromAttribute>() );
+            amender.ValidatorReceiver.ValidateReferences( new CannotBeUsedFromValidator( rule, amender.Namespace ) );
         }
 
         /// <summary>
         /// Reports a warning when any of the internal APIs of the current scope in used from a different context than the one allowed,
         /// except if this concept has access to the type using inheritance rules.
         /// </summary>
-        public static void InternalsCanOnlyBeUsedFrom( this ArchitectureAmender amender, UsageRule rule )
+        public static void InternalsCanOnlyBeUsedFrom( this ArchitectureAmender amender, UsageRule rule, bool appliesToDerivedTypes = false )
         {
-            amender.WithTypes( t => t.Accessibility == Accessibility.Internal ).AddAspect( _ => rule.ToAttribute<CanOnlyBeUsedFromAttribute>() );
-            amender.WithTypes( t => t.Accessibility != Accessibility.Internal ).AddAspect( _ => rule.ToAttribute<InternalsCanOnlyBeUsedFromAttribute>() );
+            var internalValidator = new CanOnlyBeUsedFromValidator( rule, amender.Namespace );
+            var nonInternalValidator = new CanOnlyBeUsedFromValidator( rule, amender.Namespace );
+
+            amender.WithTypes( t => t.Accessibility == Accessibility.Internal ).ValidateReferences( internalValidator );
+            amender.WithTypes( t => t.Accessibility != Accessibility.Internal ).ValidateReferences( nonInternalValidator );
         }
 
         /// <summary>
@@ -50,7 +54,7 @@ namespace Metalama.Extensions.Architecture.Fabrics
         /// </summary>
         public static void DerivedTypesMustRespectNamingConvention( this ArchitectureAmender amender, string pattern )
         {
-            amender.WithTypes( _ => true ).AddAspect( _ => new DerivedTypesMustRespectNamingConventionAttribute( pattern ) );
+            amender.ValidatorReceiver.ValidateReferences( NamingConventionValidator.CreateStarPatternValidator( pattern ) );
         }
 
         /// <summary>
@@ -59,7 +63,7 @@ namespace Metalama.Extensions.Architecture.Fabrics
         /// </summary>
         public static void DerivedTypesMustRespectRegexNamingConvention( this ArchitectureAmender amender, string pattern )
         {
-            amender.WithTypes( _ => true ).AddAspect( _ => new DerivedTypesMustRespectRegexNamingConventionAttribute( pattern ) );
+            amender.ValidatorReceiver.ValidateReferences( NamingConventionValidator.CreateRegexValidator( pattern ) );
         }
     }
 }

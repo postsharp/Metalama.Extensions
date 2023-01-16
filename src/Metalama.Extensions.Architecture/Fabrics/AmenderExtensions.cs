@@ -12,11 +12,11 @@ namespace Metalama.Extensions.Architecture.Fabrics
     [CompileTime]
     public static class AmenderExtensions
     {
-        public static ArchitectureAmender Verify( this IProjectAmender amender ) => new ProjectArchitectureAmender( amender );
+        public static ProjectArchitectureAmender Verify( this IProjectAmender amender ) => new( amender );
 
-        public static ArchitectureAmender Verify( this INamespaceAmender amender, bool includeChildNamespaces = true )
-            => new NamespaceArchitectureAmender( amender, includeChildNamespaces );
+        public static NamespaceArchitectureAmender Verify( this INamespaceAmender amender, bool includeChildNamespaces = true )
+            => new( amender, includeChildNamespaces );
 
-        public static ArchitectureAmender Verify( this ITypeAmender amender ) => new TypeArchitectureAmender( amender );
+        public static TypeArchitectureAmender Verify( this ITypeAmender amender ) => new( amender );
     }
 }

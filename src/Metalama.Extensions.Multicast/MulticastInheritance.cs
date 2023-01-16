@@ -6,7 +6,7 @@ using System;
 namespace Metalama.Extensions.Multicast;
 
 /// <summary>
-///   In Metalama, aspect inheritance is ruled at the class level by the <see cref="InheritedAttribute"/> custom attribute. In Metalama itself, only
+///   In Metalama, aspect inheritance is ruled at the class level by the <see cref="InheritableAttribute"/> custom attribute. In Metalama itself, only
 /// <c>Strict</c> inheritance is implemented.  <see cref="MulticastAspect"/> and <see cref="MulticastImplementation"/> implement an emulation of the <c>Multicast</c>
 /// inheritance mode by passing the proper parameter to the constructor.
 /// </summary>
@@ -22,7 +22,7 @@ public enum MulticastInheritance
     None,
 
     /// <summary>
-    /// This is the default inheritance mode when <see cref="InheritedAttribute"/> is added to an aspect class.
+    /// This is the default inheritance mode when <see cref="InheritableAttribute"/> is added to an aspect class.
     /// It means that multicasting is performed before inheritance, but not after. There is no need of <see cref="IMulticastAttribute"/> to enable
     /// this kind of inheritance with Metalama.
     /// </summary>

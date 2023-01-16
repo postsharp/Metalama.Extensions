@@ -24,7 +24,7 @@ public abstract class MulticastAspect : Aspect, IMulticastAttribute, IAspect<ICo
     private readonly MulticastTargets _targets;
     private readonly bool _multicastOnInheritance;
 
-    [LamaNonSerialized]
+    [NonCompileTimeSerialized]
     private MulticastImplementation? _implementation;
 
     /// <summary>

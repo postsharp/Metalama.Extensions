@@ -45,11 +45,11 @@ internal static class ArchitectureDiagnosticDefinitions
         "At least one property of the '{0}' custom attribute must be set.",
         "At least one property of the attribute must be set." );
 
-    public static readonly DiagnosticDefinition<(IDeclaration ValidatedDeclaration, DeclarationKind DeclarationKind, string ConstraintName)>
+    public static readonly DiagnosticDefinition<(IDeclaration ValidatedDeclaration, DeclarationKind DeclarationKind, INamedType ReferencingType, string ConstraintName)>
         OnlyAccessibleFrom = new(
             "LAMA0905",
             Severity.Warning,
-            "The '{0}' {1} cannot be used from this context because of the '{2}' constraint.",
+            "The '{0}' {1} cannot be used by the '{2}' type because of the '{3}' constraint.",
             "The declaration cannot be used from this context because of an architecture constraint." );
 
     public static readonly DiagnosticDefinition<Type>

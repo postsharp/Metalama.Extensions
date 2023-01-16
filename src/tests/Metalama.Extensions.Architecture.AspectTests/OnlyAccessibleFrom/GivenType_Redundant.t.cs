@@ -1,2 +1,1 @@
-// Warning LAMA0906 at line 9: `The type 'AllowedClass' specified in the custom attribute is redundant because it is contained in an allowed namespace.`
-// Warning LAMA0905 at line 11: `The 'ConstrainedClass' type cannot be used from this context because of the 'CanOnlyBeUsedFromAttribute' constraint.`
+// Warning LAMA0905 on `ConstrainedClass`: `The 'ConstrainedClass' type cannot be used by the 'Forbidden' type because of the 'CanOnlyBeUsedFromValidator' constraint.`

@@ -1,10 +1,11 @@
 ﻿// Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
 using JetBrains.Annotations;
+using Metalama.Extensions.Architecture.Fabrics;
+using Metalama.Extensions.Architecture.Validators;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 using Metalama.Framework.Eligibility;
-using Metalama.Framework.Validation;
 using System.Linq;
 
 namespace Metalama.Extensions.Architecture.Aspects;
@@ -19,28 +20,19 @@ public class InternalsCanOnlyBeUsedFromAttribute : BaseUsageValidationAttribute,
 {
     public void BuildAspect( IAspectBuilder<INamedType> builder )
     {
-        if ( !this.ValidateAndProcessProperties( builder, builder.Target.Namespace ) )
+        var targetNamespace = builder.Target.Namespace;
+
+        if ( !this.ValidateAndProcessProperties( builder ) )
         {
             return;
         }
+
+        var validator = new InternalsCanOnlyBeUsedFromValidator( new UsageRule( this ), targetNamespace.FullName );
 
         // Register a validator for all internal members.
         builder.With(
                 t => t.Members().Where( m => m.Accessibility is Accessibility.Internal or Accessibility.PrivateProtected or Accessibility.ProtectedInternal ) )
-            .ValidateReferences( this.ValidateReference, ReferenceKinds.All );
-    }
-
-    protected override void ValidateReference( in ReferenceValidationContext context )
-    {
-        // Do not validate if we have visibility through inheritance.
-        // TODO: take nested types into account.
-        if ( ((IMember) context.ReferencedDeclaration).Accessibility is Accessibility.ProtectedInternal &&
-             context.ReferencingType.Is( context.ReferencedDeclaration.GetClosestNamedType()! ) )
-        {
-            return;
-        }
-
-        base.ValidateReference( context );
+            .ValidateReferences( validator );
     }
 
     public void BuildEligibility( IEligibilityBuilder<INamedType> builder ) => builder.MustHaveAccessibility( Accessibility.Public );

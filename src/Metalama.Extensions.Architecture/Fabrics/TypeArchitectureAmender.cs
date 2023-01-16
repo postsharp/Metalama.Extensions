@@ -3,21 +3,26 @@
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 using Metalama.Framework.Fabrics;
+using Metalama.Framework.Validation;
 using System;
 using System.Linq;
 
 namespace Metalama.Extensions.Architecture.Fabrics
 {
-    internal class TypeArchitectureAmender : ArchitectureAmender
+    public sealed class TypeArchitectureAmender : ArchitectureAmender
     {
-        private readonly ITypeAmender _amender;
+        public ITypeAmender Amender { get; }
 
         public TypeArchitectureAmender( ITypeAmender amender )
         {
-            this._amender = amender;
+            this.Amender = amender;
         }
 
-        public override IAspectReceiver<INamedType> WithTypes( Func<INamedType, bool>? filter )
-            => this._amender.With( type => new[] { type }.Where( type => filter == null || filter( type ) ) );
+        public override IAspectReceiver<INamedType> WithTypes( Func<INamedType, bool>? filter = null )
+            => this.Amender.With( type => new[] { type }.Where( t => filter == null || filter( t ) ) );
+
+        public override IValidatorReceiver ValidatorReceiver => this.Amender.With( t => t );
+
+        public override string? Namespace => this.Amender.Type.Namespace.FullName;
     }
 }
