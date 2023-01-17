@@ -4,6 +4,7 @@
         <TargetFramework>netstandard2.0</TargetFramework>
         <Nullable>enable</Nullable>
         <PackageId>Metalama.Extensions.Metrics.Redist</PackageId>
+        <PackageDescription>Redistributable components for package 'Metalama.Extensions.Metrics'. This package should only be installed as a dependency. (This is not the package you are looking for if you want to use Metalama.Extensions.Metrics). </PackageDescription>
     </PropertyGroup>
 
     <ItemGroup>
