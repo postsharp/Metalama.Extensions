@@ -2,6 +2,7 @@
 
 using Metalama.Extensions.Architecture.AspectTests.InternalsOnlyAccessibleFrom.FromNamespaceFabric.ConstrainedNs;
 using Metalama.Extensions.Architecture.Fabrics;
+using Metalama.Extensions.Architecture.Predicates;
 using Metalama.Framework.Fabrics;
 
 namespace Metalama.Extensions.Architecture.AspectTests.InternalsOnlyAccessibleFrom.FromNamespaceFabric
@@ -12,7 +13,7 @@ namespace Metalama.Extensions.Architecture.AspectTests.InternalsOnlyAccessibleFr
         {
             public override void AmendNamespace( INamespaceAmender amender )
             {
-                amender.Verify().InternalsCanOnlyBeUsedFrom( MatchingRule.OwnNamespace );
+                amender.Verify().InternalsCanOnlyBeUsedFrom( r => r.CurrentNamespace() );
             }
         }
 

@@ -2,6 +2,7 @@
 
 using Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.FromTypeFabric.Allowed;
 using Metalama.Extensions.Architecture.Fabrics;
+using Metalama.Extensions.Architecture.Predicates;
 using Metalama.Framework.Fabrics;
 
 namespace Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.FromTypeFabric
@@ -12,7 +13,7 @@ namespace Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.FromTy
         {
             public override void AmendType( ITypeAmender amender )
             {
-                amender.Verify().CanOnlyBeUsedFrom( MatchingRule.Type( typeof(AllowedClass) ) );
+                amender.Verify().CanOnlyBeUsedFrom( r => r.Type( typeof(AllowedClass) ) );
             }
         }
     }

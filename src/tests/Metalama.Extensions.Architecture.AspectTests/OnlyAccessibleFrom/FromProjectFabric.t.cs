@@ -1,1 +1,1 @@
-// Warning LAMA0905 on `ConstrainedClass`: `The 'test' project cannot be used by the 'Forbidden' type because of the 'CanOnlyBeUsedFromValidator' constraint.`
+// Warning LAMA0905 on `ConstrainedClass`: `The 'test' project cannot be used by the 'Forbidden' type.`

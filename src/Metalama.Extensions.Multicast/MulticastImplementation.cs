@@ -23,7 +23,6 @@ public sealed class MulticastImplementation
     public MulticastTargets ConcreteTargets { get; }
 
     private readonly bool _multicastOnInheritance;
-    private readonly IEligibilityRule<IDeclaration>? _eligibilityRule;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MulticastImplementation"/> class.
@@ -37,9 +36,8 @@ public sealed class MulticastImplementation
     {
         this.ConcreteTargets = concreteTargets;
         this._multicastOnInheritance = multicastOnInheritance;
-        this._eligibilityRule = null;
     }
-    
+
     private bool MustMulticast( IAspectBuilder<IDeclaration> builder )
         => this._multicastOnInheritance || builder.AspectInstance.Predecessors[0].Kind != AspectPredecessorKind.Inherited;
 
@@ -342,7 +340,8 @@ public sealed class MulticastImplementation
         if ( attributeGroup.TargetsAnyDeclarationKind( MulticastTargets.Method ) )
         {
             builder
-                .Outbound.SelectMany( t => t.MethodsAndAccessors().Where( m => !m.IsImplicitlyDeclared && Filter( m, attributeGroup, MulticastTargets.Method ) ) )
+                .Outbound.SelectMany(
+                    t => t.MethodsAndAccessors().Where( m => !m.IsImplicitlyDeclared && Filter( m, attributeGroup, MulticastTargets.Method ) ) )
                 .AddAspectIfEligible( attributeGroup.AspectClass.Type, attributeGroup.GetMatchingAspect );
         }
 

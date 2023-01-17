@@ -12,14 +12,14 @@ using System.Collections.Generic;
 namespace Metalama.Extensions.Architecture.Fabrics
 {
     /// <summary>
-    /// Exposes, as extension methods, the fluent API for architecture validation from fabrics. Standard extension methods are exposed by the <see cref="ArchitectureAmenderExtensions"/> class.
+    /// Exposes, as extension methods, the fluent API for architecture validation from fabrics. Standard extension methods are exposed by the <see cref="ArchitectureVerifierExtensions"/> class.
     /// To extend the fluent API, expose extension methods of this object.
     /// </summary>
     [CompileTime]
     [PublicAPI]
-    public abstract class ArchitectureAmender
+    public abstract class ArchitectureVerifier
     {
-        internal ArchitectureAmender() { }
+        internal ArchitectureVerifier() { }
 
         public abstract IAspectReceiver<INamedType> WithTypes();
 
@@ -31,13 +31,13 @@ namespace Metalama.Extensions.Architecture.Fabrics
     }
 
     [PublicAPI]
-    public class ArchitectureAmender<T> : ArchitectureAmender
+    public class ArchitectureVerifier<T> : ArchitectureVerifier
         where T : class, IDeclaration
     {
         private readonly IAspectReceiver<T> _aspectReceiver;
         private readonly Func<T, IEnumerable<INamedType>> _getTypes;
 
-        public ArchitectureAmender( IAspectReceiver<T> aspectReceiver, Func<T, IEnumerable<INamedType>> getTypes, string? ns = null )
+        public ArchitectureVerifier( IAspectReceiver<T> aspectReceiver, Func<T, IEnumerable<INamedType>> getTypes, string? ns = null )
         {
             this._aspectReceiver = aspectReceiver;
             this._getTypes = getTypes;

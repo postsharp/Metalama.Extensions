@@ -1,6 +1,8 @@
 ﻿// Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
+using Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.ExternalAssembly.ForbiddenNamespace;
 using Metalama.Extensions.Architecture.Fabrics;
+using Metalama.Extensions.Architecture.Predicates;
 using Metalama.Framework.Fabrics;
 using System.Text.RegularExpressions;
 
@@ -12,13 +14,12 @@ namespace Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.Extern
     {
         public override void AmendProject( IProjectAmender amender )
         {
-            amender.Verify().WithReferencedAssembly( "System.Text.RegularExpressions" ).CannotBeUsedFrom( MatchingRule.NamespaceOfType( typeof( ForbiddenNamespace.ForbiddenClass ) ) );
+            amender.Verify().WithReferencedAssembly( "System.Text.RegularExpressions" ).CannotBeUsedFrom( r => r.NamespaceOf( typeof(ForbiddenClass) ) );
         }
     }
 
     namespace ForbiddenNamespace
     {
-
         internal class ForbiddenClass
         {
             private readonly Regex? _regex;

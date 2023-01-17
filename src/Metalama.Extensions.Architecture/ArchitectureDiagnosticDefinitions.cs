@@ -3,9 +3,8 @@
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 using Metalama.Framework.Diagnostics;
-using System;
 
-namespace Metalama.Extensions.Architecture.Aspects;
+namespace Metalama.Extensions.Architecture;
 
 #pragma warning disable SA1401
 
@@ -45,18 +44,11 @@ internal static class ArchitectureDiagnosticDefinitions
         "At least one property of the '{0}' custom attribute must be set.",
         "At least one property of the attribute must be set." );
 
-    public static readonly DiagnosticDefinition<(IDeclaration ValidatedDeclaration, DeclarationKind DeclarationKind, INamedType ReferencingType, string
-            ConstraintName)>
+    public static readonly DiagnosticDefinition<(IDeclaration ValidatedDeclaration, DeclarationKind DeclarationKind, INamedType ReferencingType, string?
+            OptionalSpace, string? Description)>
         OnlyAccessibleFrom = new(
             "LAMA0905",
             Severity.Warning,
-            "The '{0}' {1} cannot be used by the '{2}' type because of the '{3}' constraint.",
+            "The '{0}' {1} cannot be used by the '{2}' type.{3}{4}",
             "The declaration cannot be used from this context because of an architecture constraint." );
-
-    public static readonly DiagnosticDefinition<Type>
-        OnlyAccessibleFromRedundantType = new(
-            "LAMA0906",
-            Severity.Warning,
-            "The type '{0}' specified in the custom attribute is redundant because it is contained in an allowed namespace.",
-            "The specified type is redundant because it is contained in an allowed namespace." );
 }

@@ -1,7 +1,7 @@
 ﻿// Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
 using JetBrains.Annotations;
-using Metalama.Extensions.Architecture.Fabrics;
+using Metalama.Extensions.Architecture.Predicates;
 using Metalama.Extensions.Architecture.Validators;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
@@ -20,14 +20,14 @@ public class InternalsCanOnlyBeUsedFromAttribute : BaseUsageValidationAttribute,
 {
     public void BuildAspect( IAspectBuilder<INamedType> builder )
     {
-        var targetNamespace = builder.Target.Namespace;
-
         if ( !this.ValidateAndProcessProperties( builder ) )
         {
             return;
         }
 
-        var validator = new InternalsCanOnlyBeUsedFromValidator( new MatchingRule( this ), targetNamespace.FullName );
+        var validator = new ReferencePredicateValidator(
+            new OrPredicate( new HasFamilyAccessPredicate(), this.CreatePredicate( builder.Target.Namespace ) ),
+            this.Description );
 
         // Register a validator for all internal members.
         builder.Outbound.SelectMany(

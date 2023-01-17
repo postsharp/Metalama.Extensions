@@ -2,6 +2,7 @@
 
 using Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.FromProjectFabric.Allowed;
 using Metalama.Extensions.Architecture.Fabrics;
+using Metalama.Extensions.Architecture.Predicates;
 using Metalama.Framework.Fabrics;
 
 namespace Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.FromProjectFabric
@@ -10,7 +11,7 @@ namespace Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.FromPr
     {
         public override void AmendProject( IProjectAmender amender )
         {
-            amender.Verify().CanOnlyBeUsedFrom( MatchingRule.Namespace( typeof(AllowedClass).Namespace! ) );
+            amender.Verify().CanOnlyBeUsedFrom( r => r.Namespace( typeof(AllowedClass).Namespace! ) );
         }
     }
 

@@ -1,9 +1,12 @@
 // Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
 using JetBrains.Annotations;
+using Metalama.Extensions.Architecture.Predicates;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 using System;
+using System.Collections.Immutable;
+using ReferencePredicate = Metalama.Extensions.Architecture.Predicates.ReferencePredicate;
 
 namespace Metalama.Extensions.Architecture.Aspects;
 
@@ -39,6 +42,8 @@ public abstract class BaseUsageValidationAttribute : Attribute, IConditionallyIn
 
     public bool ValidateDerivedTypes { get; init; }
 
+    public string? Description { get; init; }
+
     /// <summary>
     /// Validates the current custom attribute and sets the aspect state.
     /// </summary>
@@ -62,4 +67,53 @@ public abstract class BaseUsageValidationAttribute : Attribute, IConditionallyIn
     }
 
     bool IConditionallyInheritableAspect.IsInheritable => this.ValidateDerivedTypes;
+
+    protected ReferencePredicate CreatePredicate( INamespace currentNamespace )
+    {
+        var predicates = ImmutableArray.CreateBuilder<ReferencePredicate>();
+
+        this.BuildPredicate( currentNamespace, predicates );
+
+        if ( predicates.Count > 0 )
+        {
+            return new AnyPredicate( predicates.ToImmutable() );
+        }
+        else
+        {
+            return new AlwaysPredicate();
+        }
+    }
+
+    private void BuildPredicate( INamespace currentNamespace, ImmutableArray<ReferencePredicate>.Builder predicates )
+    {
+        if ( this.CurrentNamespace )
+        {
+            predicates.Add( new ReferencingNamespacePredicate( currentNamespace.FullName ) );
+        }
+
+        foreach ( var ns in this.Namespaces )
+        {
+            predicates.Add( new ReferencingNamespacePredicate( ns ) );
+        }
+
+        foreach ( var type in this.NamespaceOfTypes )
+        {
+            if ( type.Namespace == null )
+            {
+                throw new InvalidOperationException( $"The type '{type.FullName}' has no namespace." );
+            }
+
+            predicates.Add( new ReferencingNamespacePredicate( type.Namespace ) );
+        }
+
+        foreach ( var type in this.Types )
+        {
+            if ( type.Namespace == null )
+            {
+                throw new InvalidOperationException( $"The type '{type.FullName}' has no namespace." );
+            }
+
+            predicates.Add( new ReferencingTypePredicate( type.Namespace, type.Name ) );
+        }
+    }
 }

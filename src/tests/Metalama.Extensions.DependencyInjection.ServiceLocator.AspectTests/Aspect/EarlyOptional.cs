@@ -2,6 +2,8 @@
 
 namespace Metalama.Extensions.DependencyInjection.DotNet.Tests.Aspect.EarlyOptional;
 
+// ReSharper disable UnusedParameter.Local
+
 // <target>
 public class TargetClass
 {

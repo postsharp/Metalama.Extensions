@@ -70,6 +70,6 @@ namespace Metalama.Extensions.Multicast.AspectTests.Filter_ByMemberModifiers
     [Tag("Literal")]
     public const int ConstField = 5;
     [Tag("NonLiteral")]
-    public int NonoConstField;
+    public int NonConstField;
   }
 }

@@ -1,2 +1,2 @@
-// Warning LAMA0905 on `InternalClass`: `The 'InternalClass' type cannot be used by the 'ForbiddenClassWithForbiddenCalls' type because of the 'CanOnlyBeUsedFromValidator' constraint.`
-// Warning LAMA0905 on `PublicClass.InternalMethod`: `The 'PublicClass.InternalMethod()' method cannot be used by the 'ForbiddenClassWithForbiddenCalls' type because of the 'InternalsCanOnlyBeUsedFromValidator' constraint.`
+// Warning LAMA0905 on `InternalClass`: `The 'InternalClass' type cannot be used by the 'ForbiddenClassWithForbiddenCalls' type.`
+// Warning LAMA0905 on `PublicClass.InternalMethod`: `The 'PublicClass.InternalMethod()' method cannot be used by the 'ForbiddenClassWithForbiddenCalls' type.`

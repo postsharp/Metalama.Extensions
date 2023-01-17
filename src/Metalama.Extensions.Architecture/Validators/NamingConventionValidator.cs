@@ -1,6 +1,5 @@
 ﻿// Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
-using Metalama.Extensions.Architecture.Aspects;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 using Metalama.Framework.Serialization;
@@ -20,8 +19,9 @@ internal class NamingConventionValidator : ReferenceValidator
         this._pattern = pattern;
     }
 
-    public static NamingConventionValidator CreateRegexValidator( string pattern ) => new NamingConventionValidator( pattern );
-    public static NamingConventionValidator CreateStarPatternValidator( string pattern ) => new NamingConventionValidator( StarPatternToRegex( pattern ) );
+    public static NamingConventionValidator CreateRegexValidator( string pattern ) => new( pattern );
+
+    public static NamingConventionValidator CreateStarPatternValidator( string pattern ) => new( StarPatternToRegex( pattern ) );
 
     // This field exists for performance reasons. It is not serialized, so it is
     // lazily recreated every time it is needed.

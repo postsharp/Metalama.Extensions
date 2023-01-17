@@ -14,11 +14,27 @@ namespace Metalama.Extensions.Architecture.Fabrics
     [CompileTime]
     public static class AmenderExtensions
     {
-        public static ArchitectureAmender<ICompilation> Verify( this IProjectAmender amender ) => new( amender.Outbound, c => c.Types );
+        public static ArchitectureVerifier<ICompilation> Verify( this IProjectAmender amender ) => new( amender.Outbound, c => c.Types );
 
-        public static ArchitectureAmender<INamespace> Verify( this INamespaceAmender amender, bool includeChildNamespaces = true )
-            => new( amender.Outbound, includeChildNamespaces ? ns => ns.DescendantsAndSelf().SelectMany( x => x.Types ) : ns => ns.Types );
+        public static ArchitectureVerifier<INamespace> Verify( this INamespaceAmender amender, bool includeChildNamespaces = true )
+        {
+            if ( includeChildNamespaces )
+            {
+                return new ArchitectureVerifier<INamespace>(
+                    amender.Outbound.SelectMany( ns => ns.DescendantsAndSelf() ),
+                    ns => ns.DescendantsAndSelf().SelectMany( x => x.Types ),
+                    amender.Namespace );
+            }
+            else
+            {
+                return new ArchitectureVerifier<INamespace>(
+                    amender.Outbound,
+                    ns => ns.Types,
+                    amender.Namespace );
+            }
+        }
 
-        public static ArchitectureAmender<INamedType> Verify( this ITypeAmender amender ) => new( amender.Outbound, type => new[] { type } );
+        public static ArchitectureVerifier<INamedType> Verify( this ITypeAmender amender )
+            => new( amender.Outbound, type => new[] { type }, amender.Type.Namespace.FullName );
     }
 }

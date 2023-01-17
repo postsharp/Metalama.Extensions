@@ -33,7 +33,7 @@ namespace Metalama.Extensions.Architecture.AspectTests.InternalsOnlyAccessibleFr
         }
     }
 
-    internal class FordibbenClassWithAllowedCalls
+    internal class ForbibbenClassWithAllowedCalls
     {
         public static void AllowedCalls()
         {
@@ -42,11 +42,11 @@ namespace Metalama.Extensions.Architecture.AspectTests.InternalsOnlyAccessibleFr
         }
     }
 
-    internal class FordibbenClassWithForbiddenCalls
+    internal class ForbibbenClassWithForbiddenCalls
     {
         public static void ForbiddenCalls()
         {
-            // Thes calls should be forbidden.
+            // These calls should be forbidden.
             ConstrainedClass.InternalMethod();
             ConstrainedClass.InternalProtectedMethod();
         }
