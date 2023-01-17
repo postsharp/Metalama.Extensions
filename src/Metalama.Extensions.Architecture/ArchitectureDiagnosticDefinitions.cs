@@ -6,8 +6,6 @@ using Metalama.Framework.Diagnostics;
 
 namespace Metalama.Extensions.Architecture;
 
-#pragma warning disable SA1401
-
 [CompileTime]
 internal static class ArchitectureDiagnosticDefinitions
 {

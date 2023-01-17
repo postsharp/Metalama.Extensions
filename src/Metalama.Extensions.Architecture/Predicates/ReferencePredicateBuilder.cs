@@ -26,7 +26,7 @@ public sealed class ReferencePredicateBuilder
     /// <summary>
     /// Initializes a new instance of the <see cref="ReferencePredicateBuilder"/> class.
     /// </summary>
-    /// <param name="ns">The namespace of the current context, used to resolve methods like <see cref="ReferencePredicateExtensions.CurrentNamespace"/>.</para>
+    /// <param name="ns">The namespace of the current context, used to resolve methods like <see cref="ReferencePredicateExtensions.CurrentNamespace"/>.</param>
     public ReferencePredicateBuilder( string? ns )
     {
         this.Namespace = ns;

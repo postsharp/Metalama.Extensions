@@ -46,7 +46,7 @@ public abstract class BaseUsageValidationAttribute : Attribute, IConditionallyIn
     public bool ValidateDerivedTypes { get; init; }
 
     /// <summary>
-    /// Gets or sets an optional description message appended to the warning message.
+    /// Gets an optional description message appended to the warning message.
     /// </summary>
     public string? Description { get; init; }
 
