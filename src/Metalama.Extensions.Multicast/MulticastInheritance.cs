@@ -11,7 +11,7 @@ namespace Metalama.Extensions.Multicast;
 /// inheritance mode by passing the proper parameter to the constructor.
 /// </summary>
 [Obsolete(
-    "Inheritance is Metalama is implemented at the aspect class level with the [Inherited] attribute, and the difference between Strict and " +
+    "Inheritance is Metalama is implemented at the aspect class level with the [Inheritable] attribute, and the difference between Strict and " +
     "Multicast is made by an argument passed to the MulticastImplementation constructor." )]
 [RunTimeOrCompileTime]
 public enum MulticastInheritance
