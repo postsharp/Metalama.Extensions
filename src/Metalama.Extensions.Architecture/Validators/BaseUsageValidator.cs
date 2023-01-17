@@ -20,15 +20,18 @@ internal abstract partial class BaseUsageValidator : ReferenceValidator
     private const string _dotStarStarPattern = "(\\." + _identifierChar + "+)*";
 
     private readonly ImmutableDictionary<string, NamespaceData> _namespaces;
-    private ImmutableArray<string> _namespacePatterns;
+    private readonly ImmutableArray<string> _namespacePatterns;
+    private readonly bool _always;
 
-    protected BaseUsageValidator( UsageRule rule, string? currentNamespace )
+    protected BaseUsageValidator( MatchingRule rule, string? currentNamespace )
     {
         var namespacesBuilder = ImmutableDictionary.CreateBuilder<string, NamespaceData>();
         var namespacePatternsBuilder = ImmutableArray.CreateBuilder<string>();
 
+        this._always = rule.MatchingAlways;
+
         // First process all namespaces.
-        foreach ( var ns in rule.AllowedNamespaces )
+        foreach ( var ns in rule.MatchingNamespaces )
         {
             if ( ns.Contains( "*" ) )
             {
@@ -42,18 +45,18 @@ internal abstract partial class BaseUsageValidator : ReferenceValidator
             }
         }
 
-        foreach ( var type in rule.AllowedNamespaceOfTypes )
+        foreach ( var type in rule.MatchingNamespaceOfTypes )
         {
             namespacesBuilder[type.Namespace ?? ""] = new NamespaceData();
         }
 
-        if ( rule.AllowCurrentNamespace && currentNamespace != null )
+        if ( rule.MatchingCurrentNamespace && currentNamespace != null )
         {
             namespacesBuilder[currentNamespace] = new NamespaceData();
         }
 
         // Process types.
-        foreach ( var type in rule.AllowedTypes )
+        foreach ( var type in rule.MatchingTypes )
         {
             var ns = type.Namespace ?? "";
 
@@ -136,6 +139,11 @@ internal abstract partial class BaseUsageValidator : ReferenceValidator
     /// </summary>
     private bool IsMatch( in ReferenceValidationContext context )
     {
+        if ( this._always )
+        {
+            return true;
+        }
+
         for ( var ns = context.ReferencingType.Namespace; ns != null; ns = ns.ParentNamespace )
         {
             // Check exactly named namespaces.
@@ -186,6 +194,7 @@ internal abstract partial class BaseUsageValidator : ReferenceValidator
     {
         // Do not validate inside the same type.
         var closestNamedType = context.ReferencedDeclaration.GetClosestNamedType();
+
         if ( closestNamedType != null && context.ReferencingDeclaration.IsContainedIn( closestNamedType ) )
         {
             return;
@@ -199,10 +208,10 @@ internal abstract partial class BaseUsageValidator : ReferenceValidator
                     (context.ReferencedDeclaration, context.ReferencedDeclaration.DeclarationKind, context.ReferencingType, this.GetType().Name) ) );
         }
     }
-    
+
     public abstract string ConstraintName { get; }
-    
-     protected abstract MatchBehavior OnMatch { get; }
+
+    protected abstract MatchBehavior OnMatch { get; }
 
     protected enum MatchBehavior
     {

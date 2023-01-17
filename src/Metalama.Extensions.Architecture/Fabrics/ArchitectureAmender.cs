@@ -3,9 +3,11 @@
 using JetBrains.Annotations;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
-using Metalama.Framework.Fabrics;
 using Metalama.Framework.Validation;
 using System;
+using System.Collections.Generic;
+
+#pragma warning disable SA1402 // File may only contain a single type
 
 namespace Metalama.Extensions.Architecture.Fabrics
 {
@@ -19,14 +21,35 @@ namespace Metalama.Extensions.Architecture.Fabrics
     {
         internal ArchitectureAmender() { }
 
-        /// <summary>
-        /// Gets the <see cref="IAspectReceiver{TDeclaration}"/> for the upstream <see cref="IAmender{T}"/>. This method should be used
-        /// only when you want to extend the architecture validation API.
-        /// </summary>
-        public abstract IAspectReceiver<INamedType> WithTypes( Func<INamedType, bool>? filter = null );
+        public abstract IAspectReceiver<INamedType> WithTypes();
 
-        public abstract IValidatorReceiver ValidatorReceiver { get; }
+        protected abstract IValidatorReceiver WithTargetCore();
+
+        public IValidatorReceiver WithTarget() => this.WithTargetCore();
 
         public abstract string? Namespace { get; }
+    }
+
+    [PublicAPI]
+    public class ArchitectureAmender<T> : ArchitectureAmender
+        where T : class, IDeclaration
+    {
+        private readonly IAspectReceiver<T> _aspectReceiver;
+        private readonly Func<T, IEnumerable<INamedType>> _getTypes;
+
+        public ArchitectureAmender( IAspectReceiver<T> aspectReceiver, Func<T, IEnumerable<INamedType>> getTypes, string? ns = null )
+        {
+            this._aspectReceiver = aspectReceiver;
+            this._getTypes = getTypes;
+            this.Namespace = ns;
+        }
+
+        public override IAspectReceiver<INamedType> WithTypes() => this._aspectReceiver.SelectMany( this._getTypes );
+
+        protected override IValidatorReceiver WithTargetCore() => this._aspectReceiver;
+
+        public new IAspectReceiver<T> WithTarget() => this._aspectReceiver;
+
+        public override string? Namespace { get; }
     }
 }

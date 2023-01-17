@@ -1,4 +1,4 @@
-// Warning LAMA0905 at line 30: `The 'ConstrainedClass.InternalProtectedMethod()' method cannot be used from this context because of the 'InternalsCanOnlyBeUsedFromValidator' constraint.`
-// Warning LAMA0905 at line 31: `The 'ConstrainedClass.InternalMethod()' method cannot be used from this context because of the 'InternalsCanOnlyBeUsedFromValidator' constraint.`
-// Warning LAMA0905 at line 44: `The 'ConstrainedClass.InternalMethod()' method cannot be used from this context because of the 'InternalsCanOnlyBeUsedFromValidator' constraint.`
-// Warning LAMA0905 at line 45: `The 'ConstrainedClass.InternalProtectedMethod()' method cannot be used from this context because of the 'InternalsCanOnlyBeUsedFromValidator' constraint.`
+// Warning LAMA0905 on `ConstrainedClass.InternalMethod`: `The 'ConstrainedClass.InternalMethod()' method cannot be used by the 'FordibbenClassWithForbiddenCalls' type because of the 'InternalsCanOnlyBeUsedFromValidator' constraint.`
+// Warning LAMA0905 on `ConstrainedClass.InternalProtectedMethod`: `The 'ConstrainedClass.InternalProtectedMethod()' method cannot be used by the 'FordibbenClassWithForbiddenCalls' type because of the 'InternalsCanOnlyBeUsedFromValidator' constraint.`
+// Warning LAMA0905 on `InternalMethod`: `The 'ConstrainedClass.InternalMethod()' method cannot be used by the 'DerivedClassWithForbiddenCalls' type because of the 'InternalsCanOnlyBeUsedFromValidator' constraint.`
+// Warning LAMA0905 on `PrivateProtectedMethod`: `The 'ConstrainedClass.PrivateProtectedMethod()' method cannot be used by the 'DerivedClassWithForbiddenCalls' type because of the 'InternalsCanOnlyBeUsedFromValidator' constraint.`

@@ -45,7 +45,8 @@ internal static class ArchitectureDiagnosticDefinitions
         "At least one property of the '{0}' custom attribute must be set.",
         "At least one property of the attribute must be set." );
 
-    public static readonly DiagnosticDefinition<(IDeclaration ValidatedDeclaration, DeclarationKind DeclarationKind, INamedType ReferencingType, string ConstraintName)>
+    public static readonly DiagnosticDefinition<(IDeclaration ValidatedDeclaration, DeclarationKind DeclarationKind, INamedType ReferencingType, string
+            ConstraintName)>
         OnlyAccessibleFrom = new(
             "LAMA0905",
             Severity.Warning,

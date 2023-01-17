@@ -26,8 +26,8 @@ public class CannotBeUsedFromAttribute : BaseUsageValidationAttribute, IAspect<I
             return;
         }
 
-        var validator = new CannotBeUsedFromValidator( new UsageRule( this ), currentNamespace.FullName );
+        var validator = new CannotBeUsedFromValidator( new MatchingRule( this ), currentNamespace.FullName );
 
-        builder.With( x => x ).ValidateReferences( validator );
+        builder.Outbound.ValidateReferences( validator );
     }
 }

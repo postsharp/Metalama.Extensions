@@ -29,7 +29,7 @@ namespace Metalama.Extensions.Architecture.Aspects
 
         public void BuildAspect( IAspectBuilder<IDeclaration> builder )
         {
-            builder.With( m => m ).ValidateReferences( this.ValidateReference, ReferenceKinds.All );
+            builder.Outbound.ValidateReferences( this.ValidateReference, ReferenceKinds.All );
         }
 
         private void ValidateReference( in ReferenceValidationContext context )

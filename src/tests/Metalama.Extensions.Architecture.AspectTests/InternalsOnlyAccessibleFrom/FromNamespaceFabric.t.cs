@@ -1,2 +1,2 @@
-// Warning LAMA0905 at line 36: `The 'InternalClass' type cannot be used from this context because of the 'CanOnlyBeUsedFromAttribute' constraint.`
-// Warning LAMA0905 at line 37: `The 'PublicClass.InternalMethod()' method cannot be used from this context because of the 'InternalsCanOnlyBeUsedFromAttribute' constraint.`
+// Warning LAMA0905 on `InternalClass`: `The 'InternalClass' type cannot be used by the 'ForbiddenClassWithForbiddenCalls' type because of the 'CanOnlyBeUsedFromValidator' constraint.`
+// Warning LAMA0905 on `PublicClass.InternalMethod`: `The 'PublicClass.InternalMethod()' method cannot be used by the 'ForbiddenClassWithForbiddenCalls' type because of the 'InternalsCanOnlyBeUsedFromValidator' constraint.`

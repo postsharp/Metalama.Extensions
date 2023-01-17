@@ -28,8 +28,8 @@ public class CanOnlyBeUsedFromAttribute : BaseUsageValidationAttribute, IAspect<
             return;
         }
 
-        var validator = new CanOnlyBeUsedFromValidator( new UsageRule( this ), currentNamespace.FullName );
+        var validator = new CanOnlyBeUsedFromValidator( new MatchingRule( this ), currentNamespace.FullName );
 
-        builder.With( x => x ).ValidateReferences( validator );
+        builder.Outbound.ValidateReferences( validator );
     }
 }

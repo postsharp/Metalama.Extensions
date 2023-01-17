@@ -2,17 +2,18 @@
 
 using Metalama.Extensions.Architecture.Aspects;
 using Metalama.Extensions.Architecture.Fabrics;
-using Metalama.Framework.Validation;
+using Metalama.Framework.Aspects;
 
 namespace Metalama.Extensions.Architecture.Validators;
 
+[CompileTime]
 internal class CanOnlyBeUsedFromValidator : BaseUsageValidator
 {
-    public CanOnlyBeUsedFromValidator( UsageRule rule, string? currentNamespace ) : base(
+    public CanOnlyBeUsedFromValidator( MatchingRule rule, string? currentNamespace ) : base(
         rule,
         currentNamespace ) { }
 
     public override string ConstraintName => "CanOnlyBeUsedFrom";
-    
+
     protected override MatchBehavior OnMatch => MatchBehavior.Allow;
 }

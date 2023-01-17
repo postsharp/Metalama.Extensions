@@ -27,10 +27,10 @@ public class InternalsCanOnlyBeUsedFromAttribute : BaseUsageValidationAttribute,
             return;
         }
 
-        var validator = new InternalsCanOnlyBeUsedFromValidator( new UsageRule( this ), targetNamespace.FullName );
+        var validator = new InternalsCanOnlyBeUsedFromValidator( new MatchingRule( this ), targetNamespace.FullName );
 
         // Register a validator for all internal members.
-        builder.With(
+        builder.Outbound.SelectMany(
                 t => t.Members().Where( m => m.Accessibility is Accessibility.Internal or Accessibility.PrivateProtected or Accessibility.ProtectedInternal ) )
             .ValidateReferences( validator );
     }

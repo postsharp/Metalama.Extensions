@@ -9,7 +9,6 @@ using System.Text.RegularExpressions;
 
 namespace Metalama.Extensions.Architecture.Aspects;
 
-
 /// <summary>
 /// Aspect that, when applied to a type, reports a warning for any derived type that does not respect a naming convention
 /// given as regular expression.
@@ -24,7 +23,6 @@ public class DerivedTypesMustRespectRegexNamingConventionAttribute : TypeAspect
 
     public string Pattern { get; }
 
-   
     public override void BuildAspect( IAspectBuilder<INamedType> builder )
     {
         // Validate the regex.
@@ -40,6 +38,6 @@ public class DerivedTypesMustRespectRegexNamingConventionAttribute : TypeAspect
             return;
         }
 
-        builder.With( t => t ).ValidateReferences( NamingConventionValidator.CreateRegexValidator( this.Pattern ) );
+        builder.Outbound.ValidateReferences( NamingConventionValidator.CreateRegexValidator( this.Pattern ) );
     }
 }

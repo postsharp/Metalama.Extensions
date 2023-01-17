@@ -12,7 +12,7 @@ namespace Metalama.Extensions.Architecture.AspectTests.InternalsOnlyAccessibleFr
         {
             public override void AmendNamespace( INamespaceAmender amender )
             {
-                amender.Verify().InternalsCanOnlyBeUsedFrom( UsageRule.OwnNamespace );
+                amender.Verify().InternalsCanOnlyBeUsedFrom( MatchingRule.OwnNamespace );
             }
         }
 
@@ -28,16 +28,22 @@ namespace Metalama.Extensions.Architecture.AspectTests.InternalsOnlyAccessibleFr
 
     namespace UnfriendNs
     {
-        internal class SomeClass
+        internal class ForbiddenClassWithAllowedCalls
+        {
+            public static void SomeMethod()
+            {
+                // Allowed because public.
+                PublicClass.PublicMethod();
+            }
+        }
+
+        internal class ForbiddenClassWithForbiddenCalls
         {
             public static void SomeMethod()
             {
                 // Forbidden because internal.
                 _ = typeof(InternalClass);
                 PublicClass.InternalMethod();
-
-                // Allowed because public.
-                PublicClass.PublicMethod();
             }
         }
     }

@@ -1,1 +1,1 @@
-// Warning LAMA0901 on `TheInterface`.
+// Warning LAMA0901 on `IInterface`.

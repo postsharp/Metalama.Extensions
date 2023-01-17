@@ -6,7 +6,6 @@ using Metalama.Framework.Code;
 using Metalama.Framework.Serialization;
 using Metalama.Framework.Validation;
 using System;
-using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 namespace Metalama.Extensions.Architecture.Validators;
@@ -23,7 +22,6 @@ internal class NamingConventionValidator : ReferenceValidator
 
     public static NamingConventionValidator CreateRegexValidator( string pattern ) => new NamingConventionValidator( pattern );
     public static NamingConventionValidator CreateStarPatternValidator( string pattern ) => new NamingConventionValidator( StarPatternToRegex( pattern ) );
-    
 
     // This field exists for performance reasons. It is not serialized, so it is
     // lazily recreated every time it is needed.
