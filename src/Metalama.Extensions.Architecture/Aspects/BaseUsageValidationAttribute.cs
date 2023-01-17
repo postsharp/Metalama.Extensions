@@ -40,8 +40,14 @@ public abstract class BaseUsageValidationAttribute : Attribute, IConditionallyIn
     /// </summary>
     public bool CurrentNamespace { get; init; }
 
+    /// <summary>
+    /// Gets a value indicating whether the types that are derived from the target type should also be validated, e.g. whether the aspect is inheritable.
+    /// </summary>
     public bool ValidateDerivedTypes { get; init; }
 
+    /// <summary>
+    /// Gets or sets an optional description message appended to the warning message.
+    /// </summary>
     public string? Description { get; init; }
 
     /// <summary>
@@ -68,6 +74,10 @@ public abstract class BaseUsageValidationAttribute : Attribute, IConditionallyIn
 
     bool IConditionallyInheritableAspect.IsInheritable => this.ValidateDerivedTypes;
 
+    /// <summary>
+    /// Creates a <see cref="ReferencePredicate"/> based on the current attribute.
+    /// </summary>
+    /// <param name="currentNamespace">The namespace in which the attribute is used.</param>
     protected ReferencePredicate CreatePredicate( INamespace currentNamespace )
     {
         var predicates = ImmutableArray.CreateBuilder<ReferencePredicate>();

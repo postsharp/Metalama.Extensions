@@ -6,6 +6,7 @@ using Metalama.Extensions.Architecture.Predicates;
 using Metalama.Extensions.Architecture.Validators;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
+using Metalama.Framework.Fabrics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -74,6 +75,10 @@ namespace Metalama.Extensions.Architecture.Fabrics
                 .ValidateReferences( new ReferencePredicateValidator( nonInternalPredicate, description ) );
         }
 
+        /// <summary>
+        /// Reports a warning when any of the internal APIs of the current scope in used from a different context different than the one allowed,
+        /// except if this concept has access to the type using inheritance rules.
+        /// </summary>
         public static void InternalsCannotOnlyBeUsedFrom(
             this ArchitectureVerifier verifier,
             Func<ReferencePredicateBuilder, ReferencePredicate> predicate,
@@ -114,12 +119,30 @@ namespace Metalama.Extensions.Architecture.Fabrics
             verifier.WithTarget().ValidateReferences( NamingConventionValidator.CreateRegexValidator( pattern ) );
         }
 
+        /// <summary>
+        /// Represents a fluent <see cref="ArchitectureVerifier{T}"/> that allows to validate code using a given assembly referenced by the current compilation.
+        /// This method can only be used in a <see cref="ProjectFabric"/>.
+        /// </summary>
+        /// <param name="verifier">The <see cref="ArchitectureVerifier{T}"/> returned by <see cref="AmenderExtensions.Verify(Metalama.Framework.Fabrics.IProjectAmender)"/>.</param>
+        /// <param name="assemblyName">The name of the assembly, without version and public key.</param>
         public static ArchitectureVerifier<IAssembly> WithReferencedAssembly( this ArchitectureVerifier<ICompilation> verifier, string assemblyName )
             => new( verifier.WithTarget().SelectMany( c => c.ReferencedAssemblies.OfName( assemblyName ) ), a => a.Types );
 
+        /// <summary>
+        /// Represents a fluent <see cref="ArchitectureVerifier{T}"/> that allows to validate code referencing given types.
+        /// This method can only be used in a <see cref="ProjectFabric"/>.
+        /// </summary>
+        /// <param name="verifier">The <see cref="ArchitectureVerifier{T}"/> returned by <see cref="AmenderExtensions.Verify(Metalama.Framework.Fabrics.IProjectAmender)"/>.</param>
+        /// <param name="types">A list of types.</param>
         public static ArchitectureVerifier<INamedType> WithTypes( this ArchitectureVerifier<ICompilation> verifier, IEnumerable<Type> types )
             => new( verifier.WithTarget().SelectMany( _ => types.Select( t => (INamedType) TypeFactory.GetType( t ) ) ), t => new[] { t } );
 
+        /// <summary>
+        /// Represents a fluent <see cref="ArchitectureVerifier{T}"/> that allows to validate code referencing given types.
+        /// This method can only be used in a <see cref="ProjectFabric"/>.
+        /// </summary>
+        /// <param name="verifier">The <see cref="ArchitectureVerifier{T}"/> returned by <see cref="AmenderExtensions.Verify(Metalama.Framework.Fabrics.IProjectAmender)"/>.</param>
+        /// <param name="types">A list of types.</param>
         public static ArchitectureVerifier<INamedType> WithTypes( this ArchitectureVerifier<ICompilation> verifier, params Type[] types )
             => verifier.WithTypes( (IEnumerable<Type>) types );
     }
