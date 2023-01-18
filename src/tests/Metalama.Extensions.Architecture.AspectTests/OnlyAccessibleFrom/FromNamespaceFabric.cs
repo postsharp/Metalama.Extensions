@@ -2,7 +2,9 @@
 
 using Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.FromNamespaceFabric.ChildNs.Allowed;
 using Metalama.Extensions.Architecture.Fabrics;
+using Metalama.Extensions.Architecture.Predicates;
 using Metalama.Framework.Fabrics;
+using System.Diagnostics;
 
 namespace Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.FromNamespaceFabric
 {
@@ -10,7 +12,9 @@ namespace Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.FromNa
     {
         public override void AmendNamespace( INamespaceAmender amender )
         {
-            amender.Verify().CanOnlyBeUsedFrom( UsageRule.Namespace( typeof(AllowedClass).Namespace! ) );
+            Debugger.Break();
+
+            amender.Verify().CanOnlyBeUsedFrom( r => r.Namespace( typeof(AllowedClass).Namespace! ) );
         }
     }
 

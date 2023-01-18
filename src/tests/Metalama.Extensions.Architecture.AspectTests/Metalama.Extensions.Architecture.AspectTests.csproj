@@ -9,6 +9,7 @@
     <Compile Remove="NamingConvention\RegexNamingConvention - Copy.t.cs" />
     <Compile Remove="NamingConvention\StarNamingConvention - Copy.t.cs" />
     <Compile Remove="NotAccessibleFrom\GivenType - Copy.t.cs" />
+    <Compile Remove="OnlyAccessibleFrom\ExternalAssembly - Copy.t.cs" />
     <Compile Remove="OnlyAccessibleFrom\FromProjectFabric - Copy.t.cs" />
     <Compile Remove="OnlyAccessibleFrom\GivenType - Copy.t.cs" />
     <Compile Remove="OnlyAccessibleFrom\NamedNamespace - Copy.t.cs" />
@@ -32,6 +33,10 @@
     <None Include="NotAccessibleFrom\NamespacePattern.t.cs">
       <SubType>Code</SubType>
       <DependentUpon>NamespacePattern.cs</DependentUpon>
+    </None>
+    <None Include="OnlyAccessibleFrom\ExternalType.t.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>ExternalType.cs</DependentUpon>
     </None>
     <None Include="OnlyAccessibleFrom\FromNamespaceFabric.t.cs">
       <SubType>Code</SubType>

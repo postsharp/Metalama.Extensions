@@ -20,7 +20,7 @@ internal class LazyServiceLocatorDependencyInjectionStrategy : DefaultDependency
     {
         var propertyArgs = new PropertyArgs();
 
-        var aspectFieldOrProperty = this.Context.FieldOrProperty!;
+        var aspectFieldOrProperty = this.Context.FieldOrProperty;
 
         // Introduce the visible property, something like `IMyService MyService => this._myServiceCache ??= (T) this._serviceProvider.GetService((typeof(T))`.
         var introducePropertyResult = builder.Advice.WithTemplateProvider( this )
@@ -109,7 +109,7 @@ internal class LazyServiceLocatorDependencyInjectionStrategy : DefaultDependency
             if ( constructor.InitializerKind != ConstructorInitializerKind.This )
             {
                 builder.Advice.WithTemplateProvider( this )
-                    .AddInitializer( constructor, nameof(Initializer), args: new { serviceProviderField = serviceProviderField } );
+                    .AddInitializer( constructor, nameof(Initializer), args: new { serviceProviderField } );
             }
         }
     }

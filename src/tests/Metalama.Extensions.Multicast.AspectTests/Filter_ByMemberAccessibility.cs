@@ -14,7 +14,6 @@ using Metalama.Extensions.Multicast.AspectTests;
     AttributeTargetMemberAttributes = MulticastAttributes.Public )]
 
 // <target>
-
 namespace Metalama.Extensions.Multicast.AspectTests.Filter_ByMemberAccessibility
 {
     public class PublicClass

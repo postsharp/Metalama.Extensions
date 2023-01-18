@@ -1,9 +1,10 @@
 // Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
+using Metalama.Extensions.Architecture.Predicates;
+using Metalama.Extensions.Architecture.Validators;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 using Metalama.Framework.Eligibility;
-using Metalama.Framework.Validation;
 
 namespace Metalama.Extensions.Architecture.Aspects;
 
@@ -16,15 +17,14 @@ public class CannotBeUsedFromAttribute : BaseUsageValidationAttribute, IAspect<I
 {
     public void BuildEligibility( IEligibilityBuilder<IMemberOrNamedType> builder ) { }
 
-    private protected override bool IsMatch( in ReferenceValidationContext context ) => !base.IsMatch( in context );
-
     public void BuildAspect( IAspectBuilder<IMemberOrNamedType> builder )
     {
-        if ( !this.ValidateAndProcessProperties( builder, builder.Target.GetClosestNamedType()!.Namespace ) )
+        if ( !this.ValidateAndProcessProperties( builder ) )
         {
             return;
         }
 
-        builder.With( x => x ).ValidateReferences( this.ValidateReference, ReferenceKinds.All );
+        builder.Outbound.ValidateReferences(
+            new ReferencePredicateValidator( this.CreatePredicate( builder.Target.GetClosestNamedType()!.Namespace ).Not(), this.Description ) );
     }
 }

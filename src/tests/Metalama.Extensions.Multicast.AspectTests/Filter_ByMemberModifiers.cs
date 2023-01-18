@@ -65,6 +65,6 @@ namespace Metalama.Extensions.Multicast.AspectTests.Filter_ByMemberModifiers
     public class ByLiteral
     {
         public const int ConstField = 5;
-        public int NonoConstField;
+        public int NonConstField;
     }
 }

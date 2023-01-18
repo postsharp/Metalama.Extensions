@@ -1,11 +1,12 @@
 // Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
 using JetBrains.Annotations;
+using Metalama.Extensions.Architecture.Predicates;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
-using Metalama.Framework.Validation;
 using System;
-using System.Text.RegularExpressions;
+using System.Collections.Immutable;
+using ReferencePredicate = Metalama.Extensions.Architecture.Predicates.ReferencePredicate;
 
 namespace Metalama.Extensions.Architecture.Aspects;
 
@@ -14,7 +15,7 @@ namespace Metalama.Extensions.Architecture.Aspects;
 /// </summary>
 [CompileTime]
 [PublicAPI]
-public abstract class BaseUsageValidationAttribute : Attribute, IAspect
+public abstract class BaseUsageValidationAttribute : Attribute, IConditionallyInheritableAspect
 {
     /// <summary>
     /// Gets the namespaces that match the rule by identifying the namespaces by their full name. Any namespace string can contain one of the following patterns: <c>*</c>
@@ -40,13 +41,23 @@ public abstract class BaseUsageValidationAttribute : Attribute, IAspect
     public bool CurrentNamespace { get; init; }
 
     /// <summary>
+    /// Gets a value indicating whether the types that are derived from the target type should also be validated, e.g. whether the aspect is inheritable.
+    /// </summary>
+    public bool ValidateDerivedTypes { get; init; }
+
+    /// <summary>
+    /// Gets an optional description message appended to the warning message.
+    /// </summary>
+    public string? Description { get; init; }
+
+    /// <summary>
     /// Validates the current custom attribute and sets the aspect state.
     /// </summary>
-    private protected bool ValidateAndProcessProperties( IAspectBuilder<IDeclaration> builder, INamespace ns )
+    private protected bool ValidateAndProcessProperties( IAspectBuilder<IDeclaration> builder )
     {
         // Report an error if the custom attribute was instantiated but no property was set.
-        var hasProperty = (this.Namespaces is { Length: > 0 }) || (this.NamespaceOfTypes is { Length: > 0 }) ||
-                          (this.Types is { Length: > 0 }) || this.CurrentNamespace;
+        var hasProperty = this.Namespaces is { Length: > 0 } || this.NamespaceOfTypes is { Length: > 0 } ||
+                          this.Types is { Length: > 0 } || this.CurrentNamespace;
 
         if ( !hasProperty )
         {
@@ -58,69 +69,61 @@ public abstract class BaseUsageValidationAttribute : Attribute, IAspect
             return false;
         }
 
-        // Process the attributes, optimize the data and store it in a state object that will be passed to the validation method. 
-        builder.AspectState = new SerializableAccessibilityRule( this, ns, builder.Diagnostics );
-
         return true;
     }
 
+    bool IConditionallyInheritableAspect.IsInheritable => this.ValidateDerivedTypes;
+
     /// <summary>
-    /// Determines whether the current context matches the rule of the current aspect. When is method returns <c>false</c>,
-    /// the <see cref="ValidateReference"/> method reports an error.
+    /// Creates a <see cref="ReferencePredicate"/> based on the current attribute.
     /// </summary>
-    private protected virtual bool IsMatch( in ReferenceValidationContext context )
+    /// <param name="currentNamespace">The namespace in which the attribute is used.</param>
+    protected ReferencePredicate CreatePredicate( INamespace currentNamespace )
     {
-        // Validate the type and/or namespace.
-        var data = (SerializableAccessibilityRule) context.AspectState!;
+        var predicates = ImmutableArray.CreateBuilder<ReferencePredicate>();
 
-        for ( var ns = context.ReferencingType.Namespace; ns != null; ns = ns.ParentNamespace )
+        this.BuildPredicate( currentNamespace, predicates );
+
+        if ( predicates.Count > 0 )
         {
-            // Check exactly named namespaces.
-            if ( data.Namespaces.TryGetValue( ns.FullName, out var namespaceData ) )
-            {
-                if ( namespaceData.AnyType )
-                {
-                    return true;
-                }
-                else if ( namespaceData.SpecificTypes?.Contains( context.ReferencingType.Name ) == true )
-                {
-                    return true;
-                }
-            }
-
-            // Check namespace patterns.
-            if ( !data.NamespacePatterns.IsDefaultOrEmpty )
-            {
-                foreach ( var pattern in data.NamespacePatterns )
-                {
-                    if ( Regex.IsMatch( ns.FullName, pattern ) )
-                    {
-                        return true;
-                    }
-                }
-            }
+            return new AnyPredicate( predicates.ToImmutable() );
         }
-
-        return false;
+        else
+        {
+            return new AlwaysPredicate();
+        }
     }
 
-    /// <summary>
-    /// Validates a reference and reports a warning if necessary.
-    /// </summary>
-    protected virtual void ValidateReference( in ReferenceValidationContext context )
+    private void BuildPredicate( INamespace currentNamespace, ImmutableArray<ReferencePredicate>.Builder predicates )
     {
-        // Do not validate inside the same type.
-        if ( context.ReferencingDeclaration.IsContainedIn( context.ReferencedDeclaration.GetClosestNamedType()! ) )
+        if ( this.CurrentNamespace )
         {
-            return;
+            predicates.Add( new ReferencingNamespacePredicate( currentNamespace.FullName ) );
         }
 
-        if ( !this.IsMatch( context ) )
+        foreach ( var ns in this.Namespaces )
         {
-            // Report the error message.
-            context.Diagnostics.Report(
-                ArchitectureDiagnosticDefinitions.OnlyAccessibleFrom.WithArguments(
-                    (context.ReferencedDeclaration, context.ReferencedDeclaration.DeclarationKind, this.GetType().Name) ) );
+            predicates.Add( new ReferencingNamespacePredicate( ns ) );
+        }
+
+        foreach ( var type in this.NamespaceOfTypes )
+        {
+            if ( type.Namespace == null )
+            {
+                throw new InvalidOperationException( $"The type '{type.FullName}' has no namespace." );
+            }
+
+            predicates.Add( new ReferencingNamespacePredicate( type.Namespace ) );
+        }
+
+        foreach ( var type in this.Types )
+        {
+            if ( type.Namespace == null )
+            {
+                throw new InvalidOperationException( $"The type '{type.FullName}' has no namespace." );
+            }
+
+            predicates.Add( new ReferencingTypePredicate( type.Namespace, type.Name ) );
         }
     }
 }

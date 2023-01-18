@@ -9,7 +9,7 @@ internal static class ObsoleteMessages
 {
     public const string ExternalAssemblies = "Multicasting to external assemblies is not supported in Metalama.";
     public const string? AttributeReplace = "AttributeReplace is true by default and cannot be set to false.";
-    public const string? Inheritance = "Inheritance is decided at the class level using the [Inherited] attribute.";
+    public const string? Inheritance = "Inheritance is decided at the class level using the [Inheritable] attribute.";
 
     // We cannot have real errors because the template compiler will fail, but we could fix that in the future.
     public const bool Error = false;

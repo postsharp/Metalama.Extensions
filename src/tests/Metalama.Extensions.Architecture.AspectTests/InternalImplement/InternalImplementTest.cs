@@ -6,7 +6,7 @@
 
 namespace Metalama.Extensions.Architecture.AspectTests.InternalImplement.InternalImplementTest
 {
-    internal class C : TheInterface
+    internal class C : IInterface
     {
         public void Method() { }
     }

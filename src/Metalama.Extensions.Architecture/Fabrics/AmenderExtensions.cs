@@ -1,7 +1,9 @@
 ﻿// Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
 using Metalama.Framework.Aspects;
+using Metalama.Framework.Code;
 using Metalama.Framework.Fabrics;
+using System.Linq;
 
 namespace Metalama.Extensions.Architecture.Fabrics
 {
@@ -12,11 +14,36 @@ namespace Metalama.Extensions.Architecture.Fabrics
     [CompileTime]
     public static class AmenderExtensions
     {
-        public static ArchitectureAmender Verify( this IProjectAmender amender ) => new ProjectArchitectureAmender( amender );
+        /// <summary>
+        /// Gets the architecture validation fuent API for a <see cref="ProjectFabric"/>.
+        /// </summary>
+        public static ArchitectureVerifier<ICompilation> Verify( this IProjectAmender amender ) => new( amender.Outbound, c => c.Types );
 
-        public static ArchitectureAmender Verify( this INamespaceAmender amender, bool includeChildNamespaces = true )
-            => new NamespaceArchitectureAmender( amender, includeChildNamespaces );
+        /// <summary>
+        /// Gets the architecture validation fuent API for a <see cref="NamespaceFabric"/>.
+        /// </summary>
+        public static ArchitectureVerifier<INamespace> Verify( this INamespaceAmender amender, bool includeChildNamespaces = true )
+        {
+            if ( includeChildNamespaces )
+            {
+                return new ArchitectureVerifier<INamespace>(
+                    amender.Outbound.SelectMany( ns => ns.DescendantsAndSelf() ),
+                    ns => ns.DescendantsAndSelf().SelectMany( x => x.Types ),
+                    amender.Namespace );
+            }
+            else
+            {
+                return new ArchitectureVerifier<INamespace>(
+                    amender.Outbound,
+                    ns => ns.Types,
+                    amender.Namespace );
+            }
+        }
 
-        public static ArchitectureAmender Verify( this ITypeAmender amender ) => new TypeArchitectureAmender( amender );
+        /// <summary>
+        /// Gets the architecture validation fuent API for a <see cref="TypeFabric"/>.
+        /// </summary>
+        public static ArchitectureVerifier<INamedType> Verify( this ITypeAmender amender )
+            => new( amender.Outbound, type => new[] { type }, amender.Type.Namespace.FullName );
     }
 }

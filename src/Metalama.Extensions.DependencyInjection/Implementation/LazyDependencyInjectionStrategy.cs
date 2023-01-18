@@ -54,7 +54,7 @@ public partial class LazyDependencyInjectionStrategy : DefaultDependencyInjectio
 
         var introduceFuncFieldResult = builder.Advice.IntroduceField(
             builder.Target,
-            property!.Name + "Func",
+            property.Name + "Func",
             dependencyFieldType );
 
         if ( introduceFuncFieldResult.Outcome == AdviceOutcome.Error )

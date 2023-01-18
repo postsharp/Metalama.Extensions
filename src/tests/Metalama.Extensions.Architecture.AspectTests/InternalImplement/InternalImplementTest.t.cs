@@ -1,1 +1,1 @@
-// Warning LAMA0901 at line 6.
+// Warning LAMA0901 on `IInterface`.

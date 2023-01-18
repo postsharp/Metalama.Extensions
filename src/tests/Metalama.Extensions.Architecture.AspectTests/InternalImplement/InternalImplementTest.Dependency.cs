@@ -5,7 +5,7 @@ using Metalama.Extensions.Architecture.Aspects;
 namespace Metalama.Extensions.Architecture.AspectTests.InternalImplement.InternalImplementTest
 {
     [InternalOnlyImplement]
-    public interface TheInterface
+    public interface IInterface
     {
         void Method();
     }

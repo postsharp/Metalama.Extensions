@@ -7,7 +7,7 @@ namespace Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.Namesp
     [CanOnlyBeUsedFrom( Namespaces = new[] { "Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.NamespacePattern_SimpleStar.Allowed*" } )]
     internal class ConstrainedClass { }
 
-    internal class ForbiddenClass : ConstrainedClass { }
+    internal class ForbiddenClass1 : ConstrainedClass { }
 
     namespace Allowed
     {
@@ -21,11 +21,11 @@ namespace Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.Namesp
 
     namespace ForbiddenNs
     {
-        internal class ForbiddenClass : ConstrainedClass { }
+        internal class ForbiddenClass2 : ConstrainedClass { }
 
         namespace Child
         {
-            internal class ForbiddenClass : ConstrainedClass { }
+            internal class ForbiddenClass3 : ConstrainedClass { }
         }
     }
 }

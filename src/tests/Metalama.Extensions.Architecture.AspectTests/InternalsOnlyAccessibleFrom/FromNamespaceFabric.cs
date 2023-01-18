@@ -2,6 +2,7 @@
 
 using Metalama.Extensions.Architecture.AspectTests.InternalsOnlyAccessibleFrom.FromNamespaceFabric.ConstrainedNs;
 using Metalama.Extensions.Architecture.Fabrics;
+using Metalama.Extensions.Architecture.Predicates;
 using Metalama.Framework.Fabrics;
 
 namespace Metalama.Extensions.Architecture.AspectTests.InternalsOnlyAccessibleFrom.FromNamespaceFabric
@@ -12,7 +13,7 @@ namespace Metalama.Extensions.Architecture.AspectTests.InternalsOnlyAccessibleFr
         {
             public override void AmendNamespace( INamespaceAmender amender )
             {
-                amender.Verify().InternalsCanOnlyBeUsedFrom( UsageRule.OwnNamespace );
+                amender.Verify().InternalsCanOnlyBeUsedFrom( r => r.CurrentNamespace() );
             }
         }
 
@@ -28,16 +29,22 @@ namespace Metalama.Extensions.Architecture.AspectTests.InternalsOnlyAccessibleFr
 
     namespace UnfriendNs
     {
-        internal class SomeClass
+        internal class ForbiddenClassWithAllowedCalls
+        {
+            public static void SomeMethod()
+            {
+                // Allowed because public.
+                PublicClass.PublicMethod();
+            }
+        }
+
+        internal class ForbiddenClassWithForbiddenCalls
         {
             public static void SomeMethod()
             {
                 // Forbidden because internal.
                 _ = typeof(InternalClass);
                 PublicClass.InternalMethod();
-
-                // Allowed because public.
-                PublicClass.PublicMethod();
             }
         }
     }

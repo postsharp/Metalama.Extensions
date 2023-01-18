@@ -1,10 +1,11 @@
 ﻿// Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
 using JetBrains.Annotations;
+using Metalama.Extensions.Architecture.Predicates;
+using Metalama.Extensions.Architecture.Validators;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 using Metalama.Framework.Eligibility;
-using Metalama.Framework.Validation;
 using System.Linq;
 
 namespace Metalama.Extensions.Architecture.Aspects;
@@ -15,34 +16,22 @@ namespace Metalama.Extensions.Architecture.Aspects;
 /// <see cref="BaseUsageValidationAttribute.NamespaceOfTypes"/> or <see cref="BaseUsageValidationAttribute.CurrentNamespace"/> properties.
 /// </summary>
 [PublicAPI]
-public class InternalsCannotBeUsedFromFromAttribute : BaseUsageValidationAttribute, IAspect<INamedType>
+public class InternalsCannotBeUsedFromAttribute : BaseUsageValidationAttribute, IAspect<INamedType>
 {
     public void BuildAspect( IAspectBuilder<INamedType> builder )
     {
-        if ( !this.ValidateAndProcessProperties( builder, builder.Target.Namespace ) )
+        if ( !this.ValidateAndProcessProperties( builder ) )
         {
             return;
         }
+
+        var validator = new ReferencePredicateValidator( this.CreatePredicate( builder.Target.Namespace ).Not(), this.Description );
 
         // Register a validator for all internal members.
-        builder.With(
+        builder.Outbound.SelectMany(
                 t => t.Members().Where( m => m.Accessibility is Accessibility.Internal or Accessibility.PrivateProtected or Accessibility.ProtectedInternal ) )
-            .ValidateReferences( this.ValidateReference, ReferenceKinds.All );
+            .ValidateReferences( validator );
     }
-
-    protected override void ValidateReference( in ReferenceValidationContext context )
-    {
-        // Do not validate if we have visibility through inheritance.
-        // TODO: take nested types into account.
-        if ( context.ReferencingType.Is( context.ReferencedDeclaration.GetClosestNamedType()! ) )
-        {
-            return;
-        }
-
-        base.ValidateReference( context );
-    }
-
-    private protected override bool IsMatch( in ReferenceValidationContext context ) => !base.IsMatch( in context );
 
     public void BuildEligibility( IEligibilityBuilder<INamedType> builder ) => builder.MustHaveAccessibility( Accessibility.Public );
 }

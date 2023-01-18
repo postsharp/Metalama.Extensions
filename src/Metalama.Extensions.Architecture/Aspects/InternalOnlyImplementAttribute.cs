@@ -18,7 +18,7 @@ namespace Metalama.Extensions.Architecture.Aspects
     {
         public override void BuildAspect( IAspectBuilder<INamedType> builder )
         {
-            builder.With( t => t ).ValidateReferences( this.ValidateReference, ReferenceKinds.BaseType );
+            builder.Outbound.ValidateReferences( this.ValidateReference, ReferenceKinds.BaseType );
         }
 
         private void ValidateReference( in ReferenceValidationContext context )
