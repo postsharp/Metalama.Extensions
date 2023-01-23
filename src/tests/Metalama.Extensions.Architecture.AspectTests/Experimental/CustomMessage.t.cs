@@ -1,0 +1,1 @@
+// Warning LAMA0900 on `C`: `The 'C' type is experimental. This is the custom message.`

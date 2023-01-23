@@ -1,0 +1,89 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="InternalsOnlyAccessibleFrom\FromNamespaceFabric.t.cs" />
+    <Compile Remove="NamingConvention\RegexNamingConvention - Copy.t.cs" />
+    <Compile Remove="NamingConvention\StarNamingConvention - Copy.t.cs" />
+    <Compile Remove="NotAccessibleFrom\GivenType - Copy.t.cs" />
+    <Compile Remove="OnlyAccessibleFrom\ExternalAssembly - Copy.t.cs" />
+    <Compile Remove="OnlyAccessibleFrom\FromProjectFabric - Copy.t.cs" />
+    <Compile Remove="OnlyAccessibleFrom\GivenType - Copy.t.cs" />
+    <Compile Remove="OnlyAccessibleFrom\NamedNamespace - Copy.t.cs" />
+    <Compile Remove="OnlyAccessibleFrom\NamespacePattern_SimpleStar - Copy.t.cs" />
+    <Compile Remove="OnlyAccessibleFrom\TypeNamespace - Copy.t.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="InternalsOnlyAccessibleFrom\FromNamespaceFabric.t.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>FromNamespaceFabric.cs</DependentUpon>
+    </None>
+    <None Include="NamingConvention\RegexNamingConvention_Invalid.t.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>RegexNamingConvention_Invalid.cs</DependentUpon>
+    </None>
+    <None Include="NamingConvention\RegexNamingConvention.t.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>RegexNamingConvention.cs</DependentUpon>
+    </None>
+    <None Include="NotAccessibleFrom\NamespacePattern.t.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>NamespacePattern.cs</DependentUpon>
+    </None>
+    <None Include="OnlyAccessibleFrom\ExternalType.t.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>ExternalType.cs</DependentUpon>
+    </None>
+    <None Include="OnlyAccessibleFrom\FromNamespaceFabric.t.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>FromNamespaceFabric.cs</DependentUpon>
+    </None>
+    <None Include="OnlyAccessibleFrom\FromTypeFabric.t.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>FromTypeFabric.cs</DependentUpon>
+    </None>
+    <None Include="OnlyAccessibleFrom\GivenType_Redundant.t.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>GivenType_Redundant.cs</DependentUpon>
+    </None>
+    <None Include="OnlyAccessibleFrom\GivenType.t.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>GivenType.cs</DependentUpon>
+    </None>
+    <None Include="OnlyAccessibleFrom\NamespacePattern_DoubleStar.t.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>NamespacePattern_DoubleStar.cs</DependentUpon>
+    </None>
+    <None Include="OnlyAccessibleFrom\NamespacePattern_SimpleStar.t.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>NamespacePattern_SimpleStar.cs</DependentUpon>
+    </None>
+    <None Include="OnlyAccessibleFrom\TypeNamespace.t.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>TypeNamespace.cs</DependentUpon>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+	  <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
+	  <PackageReference Include="xunit" Version="2.4.1" />
+	  <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		  <PrivateAssets>all</PrivateAssets>
+	  </PackageReference>
+	  <PackageReference Include="coverlet.collector" Version="3.1.2">
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		  <PrivateAssets>all</PrivateAssets>
+	  </PackageReference>
+    <PackageReference Include="Metalama.Testing.AspectTesting" Version="$(MetalamaVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Metalama.Extensions.Architecture\Metalama.Extensions.Architecture.csproj" />
+  </ItemGroup>
+
+</Project>

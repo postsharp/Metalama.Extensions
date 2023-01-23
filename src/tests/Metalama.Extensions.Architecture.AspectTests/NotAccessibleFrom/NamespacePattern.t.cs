@@ -1,0 +1,1 @@
+// Warning LAMA0905 on `ConstrainedClass`: `The 'ConstrainedClass' type cannot be used by the 'ForbiddenClass' type.`
