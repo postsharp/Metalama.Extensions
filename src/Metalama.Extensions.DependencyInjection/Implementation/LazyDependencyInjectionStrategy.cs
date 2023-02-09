@@ -3,7 +3,6 @@
 using Metalama.Framework.Advising;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
-using Metalama.Framework.Code.SyntaxBuilders;
 using System;
 
 namespace Metalama.Extensions.DependencyInjection.Implementation;
@@ -111,7 +110,7 @@ public partial class LazyDependencyInjectionStrategy : DefaultDependencyInjectio
 
     [Template] // Bug: Cannot be private!
     public static dynamic? GetDependencyTemplate( TemplateArgs args )
-        => args.CacheField!.ToExpression().Value ??= args.DependencyField!.ToExpression().Value!.Invoke();
+        => args.CacheField!.Value ??= args.DependencyField!.Value!.Invoke();
 
     [Template]
     public void SetDependencyTemplate( TemplateArgs args )

@@ -3,7 +3,6 @@
 using Metalama.Extensions.DependencyInjection.Implementation;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
-using Metalama.Framework.Code.SyntaxBuilders;
 using System;
 
 namespace Metalama.Extensions.DependencyInjection.ServiceLocator;
@@ -29,13 +28,13 @@ internal class EarlyServiceLocatorDependencyInjectionStrategy : DefaultDependenc
 
         if ( isRequired )
         {
-            fieldOrProperty.ToExpression().Value =
+            fieldOrProperty.Value =
                 (T) ServiceProviderProvider.ServiceProvider().GetService( typeof(T) )
                 ?? throw new InvalidOperationException( $"The service '{fieldOrProperty.Type}' could not be obtained from the service locator." );
         }
         else
         {
-            fieldOrProperty.ToExpression().Value =
+            fieldOrProperty.Value =
                 (T) ServiceProviderProvider.ServiceProvider().GetService( typeof(T) );
         }
     }

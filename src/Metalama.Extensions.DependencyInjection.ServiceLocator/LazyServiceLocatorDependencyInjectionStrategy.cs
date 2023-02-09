@@ -4,7 +4,6 @@ using Metalama.Extensions.DependencyInjection.Implementation;
 using Metalama.Framework.Advising;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
-using Metalama.Framework.Code.SyntaxBuilders;
 using System;
 
 namespace Metalama.Extensions.DependencyInjection.ServiceLocator;
@@ -121,21 +120,21 @@ internal class LazyServiceLocatorDependencyInjectionStrategy : DefaultDependency
         public IField? ServiceProviderField { get; set; }
     }
 
-    [Template] // Bug: Cannot be private!
-    public static T GetDependencyTemplate<[CompileTime] T>( PropertyArgs args )
+    [Template] 
+    private static T GetDependencyTemplate<[CompileTime] T>( PropertyArgs args )
     {
-        return args.CacheField.ToExpression().Value ??= (T) args.ServiceProviderField!.ToExpression().Value!.GetService( typeof(T) );
+        return args.CacheField!.Value ??= (T) args.ServiceProviderField!.Value!.GetService( typeof(T) );
     }
 
     [Template]
-    public void SetDependencyTemplate<[CompileTime] T>( PropertyArgs args )
+    private void SetDependencyTemplate<[CompileTime] T>( PropertyArgs args )
     {
         throw new NotSupportedException( $"Cannot set '{this.Context.FieldOrProperty.Name}' because of the dependency aspect." );
     }
 
     [Template]
-    public static void Initializer( IField serviceProviderField )
+    private static void Initializer( IField serviceProviderField )
     {
-        serviceProviderField.ToExpression().Value = ServiceProviderProvider.ServiceProvider();
+        serviceProviderField.Value = ServiceProviderProvider.ServiceProvider();
     }
 }
