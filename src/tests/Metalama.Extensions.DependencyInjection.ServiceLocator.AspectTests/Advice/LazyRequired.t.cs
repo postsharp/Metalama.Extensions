@@ -11,7 +11,7 @@ public class TargetClass
   }
   private IFormatProvider? _formatProviderCache;
   private IServiceProvider _serviceProvider;
-  public IFormatProvider _formatProvider
+  private IFormatProvider _formatProvider
   {
     get
     {

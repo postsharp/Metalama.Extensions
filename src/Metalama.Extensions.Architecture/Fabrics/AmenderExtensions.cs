@@ -15,12 +15,12 @@ namespace Metalama.Extensions.Architecture.Fabrics
     public static class AmenderExtensions
     {
         /// <summary>
-        /// Gets the architecture validation fuent API for a <see cref="ProjectFabric"/>.
+        /// Gets the architecture validation fluent API for a <see cref="ProjectFabric"/>.
         /// </summary>
         public static ArchitectureVerifier<ICompilation> Verify( this IProjectAmender amender ) => new( amender.Outbound, c => c.Types );
 
         /// <summary>
-        /// Gets the architecture validation fuent API for a <see cref="NamespaceFabric"/>.
+        /// Gets the architecture validation fluent API for a <see cref="NamespaceFabric"/>.
         /// </summary>
         public static ArchitectureVerifier<INamespace> Verify( this INamespaceAmender amender, bool includeChildNamespaces = true )
         {
@@ -41,7 +41,7 @@ namespace Metalama.Extensions.Architecture.Fabrics
         }
 
         /// <summary>
-        /// Gets the architecture validation fuent API for a <see cref="TypeFabric"/>.
+        /// Gets the architecture validation fluent API for a <see cref="TypeFabric"/>.
         /// </summary>
         public static ArchitectureVerifier<INamedType> Verify( this ITypeAmender amender )
             => new( amender.Outbound, type => new[] { type }, amender.Type.Namespace.FullName );
