@@ -1,0 +1,1 @@
+// Warning LAMA0905 on `o.ConstrainedProperty`: `The 'ConstrainedClass.ConstrainedProperty' property cannot be assigned by the 'ForbiddenClass' type.`
