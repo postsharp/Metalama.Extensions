@@ -17,7 +17,9 @@ internal class ReferencingTypePredicate : ReferencePredicate
         : this(
               type.Namespace ?? "",
               type.Name,
-              type.IsConstructedGenericType ? type.GenericTypeArguments.Select(a => new ReferencingTypePredicate(a, builder)).ToArray() : null,
+
+              // IsGenericType property needs to be checked first to avoid NotImplementedException from IsConstructedGenericType property getter.
+              type.IsGenericType && type.IsConstructedGenericType ? type.GenericTypeArguments.Select(a => new ReferencingTypePredicate(a, builder)).ToArray() : null,
               builder ) { }
 
     public ReferencingTypePredicate( string ns, string typeName, ReferencingTypePredicate[]? typeArgumentPredicates = null, ReferencePredicateBuilder? builder = null ) : base( builder )
