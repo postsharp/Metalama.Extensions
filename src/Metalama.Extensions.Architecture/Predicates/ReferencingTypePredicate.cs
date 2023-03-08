@@ -13,13 +13,12 @@ internal class ReferencingTypePredicate : ReferencePredicate
     private readonly string _typeName;
     private readonly ReferencingTypePredicate[]? _typeArgumentPredicates;
 
+    // IsGenericType property needs to be checked first to avoid NotImplementedException from IsConstructedGenericType property getter.
     public ReferencingTypePredicate( Type type, ReferencePredicateBuilder? builder = null )
         : this(
               type.Namespace ?? "",
               type.Name,
-
-              // IsGenericType property needs to be checked first to avoid NotImplementedException from IsConstructedGenericType property getter.
-              type.IsGenericType && type.IsConstructedGenericType ? type.GenericTypeArguments.Select(a => new ReferencingTypePredicate(a, builder)).ToArray() : null,
+              type.IsGenericType && type.IsConstructedGenericType ? type.GenericTypeArguments.Select( a => new ReferencingTypePredicate( a, builder ) ).ToArray() : null,
               builder ) { }
 
     public ReferencingTypePredicate( string ns, string typeName, ReferencingTypePredicate[]? typeArgumentPredicates = null, ReferencePredicateBuilder? builder = null ) : base( builder )
