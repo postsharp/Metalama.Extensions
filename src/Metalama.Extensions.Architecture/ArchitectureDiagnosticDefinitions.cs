@@ -48,5 +48,5 @@ internal static class ArchitectureDiagnosticDefinitions
             "LAMA0905",
             Severity.Warning,
             "The '{0}' {1} cannot be {2} by the '{3}' type.{4}{5}",
-            "The declaration cannot be {2} from this context because of an architecture constraint." );
+            "The declaration cannot be used from this context because of an architecture constraint." );
 }
