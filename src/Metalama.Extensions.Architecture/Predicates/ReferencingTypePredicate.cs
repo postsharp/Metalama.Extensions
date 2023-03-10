@@ -3,7 +3,6 @@
 using Metalama.Framework.Code;
 using Metalama.Framework.Validation;
 using System;
-using System.Linq;
 
 namespace Metalama.Extensions.Architecture.Predicates;
 
@@ -11,54 +10,33 @@ internal class ReferencingTypePredicate : ReferencePredicate
 {
     private readonly string _ns;
     private readonly string _typeName;
-    private readonly ReferencingTypePredicate[]? _typeArgumentPredicates;
 
     // IsGenericType property needs to be checked first to avoid NotImplementedException from IsConstructedGenericType property getter.
     public ReferencingTypePredicate( Type type, ReferencePredicateBuilder? builder = null )
-        : this(
-              type.Namespace ?? "",
-              type.Name,
-              type.IsGenericType && type.IsConstructedGenericType ? type.GenericTypeArguments.Select( a => new ReferencingTypePredicate( a, builder ) ).ToArray() : null,
-              builder ) { }
-
-    public ReferencingTypePredicate( string ns, string typeName, ReferencingTypePredicate[]? typeArgumentPredicates = null, ReferencePredicateBuilder? builder = null ) : base( builder )
+        : base( builder )
     {
-        this._ns = ns;
-        this._typeName = typeName;
-        this._typeArgumentPredicates = typeArgumentPredicates;
+        if ( type.IsGenericType && !type.IsGenericTypeDefinition )
+        {
+            throw new InvalidOperationException( $"The '{type}' type cannot be used as a referencing type predicate parameter. Bound generic types are not allowed." );
+        }
+
+        this._ns = type.Namespace ?? "";
+        this._typeName = GetName( type );
     }
 
-    private bool IsMatch(INamedType type)
-    {
-        if ( type.Namespace.FullName != this._ns )
-        {
-            return false;
-        }
+    private static string GetName( Type type )
+            => type.DeclaringType == null
+            ? type.Name
+            : $"{GetName( type.DeclaringType )}+{type.Name}";
 
-        if ( type.GetMetadataName() != this._typeName )
-        {
-            return false;
-        }
+    private static string GetName( INamedType type )
+        => type.DeclaringType == null
+        ? type.GetMetadataName()
+        : $"{GetName( type.DeclaringType )}+{type.GetMetadataName()}";
 
-        if ( type.IsGeneric && !type.IsCanonicalGenericInstance )
-        {
-            if (this._typeArgumentPredicates == null)
-            {
-                return false;
-            }
+    private bool IsMatch( INamedType type )
+        => type.Namespace.FullName == this._ns && GetName( type ) == this._typeName;
 
-            return type.TypeArguments.Select( ( a, i ) => a is INamedType n && this._typeArgumentPredicates[i].IsMatch( n ) ).All( b => b );
-        }
-        else
-        {
-            if ( this._typeArgumentPredicates != null )
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    public override bool IsMatch( in ReferenceValidationContext context ) => this.IsMatch( context.ReferencingType );
+    public override bool IsMatch( in ReferenceValidationContext context )
+        => this.IsMatch( context.ReferencingType );
 }

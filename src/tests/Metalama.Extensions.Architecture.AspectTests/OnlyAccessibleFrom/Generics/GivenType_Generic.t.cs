@@ -1,2 +1,1 @@
-// Warning LAMA0905 on `new ConstrainedClass()`: `The 'ConstrainedClass' type cannot be used by the 'GenericClass<T>' type.`
-// Warning LAMA0905 on `ConstrainedClass`: `The 'ConstrainedClass' type cannot be used by the 'GenericClass<T>' type.`
+// Error LAMA0041 on `ConstrainedClass`: `'CanOnlyBeUsedFromAttribute.BuildAspect' threw 'InvalidOperationException' when applied to 'ConstrainedClass': The 'Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.Generics.GivenType_Generic.GenericClass`1[System.Int32]' type cannot be used as a referencing type predicate parameter. Bound generic types are not allowed. Exception details are in '(none)'. To attach a debugger to the compiler, use the  '-p:MetalamaDebugCompiler=True' command-line option.`
