@@ -8,35 +8,26 @@ namespace Metalama.Extensions.Architecture.Predicates;
 
 internal class ReferencingTypePredicate : ReferencePredicate
 {
-    private readonly string _ns;
-    private readonly string _typeName;
+    private readonly IRef<IDeclaration> _typeRef;
 
-    // IsGenericType property needs to be checked first to avoid NotImplementedException from IsConstructedGenericType property getter.
     public ReferencingTypePredicate( Type type, ReferencePredicateBuilder? builder = null )
         : base( builder )
     {
-        if ( type.IsGenericType && !type.IsGenericTypeDefinition )
+        var iType = TypeFactory.GetType( type );
+
+        if ( iType is not INamedType namedType )
         {
-            throw new InvalidOperationException( $"The '{type}' type cannot be used as a referencing type predicate parameter. Bound generic types are not allowed." );
+            throw new InvalidOperationException( $"The type '{type}' cannot be used as a referencing type predicate parameter. Arrays, type parameters and pointers are not allowed." );
         }
 
-        this._ns = type.Namespace ?? "";
-        this._typeName = GetName( type );
+        if ( namedType is { IsGeneric: true, IsCanonicalGenericInstance: false } )
+        {
+            throw new InvalidOperationException( $"The type '{type}' cannot be used as a referencing type predicate parameter. Bound generic types are not allowed." );
+        }
+
+        this._typeRef = namedType.GetOriginalDefinition().ToRef();
     }
 
-    private static string GetName( Type type )
-            => type.DeclaringType == null
-            ? type.Name
-            : $"{GetName( type.DeclaringType )}+{type.Name}";
-
-    private static string GetName( INamedType type )
-        => type.DeclaringType == null
-        ? type.GetMetadataName()
-        : $"{GetName( type.DeclaringType )}+{type.GetMetadataName()}";
-
-    private bool IsMatch( INamedType type )
-        => type.Namespace.FullName == this._ns && GetName( type ) == this._typeName;
-
     public override bool IsMatch( in ReferenceValidationContext context )
-        => this.IsMatch( context.ReferencingType );
+        => context.ReferencingType.Equals( this._typeRef.GetTarget( options: default ) );
 }
