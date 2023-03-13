@@ -42,11 +42,11 @@ internal static class ArchitectureDiagnosticDefinitions
         "At least one property of the '{0}' custom attribute must be set.",
         "At least one property of the attribute must be set." );
 
-    public static readonly DiagnosticDefinition<(IDeclaration ValidatedDeclaration, DeclarationKind DeclarationKind, INamedType ReferencingType, string?
+    public static readonly DiagnosticDefinition<(IDeclaration ValidatedDeclaration, DeclarationKind DeclarationKind, string UsageKind, INamedType ReferencingType, string?
             OptionalSpace, string? Description)>
         OnlyAccessibleFrom = new(
             "LAMA0905",
             Severity.Warning,
-            "The '{0}' {1} cannot be used by the '{2}' type.{3}{4}",
+            "The '{0}' {1} cannot be {2} by the '{3}' type.{4}{5}",
             "The declaration cannot be used from this context because of an architecture constraint." );
 }

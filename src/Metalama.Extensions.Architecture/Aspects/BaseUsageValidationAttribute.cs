@@ -118,12 +118,7 @@ public abstract class BaseUsageValidationAttribute : Attribute, IConditionallyIn
 
         foreach ( var type in this.Types )
         {
-            if ( type.Namespace == null )
-            {
-                throw new InvalidOperationException( $"The type '{type.FullName}' has no namespace." );
-            }
-
-            predicates.Add( new ReferencingTypePredicate( type.Namespace, type.Name ) );
+            predicates.Add( new ReferencingTypePredicate( type ) );
         }
     }
 }

@@ -1,0 +1,1 @@
+// Warning LAMA0905 on `new ConstrainedClass().ConstrainedMethod`: `The 'ConstrainedClass.ConstrainedMethod()' method cannot be used by the 'ForbiddenClass' type.`
