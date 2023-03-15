@@ -1,5 +1,6 @@
 ﻿// Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
+using Metalama.Framework.Code;
 using Metalama.Framework.Validation;
 using System;
 
@@ -7,17 +8,26 @@ namespace Metalama.Extensions.Architecture.Predicates;
 
 internal class ReferencingTypePredicate : ReferencePredicate
 {
-    private readonly string _ns;
-    private readonly string _typeName;
+    private readonly IRef<IDeclaration> _typeRef;
 
-    public ReferencingTypePredicate( Type type, ReferencePredicateBuilder? builder = null ) : this( type.Namespace ?? "", type.Name, builder ) { }
-
-    public ReferencingTypePredicate( string ns, string typeName, ReferencePredicateBuilder? builder = null ) : base( builder )
+    public ReferencingTypePredicate( Type type, ReferencePredicateBuilder? builder = null )
+        : base( builder )
     {
-        this._ns = ns;
-        this._typeName = typeName;
+        var iType = TypeFactory.GetType( type );
+
+        if ( iType is not INamedType namedType )
+        {
+            throw new InvalidOperationException( $"The type '{type}' cannot be used as a referencing type predicate parameter. Arrays, type parameters and pointers are not allowed." );
+        }
+
+        if ( namedType is { IsGeneric: true, IsCanonicalGenericInstance: false } )
+        {
+            throw new InvalidOperationException( $"The type '{type}' cannot be used as a referencing type predicate parameter. Bound generic types are not allowed." );
+        }
+
+        this._typeRef = namedType.GetOriginalDefinition().ToRef();
     }
 
     public override bool IsMatch( in ReferenceValidationContext context )
-        => context.ReferencingType.Name == this._typeName && context.ReferencingType.Namespace.FullName == this._ns;
+        => context.ReferencingType.Equals( this._typeRef.GetTarget( options: default ) );
 }
