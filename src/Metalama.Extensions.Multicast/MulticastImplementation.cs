@@ -96,7 +96,7 @@ public sealed class MulticastImplementation
 
                     break;
 
-                case IAspectBuilder<IMemberWithAccessors> propertyOrEventAspectBuilder:
+                case IAspectBuilder<IHasAccessors> propertyOrEventAspectBuilder:
 
                     AddChildAspects( propertyOrEventAspectBuilder, attributeGroup );
 
@@ -388,7 +388,7 @@ public sealed class MulticastImplementation
         }
     }
 
-    private static void AddChildAspects( IAspectBuilder<IMemberWithAccessors> builder, MulticastAttributeGroup attributeGroup )
+    private static void AddChildAspects( IAspectBuilder<IHasAccessors> builder, MulticastAttributeGroup attributeGroup )
     {
         if ( attributeGroup.TargetsAnyDeclarationKind( MulticastTargets.Method ) )
         {
