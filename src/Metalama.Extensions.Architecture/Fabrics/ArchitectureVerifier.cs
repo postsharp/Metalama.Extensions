@@ -30,9 +30,9 @@ namespace Metalama.Extensions.Architecture.Fabrics
         /// <summary>
         /// Gets a weakly-typed <see cref="IValidatorReceiver"/> that allows to add validators to the target declarations in the current scope.
         /// </summary>
-        public IValidatorReceiver WithTarget() => this.WithTargetCore();
+        public IValidatorReceiver Receiver => this.GetReceiver();
 
-        private protected abstract IValidatorReceiver WithTargetCore();
+        private protected abstract IValidatorReceiver GetReceiver();
 
         /// <summary>
         /// Gets the full name of the namespace in the current scope, or <c>null</c> if no namespace is relevant to the current scope.
@@ -48,7 +48,6 @@ namespace Metalama.Extensions.Architecture.Fabrics
     public sealed class ArchitectureVerifier<T> : ArchitectureVerifier
         where T : class, IDeclaration
     {
-        private readonly IAspectReceiver<T> _aspectReceiver;
         private readonly Func<T, IEnumerable<INamedType>> _getTypes;
 
         /// <summary>
@@ -59,20 +58,20 @@ namespace Metalama.Extensions.Architecture.Fabrics
         /// <param name="ns">The full name of the namespace in the current scope, or <c>null</c> if no namespace is relevant to the current scope.</param>
         public ArchitectureVerifier( IAspectReceiver<T> aspectReceiver, Func<T, IEnumerable<INamedType>> getTypes, string? ns = null )
         {
-            this._aspectReceiver = aspectReceiver;
+            this.Receiver = aspectReceiver;
             this._getTypes = getTypes;
             this.Namespace = ns;
         }
 
         /// <inheritdoc />
-        public override IAspectReceiver<INamedType> WithTypes() => this._aspectReceiver.SelectMany( this._getTypes );
+        public override IAspectReceiver<INamedType> WithTypes() => this.Receiver.SelectMany( this._getTypes );
 
-        private protected override IValidatorReceiver WithTargetCore() => this._aspectReceiver;
+        private protected override IValidatorReceiver GetReceiver() => this.Receiver;
 
         /// <summary>
         /// Gets an <see cref="IAspectReceiver{TDeclaration}"/> that allows to add validators and aspects to the target declarations in the current scope.
         /// </summary>
-        public new IAspectReceiver<T> WithTarget() => this._aspectReceiver;
+        public new IAspectReceiver<T> Receiver { get; }
 
         /// <inheritdoc />
         public override string? Namespace { get; }

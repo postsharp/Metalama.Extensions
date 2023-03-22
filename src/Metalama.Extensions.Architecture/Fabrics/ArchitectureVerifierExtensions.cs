@@ -7,6 +7,7 @@ using Metalama.Extensions.Architecture.Validators;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 using Metalama.Framework.Fabrics;
+using Metalama.Framework.Validation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,9 +33,11 @@ namespace Metalama.Extensions.Architecture.Fabrics
         public static void CanOnlyBeUsedFrom(
             this ArchitectureVerifier verifier,
             Func<ReferencePredicateBuilder, ReferencePredicate> predicate,
-            string? description = null )
+            string? description = null,
+            ReferenceKinds referenceKinds = ReferenceKinds.All )
         {
-            verifier.WithTarget().ValidateReferences( new ReferencePredicateValidator( predicate( new ReferencePredicateBuilder( verifier ) ), description ) );
+            verifier.Receiver.ValidateReferences(
+                new ReferencePredicateValidator( predicate( new ReferencePredicateBuilder( verifier ) ), description, referenceKinds ) );
         }
 
         /// <summary>
@@ -43,10 +46,12 @@ namespace Metalama.Extensions.Architecture.Fabrics
         public static void CannotBeUsedFrom(
             this ArchitectureVerifier verifier,
             Func<ReferencePredicateBuilder, ReferencePredicate> predicate,
-            string? description = null )
+            string? description = null,
+            ReferenceKinds referenceKinds = ReferenceKinds.All )
         {
-            verifier.WithTarget()
-                .ValidateReferences( new ReferencePredicateValidator( predicate( new ReferencePredicateBuilder( verifier ) ).Not(), description ) );
+            verifier.Receiver
+                .ValidateReferences(
+                    new ReferencePredicateValidator( predicate( new ReferencePredicateBuilder( verifier ) ).Not(), description, referenceKinds ) );
         }
 
         /// <summary>
@@ -56,7 +61,8 @@ namespace Metalama.Extensions.Architecture.Fabrics
         public static void InternalsCanOnlyBeUsedFrom(
             this ArchitectureVerifier verifier,
             Func<ReferencePredicateBuilder, ReferencePredicate> predicate,
-            string? description = null )
+            string? description = null,
+            ReferenceKinds referenceKinds = ReferenceKinds.All )
         {
             var predicateBuilder = new ReferencePredicateBuilder( verifier );
             var builtPredicate = predicate( predicateBuilder );
@@ -65,24 +71,25 @@ namespace Metalama.Extensions.Architecture.Fabrics
 
             verifier.WithTypes()
                 .Where( t => t.Accessibility == Accessibility.Internal )
-                .ValidateReferences( new ReferencePredicateValidator( internalPredicate, description ) );
+                .ValidateReferences( new ReferencePredicateValidator( internalPredicate, description, referenceKinds ) );
 
             verifier.WithTypes()
                 .Where( t => t.Accessibility != Accessibility.Internal )
                 .SelectMany(
                     t => t.Members()
                         .Where( m => m.Accessibility is Accessibility.Internal or Accessibility.PrivateProtected or Accessibility.ProtectedInternal ) )
-                .ValidateReferences( new ReferencePredicateValidator( nonInternalPredicate, description ) );
+                .ValidateReferences( new ReferencePredicateValidator( nonInternalPredicate, description, referenceKinds ) );
         }
 
         /// <summary>
         /// Reports a warning when any of the internal APIs of the current scope in used from a different context different than the one allowed,
         /// except if this concept has access to the type using inheritance rules.
         /// </summary>
-        public static void InternalsCannotOnlyBeUsedFrom(
+        public static void InternalsCannotBeUsedFrom(
             this ArchitectureVerifier verifier,
             Func<ReferencePredicateBuilder, ReferencePredicate> predicate,
-            string? description = null )
+            string? description = null,
+            ReferenceKinds referenceKinds = ReferenceKinds.All )
         {
             var predicateBuilder = new ReferencePredicateBuilder( verifier );
             var builtPredicate = predicate( predicateBuilder );
@@ -91,14 +98,14 @@ namespace Metalama.Extensions.Architecture.Fabrics
 
             verifier.WithTypes()
                 .Where( t => t.Accessibility == Accessibility.Internal )
-                .ValidateReferences( new ReferencePredicateValidator( internalPredicate, description ) );
+                .ValidateReferences( new ReferencePredicateValidator( internalPredicate, description, referenceKinds ) );
 
             verifier.WithTypes()
                 .Where( t => t.Accessibility != Accessibility.Internal )
                 .SelectMany(
                     t => t.Members()
                         .Where( m => m.Accessibility is Accessibility.Internal or Accessibility.PrivateProtected or Accessibility.ProtectedInternal ) )
-                .ValidateReferences( new ReferencePredicateValidator( nonInternalPredicate, description ) );
+                .ValidateReferences( new ReferencePredicateValidator( nonInternalPredicate, description, referenceKinds ) );
         }
 
         /// <summary>
@@ -107,7 +114,7 @@ namespace Metalama.Extensions.Architecture.Fabrics
         /// </summary>
         public static void DerivedTypesMustRespectNamingConvention( this ArchitectureVerifier verifier, string pattern )
         {
-            verifier.WithTarget().ValidateReferences( NamingConventionValidator.CreateStarPatternValidator( pattern ) );
+            verifier.Receiver.ValidateReferences( NamingConventionValidator.CreateStarPatternValidator( pattern ) );
         }
 
         /// <summary>
@@ -116,7 +123,7 @@ namespace Metalama.Extensions.Architecture.Fabrics
         /// </summary>
         public static void DerivedTypesMustRespectRegexNamingConvention( this ArchitectureVerifier verifier, string pattern )
         {
-            verifier.WithTarget().ValidateReferences( NamingConventionValidator.CreateRegexValidator( pattern ) );
+            verifier.Receiver.ValidateReferences( NamingConventionValidator.CreateRegexValidator( pattern ) );
         }
 
         /// <summary>
@@ -126,7 +133,7 @@ namespace Metalama.Extensions.Architecture.Fabrics
         /// <param name="verifier">The <see cref="ArchitectureVerifier{T}"/> returned by <see cref="AmenderExtensions.Verify(Metalama.Framework.Fabrics.IProjectAmender)"/>.</param>
         /// <param name="assemblyName">The name of the assembly, without version and public key.</param>
         public static ArchitectureVerifier<IAssembly> WithReferencedAssembly( this ArchitectureVerifier<ICompilation> verifier, string assemblyName )
-            => new( verifier.WithTarget().SelectMany( c => c.ReferencedAssemblies.OfName( assemblyName ) ), a => a.Types );
+            => new( verifier.Receiver.SelectMany( c => c.ReferencedAssemblies.OfName( assemblyName ) ), a => a.Types );
 
         /// <summary>
         /// Represents a fluent <see cref="ArchitectureVerifier{T}"/> that allows to validate code referencing given types.
@@ -135,7 +142,7 @@ namespace Metalama.Extensions.Architecture.Fabrics
         /// <param name="verifier">The <see cref="ArchitectureVerifier{T}"/> returned by <see cref="AmenderExtensions.Verify(Metalama.Framework.Fabrics.IProjectAmender)"/>.</param>
         /// <param name="types">A list of types.</param>
         public static ArchitectureVerifier<INamedType> WithTypes( this ArchitectureVerifier<ICompilation> verifier, IEnumerable<Type> types )
-            => new( verifier.WithTarget().SelectMany( _ => types.Select( t => (INamedType) TypeFactory.GetType( t ) ) ), t => new[] { t } );
+            => new( verifier.Receiver.SelectMany( _ => types.Select( t => (INamedType) TypeFactory.GetType( t ) ) ), t => new[] { t } );
 
         /// <summary>
         /// Represents a fluent <see cref="ArchitectureVerifier{T}"/> that allows to validate code referencing given types.

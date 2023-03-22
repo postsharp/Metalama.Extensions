@@ -1,1 +1,1 @@
-// Warning LAMA0905 on `ConstrainedClass`: `The 'test' project cannot be used by the 'Forbidden' type.`
+// Warning LAMA0905 on `ConstrainedClass`: `The 'test' project cannot be referenced by the 'Forbidden' type.`

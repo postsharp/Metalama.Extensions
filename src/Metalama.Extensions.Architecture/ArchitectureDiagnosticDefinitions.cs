@@ -32,7 +32,7 @@ internal static class ArchitectureDiagnosticDefinitions
 
     public static readonly DiagnosticDefinition<(INamedType ReferencingType, INamedType BaseType, string Pattern)> NamingConventionViolation = new(
         "LAMA0903",
-        Severity.Error,
+        Severity.Warning,
         "The type '{0}' does not respect the naming convention set on the base class or interface '{1}'. The type name should match the \"{2}\" pattern.",
         "The type does not respect the naming convention set on the base class or interface." );
 

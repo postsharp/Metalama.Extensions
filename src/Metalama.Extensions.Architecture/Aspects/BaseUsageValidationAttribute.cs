@@ -4,6 +4,7 @@ using JetBrains.Annotations;
 using Metalama.Extensions.Architecture.Predicates;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
+using Metalama.Framework.Validation;
 using System;
 using System.Collections.Immutable;
 using ReferencePredicate = Metalama.Extensions.Architecture.Predicates.ReferencePredicate;
@@ -49,6 +50,11 @@ public abstract class BaseUsageValidationAttribute : Attribute, IConditionallyIn
     /// Gets an optional description message appended to the warning message.
     /// </summary>
     public string? Description { get; init; }
+
+    /// <summary>
+    /// Gets the kinds of references that must be validated. The default value is <see cref="Metalama.Framework.Validation.ReferenceKinds.All"/>.
+    /// </summary>
+    public ReferenceKinds ReferenceKinds { get; init; } = ReferenceKinds.All;
 
     /// <summary>
     /// Validates the current custom attribute and sets the aspect state.

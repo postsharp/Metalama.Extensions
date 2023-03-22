@@ -20,7 +20,12 @@ public class CanOnlyBeUsedFromAttribute : BaseUsageValidationAttribute, IAspect<
 
     public void BuildAspect( IAspectBuilder<IMemberOrNamedType> builder )
     {
+        if ( !this.ValidateAndProcessProperties( builder ) )
+        {
+            return;
+        }
+
         builder.Outbound.ValidateReferences(
-            new ReferencePredicateValidator( this.CreatePredicate( builder.Target.GetClosestNamedType()!.Namespace ), this.Description ) );
+            new ReferencePredicateValidator( this.CreatePredicate( builder.Target.GetClosestNamedType()!.Namespace ), this.Description, this.ReferenceKinds ) );
     }
 }

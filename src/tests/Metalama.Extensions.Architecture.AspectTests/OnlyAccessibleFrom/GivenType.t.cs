@@ -1,1 +1,1 @@
-// Warning LAMA0905 on `ConstrainedClass`: `The 'ConstrainedClass' type cannot be used by the 'Forbidden' type.`
+// Warning LAMA0905 on `ConstrainedClass`: `The 'ConstrainedClass' type cannot be referenced by the 'Forbidden' type.`
