@@ -24,7 +24,7 @@ namespace Metalama.Extensions.Architecture.Aspects
             
             // It is normally not recommended to store state in an aspect field (instead it is recommended for aspects to have an immutable design).
             // In this case, it does not matter because the aspect instance is not shared or inherited.
-            this._projectName = builder.Project.Name;
+            this._projectName = builder.Project.Name ?? "unnamed";
         }
 
         private void ValidateReference( in ReferenceValidationContext context )
