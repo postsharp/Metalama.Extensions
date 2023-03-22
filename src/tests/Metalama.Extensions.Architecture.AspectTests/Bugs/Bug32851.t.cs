@@ -1,1 +1,1 @@
-// TODO: Replace this file with the correct transformed code. See the test output for the actual transformed code.
+// Warning LAMA0905 on `InternalClass`: `The 'InternalClass' type cannot be used by the 'MiddleClass' type.`
