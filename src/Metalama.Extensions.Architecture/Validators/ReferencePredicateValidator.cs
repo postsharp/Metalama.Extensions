@@ -12,15 +12,14 @@ public class ReferencePredicateValidator : ReferenceValidator
 {
     private readonly ReferencePredicate _predicate;
     private readonly string? _description;
-    private readonly ReferenceKinds _validatedReferenceKinds;
 
-    public override ReferenceKinds ValidatedReferenceKinds => this._validatedReferenceKinds;
+    public override ReferenceKinds ValidatedReferenceKinds { get; }
 
-    public ReferencePredicateValidator( ReferencePredicate predicate, string? description, ReferenceKinds validatedReferenceKinds = ReferenceKinds.All )
+    public ReferencePredicateValidator( ReferencePredicate predicate, string? description, ReferenceKinds validatedReferenceKinds )
     {
         this._predicate = predicate;
         this._description = description;
-        this._validatedReferenceKinds = validatedReferenceKinds;
+        this.ValidatedReferenceKinds = validatedReferenceKinds;
     }
 
     /// <summary>
@@ -46,26 +45,20 @@ public class ReferencePredicateValidator : ReferenceValidator
             {
                 usageKind = "assigned";
             }
-            else if ( (context.ReferenceKinds & ReferenceKinds.MemberAccess) == ReferenceKinds.MemberAccess )
-            {
-
-                // TODO: Member access is not distinguished by Metalama at the moment. (ReferenceKinds.Other is given instead.)
-                usageKind = "accessed";
-            }
             else
             {
-                usageKind = "used";
+                usageKind = "referenced";
             }
 
             // Report the error message.
             context.Diagnostics.Report(
                 ArchitectureDiagnosticDefinitions.OnlyAccessibleFrom.WithArguments(
                     (context.ReferencedDeclaration,
-                    context.ReferencedDeclaration.DeclarationKind,
-                    usageKind,
-                    context.ReferencingType,
-                    optionalSpace,
-                    this._description) ) );
+                     context.ReferencedDeclaration.DeclarationKind,
+                     usageKind,
+                     context.ReferencingType,
+                     optionalSpace,
+                     this._description) ) );
         }
     }
 }

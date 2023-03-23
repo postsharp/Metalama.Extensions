@@ -3,6 +3,8 @@
 using JetBrains.Annotations;
 using Metalama.Extensions.Architecture.Fabrics;
 using Metalama.Framework.Aspects;
+using Metalama.Framework.Code;
+using Metalama.Framework.Fabrics;
 
 namespace Metalama.Extensions.Architecture.Predicates;
 
@@ -15,10 +17,10 @@ namespace Metalama.Extensions.Architecture.Predicates;
 public sealed class ReferencePredicateBuilder
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="ReferencePredicateBuilder"/> class by specifying an <see cref="ArchitectureVerifier{T}"/>.
+    /// Initializes a new instance of the <see cref="ReferencePredicateBuilder"/> class by specifying an <see cref="TypeSetVerifier{T}"/>.
     /// </summary>
-    /// <param name="verifier">The parent <see cref="ArchitectureVerifier{T}"/>.</param>
-    public ReferencePredicateBuilder( ArchitectureVerifier verifier )
+    /// <param name="verifier">The parent <see cref="TypeSetVerifier{T}"/>.</param>
+    public ReferencePredicateBuilder( IVerifier<IDeclaration> verifier )
     {
         this.Namespace = verifier.Namespace;
     }
@@ -32,5 +34,10 @@ public sealed class ReferencePredicateBuilder
         this.Namespace = ns;
     }
 
+    /// <summary>
+    /// Gets the namespace from which the current <see cref="ReferencePredicateBuilder"/> was instantiated, i.e. the namespace of the
+    /// <see cref="NamespaceFabric"/> or the <see cref="TypeFabric"/>. Returns <c>null</c> if the <see cref="ReferencePredicateBuilder"/> was instantiated
+    /// from a <see cref="ProjectFabric"/>. 
+    /// </summary>
     public string? Namespace { get; }
 }

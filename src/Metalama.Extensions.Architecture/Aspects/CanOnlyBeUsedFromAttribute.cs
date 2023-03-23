@@ -5,6 +5,7 @@ using Metalama.Extensions.Architecture.Validators;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 using Metalama.Framework.Eligibility;
+using System.Diagnostics;
 
 namespace Metalama.Extensions.Architecture.Aspects;
 
@@ -20,7 +21,14 @@ public class CanOnlyBeUsedFromAttribute : BaseUsageValidationAttribute, IAspect<
 
     public void BuildAspect( IAspectBuilder<IMemberOrNamedType> builder )
     {
+        Debugger.Break();
+
+        if ( !this.ValidateAndProcessProperties( builder ) )
+        {
+            return;
+        }
+
         builder.Outbound.ValidateReferences(
-            new ReferencePredicateValidator( this.CreatePredicate( builder.Target.GetClosestNamedType()!.Namespace ), this.Description ) );
+            new ReferencePredicateValidator( this.CreatePredicate( builder.Target.GetClosestNamedType()!.Namespace ), this.Description, this.ReferenceKinds ) );
     }
 }

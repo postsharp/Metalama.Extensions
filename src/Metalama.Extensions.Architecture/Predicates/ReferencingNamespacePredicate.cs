@@ -9,7 +9,7 @@ namespace Metalama.Extensions.Architecture.Predicates;
 
 internal class ReferencingNamespacePredicate : ReferencePredicate
 {
-    private const string _identifierChar = "\\p{L}";
+    private const string _identifierChar = "[\\p{L}\\p{M}\\p{N}\\p{Pc}\\p{Cf}]";
     private const string _starPattern = _identifierChar + "*";
     private const string _dotStarStarDotPattern = "(\\." + _identifierChar + "+)*\\.";
     private const string _starStarDotPattern = "(" + _identifierChar + "+\\.)*";

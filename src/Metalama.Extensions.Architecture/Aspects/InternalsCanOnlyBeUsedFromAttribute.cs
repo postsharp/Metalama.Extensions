@@ -27,7 +27,8 @@ public class InternalsCanOnlyBeUsedFromAttribute : BaseUsageValidationAttribute,
 
         var validator = new ReferencePredicateValidator(
             new OrPredicate( new HasFamilyAccessPredicate(), this.CreatePredicate( builder.Target.Namespace ) ),
-            this.Description );
+            this.Description,
+            this.ReferenceKinds );
 
         // Register a validator for all internal members.
         builder.Outbound.SelectMany(

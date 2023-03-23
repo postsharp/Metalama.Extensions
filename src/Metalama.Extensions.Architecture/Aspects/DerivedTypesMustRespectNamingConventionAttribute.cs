@@ -14,5 +14,5 @@ namespace Metalama.Extensions.Architecture.Aspects;
 [CompileTime]
 public class DerivedTypesMustRespectNamingConventionAttribute : DerivedTypesMustRespectRegexNamingConventionAttribute
 {
-    public DerivedTypesMustRespectNamingConventionAttribute( string pattern ) : base( NamingConventionValidator.StarPatternToRegex( pattern ) ) { }
+    public DerivedTypesMustRespectNamingConventionAttribute( string pattern ) : base( NamingConventionHelper.StarPatternToRegex( pattern ) ) { }
 }

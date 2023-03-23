@@ -1,1 +1,1 @@
-// Warning LAMA0905 on `ConstrainedClass`: `The 'Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.FromNamespaceFabric.ChildNs' namespace cannot be used by the 'Forbidden' type.`
+// Warning LAMA0905 on `ConstrainedClass`: `The 'Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.FromNamespaceFabric.ChildNs' namespace cannot be referenced by the 'Forbidden' type.`

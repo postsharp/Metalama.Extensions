@@ -25,6 +25,9 @@ public class CannotBeUsedFromAttribute : BaseUsageValidationAttribute, IAspect<I
         }
 
         builder.Outbound.ValidateReferences(
-            new ReferencePredicateValidator( this.CreatePredicate( builder.Target.GetClosestNamedType()!.Namespace ).Not(), this.Description ) );
+            new ReferencePredicateValidator(
+                this.CreatePredicate( builder.Target.GetClosestNamedType()!.Namespace ).Not(),
+                this.Description,
+                this.ReferenceKinds ) );
     }
 }

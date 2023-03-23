@@ -1,1 +1,1 @@
-// Warning LAMA0905 on `InternalClass`: `The 'InternalClass' type cannot be used by the 'MiddleClass' type.`
+// Warning LAMA0905 on `InternalClass`: `The 'InternalClass' type cannot be referenced by the 'MiddleClass' type.`

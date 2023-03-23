@@ -4,7 +4,6 @@ using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 using Metalama.Framework.Serialization;
 using Metalama.Framework.Validation;
-using System;
 using System.Text.RegularExpressions;
 
 namespace Metalama.Extensions.Architecture.Validators;
@@ -21,7 +20,7 @@ internal class NamingConventionValidator : ReferenceValidator
 
     public static NamingConventionValidator CreateRegexValidator( string pattern ) => new( pattern );
 
-    public static NamingConventionValidator CreateStarPatternValidator( string pattern ) => new( StarPatternToRegex( pattern ) );
+    public static NamingConventionValidator CreateStarPatternValidator( string pattern ) => new( NamingConventionHelper.StarPatternToRegex( pattern ) );
 
     // This field exists for performance reasons. It is not serialized, so it is
     // lazily recreated every time it is needed.
@@ -39,23 +38,10 @@ internal class NamingConventionValidator : ReferenceValidator
         if ( !regex.IsMatch( referencingType.Name ) )
         {
             context.Diagnostics.Report(
-                ArchitectureDiagnosticDefinitions.NamingConventionViolation.WithArguments(
+                ArchitectureDiagnosticDefinitions.NamingConventionViolationInDerivedType.WithArguments(
                     (referencingType, (INamedType) context.ReferencedDeclaration, this._pattern) ) );
         }
     }
 
     public override ReferenceKinds ValidatedReferenceKinds => ReferenceKinds.BaseType;
-
-    public static string StarPatternToRegex( string pattern )
-    {
-        const string regexPrefix = "regex:";
-
-        if ( pattern.StartsWith( regexPrefix, StringComparison.InvariantCulture ) )
-        {
-            // For backward compatibility with PostSharp, we detect the prefix.
-            return pattern.Substring( regexPrefix.Length );
-        }
-
-        return "^" + Regex.Escape( pattern ).Replace( "\\*", ".*" ) + "$";
-    }
 }

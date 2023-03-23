@@ -1,1 +1,1 @@
-// Warning LAMA0905 on `ConstrainedProperty`: `The 'ConstrainedClass.ConstrainedProperty' property cannot be used by the 'ForbiddenClass' type.`
+// Warning LAMA0905 on `ConstrainedProperty`: `The 'ConstrainedClass.ConstrainedProperty' property cannot be referenced by the 'ForbiddenClass' type.`
