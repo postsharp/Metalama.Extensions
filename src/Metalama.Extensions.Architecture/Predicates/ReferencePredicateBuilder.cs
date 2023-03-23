@@ -17,10 +17,10 @@ namespace Metalama.Extensions.Architecture.Predicates;
 public sealed class ReferencePredicateBuilder
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="ReferencePredicateBuilder"/> class by specifying an <see cref="TypeArchitectureVerifier{T}"/>.
+    /// Initializes a new instance of the <see cref="ReferencePredicateBuilder"/> class by specifying an <see cref="TypeSetVerifier{T}"/>.
     /// </summary>
-    /// <param name="verifier">The parent <see cref="TypeArchitectureVerifier{T}"/>.</param>
-    public ReferencePredicateBuilder( IArchitectureVerifier<IDeclaration> verifier )
+    /// <param name="verifier">The parent <see cref="TypeSetVerifier{T}"/>.</param>
+    public ReferencePredicateBuilder( IVerifier<IDeclaration> verifier )
     {
         this.Namespace = verifier.Namespace;
     }

@@ -30,7 +30,7 @@ internal static class ArchitectureDiagnosticDefinitions
         "The string `{0}` is not a valid regular expression: {1}",
         "The string is not a valid regular expression." );
 
-    public static readonly DiagnosticDefinition<(INamedType ReferencingType, INamedType BaseType, string Pattern)> NamingConventionViolation = new(
+    public static readonly DiagnosticDefinition<(INamedType ReferencingType, INamedType BaseType, string Pattern)> NamingConventionViolationInDerivedType = new(
         "LAMA0903",
         Severity.Warning,
         "The type '{0}' does not respect the naming convention set on the base class or interface '{1}'. The type name should match the \"{2}\" pattern.",
@@ -42,11 +42,19 @@ internal static class ArchitectureDiagnosticDefinitions
         "At least one property of the '{0}' custom attribute must be set.",
         "At least one property of the attribute must be set." );
 
-    public static readonly DiagnosticDefinition<(IDeclaration ValidatedDeclaration, DeclarationKind DeclarationKind, string UsageKind, INamedType ReferencingType, string?
+    public static readonly DiagnosticDefinition<(IDeclaration ValidatedDeclaration, DeclarationKind DeclarationKind, string UsageKind, INamedType
+            ReferencingType, string?
             OptionalSpace, string? Description)>
         OnlyAccessibleFrom = new(
             "LAMA0905",
             Severity.Warning,
             "The '{0}' {1} cannot be {2} by the '{3}' type.{4}{5}",
             "The declaration cannot be used from this context because of an architecture constraint." );
+
+    public static readonly DiagnosticDefinition<(INamedDeclaration Declaration, DeclarationKind DeclarationKind, string Pattern)> NamingConventionViolation =
+        new(
+            "LAMA0906",
+            Severity.Warning,
+            "The {1} '{0}' does not respect the naming convention set by a fabric. The {1} name should match the \"{2}\" pattern.",
+            "The declaration does not respect the naming convention set by the fabric." );
 }

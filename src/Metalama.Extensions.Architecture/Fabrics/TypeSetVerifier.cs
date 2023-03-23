@@ -10,15 +10,15 @@ using System;
 namespace Metalama.Extensions.Architecture.Fabrics
 {
     /// <summary>
-    /// Implementation of <see cref="ITypeArchitectureVerifier{T}"/>.
+    /// Implementation of <see cref="ITypeSetVerifier{T}"/>.
     /// </summary>
     [PublicAPI]
-    internal sealed class TypeArchitectureVerifier<T> : ArchitectureVerifier<T>, ITypeArchitectureVerifier<T>
+    internal class TypeSetVerifier<T> : Verifier<T>, ITypeSetVerifier<T>
         where T : class, IDeclaration
     {
         private readonly Func<IAspectReceiver<T>, IAspectReceiver<INamedType>> _getTypeReceiver;
 
-        public TypeArchitectureVerifier(
+        public TypeSetVerifier(
             IAspectReceiver<T> receiver,
             Func<IAspectReceiver<T>, IAspectReceiver<INamedType>> getTypeReceiver,
             string? ns = null ) : base(
@@ -30,5 +30,8 @@ namespace Metalama.Extensions.Architecture.Fabrics
 
         /// <inheritdoc />
         public IAspectReceiver<INamedType> TypeReceiver => this._getTypeReceiver( this.Receiver );
+
+        public ITypeSetVerifier<INamedType> SelectTypesDerivedFrom( Type type, DerivedTypesOptions options = DerivedTypesOptions.Default )
+            => new TypeSetVerifier<INamedType>( this.TypeReceiver.Where( t => t.DerivesFrom( type, options ) ), x => x, this.Namespace );
     }
 }

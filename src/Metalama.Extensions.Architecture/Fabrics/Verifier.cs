@@ -6,16 +6,16 @@ using Metalama.Framework.Code;
 namespace Metalama.Extensions.Architecture.Fabrics;
 
 /// <summary>
-/// Implementation of <see cref="IArchitectureVerifier{T}"/>.
+/// Implementation of <see cref="IVerifier{T}"/>.
 /// </summary>
-internal class ArchitectureVerifier<T> : IArchitectureVerifier<T>
+internal class Verifier<T> : IVerifier<T>
     where T : class, IDeclaration
 {
     public IAspectReceiver<T> Receiver { get; }
 
     public string? Namespace { get; }
 
-    public ArchitectureVerifier( IAspectReceiver<T> receiver, string? ns )
+    public Verifier( IAspectReceiver<T> receiver, string? ns )
     {
         this.Receiver = receiver;
         this.Namespace = ns;

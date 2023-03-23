@@ -17,24 +17,23 @@ namespace Metalama.Extensions.Architecture.Fabrics
         /// <summary>
         /// Gets the architecture validation fluent API for a <see cref="ProjectFabric"/>.
         /// </summary>
-        public static ITypeArchitectureVerifier<ICompilation> Verify( this IProjectAmender amender )
-            => new TypeArchitectureVerifier<ICompilation>( amender.Outbound, x => x.SelectMany( c => c.Types ) );
+        public static ITypeSetVerifier<ICompilation> Verify( this IProjectAmender amender ) => new CompilationSetVerifier( amender.Outbound );
 
         /// <summary>
         /// Gets the architecture validation fluent API for a <see cref="NamespaceFabric"/>.
         /// </summary>
-        public static ITypeArchitectureVerifier<INamespace> Verify( this INamespaceAmender amender, bool includeChildNamespaces = true )
+        public static ITypeSetVerifier<INamespace> Verify( this INamespaceAmender amender, bool includeChildNamespaces = true )
         {
             if ( includeChildNamespaces )
             {
-                return new TypeArchitectureVerifier<INamespace>(
+                return new TypeSetVerifier<INamespace>(
                     amender.Outbound.SelectMany( ns => ns.DescendantsAndSelf() ),
                     x => x.SelectMany( ns => ns.DescendantsAndSelf().SelectMany( x => x.Types ) ),
                     amender.Namespace );
             }
             else
             {
-                return new TypeArchitectureVerifier<INamespace>(
+                return new TypeSetVerifier<INamespace>(
                     amender.Outbound,
                     x => x.SelectMany( ns => ns.Types ),
                     amender.Namespace );
@@ -44,7 +43,7 @@ namespace Metalama.Extensions.Architecture.Fabrics
         /// <summary>
         /// Gets the architecture validation fluent API for a <see cref="TypeFabric"/>.
         /// </summary>
-        public static ITypeArchitectureVerifier<INamedType> Verify( this ITypeAmender amender )
-            => new TypeArchitectureVerifier<INamedType>( amender.Outbound, x => x, amender.Type.Namespace.FullName );
+        public static ITypeSetVerifier<INamedType> Verify( this ITypeAmender amender )
+            => new TypeSetVerifier<INamedType>( amender.Outbound, x => x, amender.Type.Namespace.FullName );
     }
 }
