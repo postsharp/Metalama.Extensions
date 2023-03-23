@@ -15,23 +15,23 @@ using System.Linq;
 namespace Metalama.Extensions.Architecture.Fabrics
 {
     /// <summary>
-    /// Extension methods that verify the architecture. These methods extend the <see cref="ArchitectureVerifier"/> class, which is returned
+    /// Extension methods that verify the architecture. These methods extend the <see cref="TypeArchitectureVerifier{T}"/> class, which is returned
     /// by the <see cref="AmenderExtensions.Verify(Metalama.Framework.Fabrics.IProjectAmender)"/> method of the <see cref="AmenderExtensions"/> class.
     /// </summary>
     [CompileTime]
     [PublicAPI]
     public static class ArchitectureVerifierExtensions
     {
-        public static void Experimental( this ArchitectureVerifier verifier )
+        public static void Experimental( this IArchitectureVerifier<IDeclaration> verifier )
         {
-            verifier.WithTypes().AddAspect( _ => new ExperimentalAttribute() );
+            verifier.Receiver.AddAspect( _ => new ExperimentalAttribute() );
         }
 
         /// <summary>
         /// Reports a warning when any type in the current scope is used from a different context than the ones matching the specified predicate. 
         /// </summary>
         public static void CanOnlyBeUsedFrom(
-            this ArchitectureVerifier verifier,
+            this IArchitectureVerifier<IDeclaration> verifier,
             Func<ReferencePredicateBuilder, ReferencePredicate> predicate,
             string? description = null,
             ReferenceKinds referenceKinds = ReferenceKinds.All )
@@ -44,7 +44,7 @@ namespace Metalama.Extensions.Architecture.Fabrics
         /// Reports a warning when any type in the current scope is used from the context matching the specified predicate.
         /// </summary>
         public static void CannotBeUsedFrom(
-            this ArchitectureVerifier verifier,
+            this IArchitectureVerifier<IDeclaration> verifier,
             Func<ReferencePredicateBuilder, ReferencePredicate> predicate,
             string? description = null,
             ReferenceKinds referenceKinds = ReferenceKinds.All )
@@ -59,7 +59,7 @@ namespace Metalama.Extensions.Architecture.Fabrics
         /// except if this concept has access to the type using inheritance rules.
         /// </summary>
         public static void InternalsCanOnlyBeUsedFrom(
-            this ArchitectureVerifier verifier,
+            this ITypeArchitectureVerifier<IDeclaration> verifier,
             Func<ReferencePredicateBuilder, ReferencePredicate> predicate,
             string? description = null,
             ReferenceKinds referenceKinds = ReferenceKinds.All )
@@ -69,11 +69,11 @@ namespace Metalama.Extensions.Architecture.Fabrics
             var internalPredicate = builtPredicate;
             var nonInternalPredicate = predicateBuilder.HasFamilyAccess().Or( builtPredicate );
 
-            verifier.WithTypes()
+            verifier.TypeReceiver
                 .Where( t => t.Accessibility == Accessibility.Internal )
                 .ValidateReferences( new ReferencePredicateValidator( internalPredicate, description, referenceKinds ) );
 
-            verifier.WithTypes()
+            verifier.TypeReceiver
                 .Where( t => t.Accessibility != Accessibility.Internal )
                 .SelectMany(
                     t => t.Members()
@@ -86,7 +86,7 @@ namespace Metalama.Extensions.Architecture.Fabrics
         /// except if this concept has access to the type using inheritance rules.
         /// </summary>
         public static void InternalsCannotBeUsedFrom(
-            this ArchitectureVerifier verifier,
+            this ITypeArchitectureVerifier<IDeclaration> verifier,
             Func<ReferencePredicateBuilder, ReferencePredicate> predicate,
             string? description = null,
             ReferenceKinds referenceKinds = ReferenceKinds.All )
@@ -96,11 +96,11 @@ namespace Metalama.Extensions.Architecture.Fabrics
             var internalPredicate = builtPredicate;
             var nonInternalPredicate = predicateBuilder.HasFamilyAccess().Or( builtPredicate.Not() );
 
-            verifier.WithTypes()
+            verifier.TypeReceiver
                 .Where( t => t.Accessibility == Accessibility.Internal )
                 .ValidateReferences( new ReferencePredicateValidator( internalPredicate, description, referenceKinds ) );
 
-            verifier.WithTypes()
+            verifier.TypeReceiver
                 .Where( t => t.Accessibility != Accessibility.Internal )
                 .SelectMany(
                     t => t.Members()
@@ -112,7 +112,7 @@ namespace Metalama.Extensions.Architecture.Fabrics
         /// Reports a warning when any type that inherits any type in the current scope does not follow a given convention, where the convention
         /// is given as a star pattern, i.e. where the <c>*</c> matches any sequence of characters, even empty.
         /// </summary>
-        public static void DerivedTypesMustRespectNamingConvention( this ArchitectureVerifier verifier, string pattern )
+        public static void DerivedTypesMustRespectNamingConvention( this ITypeArchitectureVerifier<IDeclaration> verifier, string pattern )
         {
             verifier.Receiver.ValidateReferences( NamingConventionValidator.CreateStarPatternValidator( pattern ) );
         }
@@ -121,19 +121,53 @@ namespace Metalama.Extensions.Architecture.Fabrics
         /// Reports a warning when any type that inherits any type in the current scope does not follow a given convention, where the convention
         /// is given as a regular expression.
         /// </summary>
-        public static void DerivedTypesMustRespectRegexNamingConvention( this ArchitectureVerifier verifier, string pattern )
+        public static void DerivedTypesMustRespectRegexNamingConvention( this ITypeArchitectureVerifier<IDeclaration> verifier, string pattern )
         {
             verifier.Receiver.ValidateReferences( NamingConventionValidator.CreateRegexValidator( pattern ) );
         }
 
         /// <summary>
-        /// Represents a fluent <see cref="ArchitectureVerifier{T}"/> that allows to validate code using a given assembly referenced by the current compilation.
+        /// Represents a fluent <see cref="TypeArchitectureVerifier{T}"/> that allows to validate code using a given assembly referenced by the current compilation.
         /// This method can only be used in a <see cref="ProjectFabric"/>.
         /// </summary>
-        /// <param name="verifier">The <see cref="ArchitectureVerifier{T}"/> returned by <see cref="AmenderExtensions.Verify(Metalama.Framework.Fabrics.IProjectAmender)"/>.</param>
+        /// <param name="verifier">The <see cref="TypeArchitectureVerifier{T}"/> returned by <see cref="AmenderExtensions.Verify(Metalama.Framework.Fabrics.IProjectAmender)"/>.</param>
         /// <param name="assemblyName">The name of the assembly, without version and public key.</param>
-        public static ArchitectureVerifier<IAssembly> WithReferencedAssembly( this ArchitectureVerifier<ICompilation> verifier, string assemblyName )
-            => new( verifier.Receiver.SelectMany( c => c.ReferencedAssemblies.OfName( assemblyName ) ), a => a.Types );
+        public static ITypeArchitectureVerifier<IAssembly> WithReferencedAssembly( this ITypeArchitectureVerifier<ICompilation> verifier, string assemblyName )
+            => new TypeArchitectureVerifier<IAssembly>(
+                verifier.Receiver.SelectMany( c => c.ReferencedAssemblies.OfName( assemblyName ) ),
+                x => x.SelectMany( a => a.Types ) );
+
+        public static ITypeArchitectureVerifier<INamedType> Select<T>( this IArchitectureVerifier<T> verifier, Func<T, INamedType> func )
+            where T : class, IDeclaration
+            => new TypeArchitectureVerifier<INamedType>( verifier.Receiver.Select( func ), x => x, verifier.Namespace );
+
+        public static ITypeArchitectureVerifier<INamedType> SelectMany<T>( this IArchitectureVerifier<T> verifier, Func<T, IEnumerable<INamedType>> func )
+            where T : class, IDeclaration
+            => new TypeArchitectureVerifier<INamedType>( verifier.Receiver.SelectMany( func ), x => x, verifier.Namespace );
+
+        public static IArchitectureVerifier<TOut> Select<TIn, TOut>( this IArchitectureVerifier<TIn> verifier, Func<TIn, TOut> func )
+            where TIn : class, IDeclaration
+            where TOut : class, IDeclaration
+            => new ArchitectureVerifier<TOut>( verifier.Receiver.Select( func ), verifier.Namespace );
+
+        public static IArchitectureVerifier<TOut> SelectMany<TIn, TOut>( this IArchitectureVerifier<TIn> verifier, Func<TIn, IEnumerable<TOut>> func )
+            where TIn : class, IDeclaration
+            where TOut : class, IDeclaration
+            => new ArchitectureVerifier<TOut>( verifier.Receiver.SelectMany( func ), verifier.Namespace );
+
+        public static IArchitectureVerifier<T> Where<T>( this IArchitectureVerifier<T> verifier, Func<T, bool> predicate )
+            where T : class, IDeclaration
+            => new ArchitectureVerifier<T>( verifier.Receiver.Where( predicate ), verifier.Namespace );
+
+        public static ITypeArchitectureVerifier<INamedType> Types( this ITypeArchitectureVerifier<IDeclaration> verifier )
+            => new TypeArchitectureVerifier<INamedType>( verifier.TypeReceiver, x => x, verifier.Namespace );
+
+        public static ITypeArchitectureVerifier<INamedType> Where<T>( this ITypeArchitectureVerifier<INamedType> verifier, Func<INamedType, bool> predicate )
+            where T : class, IDeclaration
+            => new TypeArchitectureVerifier<INamedType>(
+                verifier.TypeReceiver.Where( predicate ),
+                x => x,
+                verifier.Namespace );
 
         /// <summary>
         /// Represents a fluent <see cref="ArchitectureVerifier{T}"/> that allows to validate code referencing given types.
@@ -141,8 +175,10 @@ namespace Metalama.Extensions.Architecture.Fabrics
         /// </summary>
         /// <param name="verifier">The <see cref="ArchitectureVerifier{T}"/> returned by <see cref="AmenderExtensions.Verify(Metalama.Framework.Fabrics.IProjectAmender)"/>.</param>
         /// <param name="types">A list of types.</param>
-        public static ArchitectureVerifier<INamedType> WithTypes( this ArchitectureVerifier<ICompilation> verifier, IEnumerable<Type> types )
-            => new( verifier.Receiver.SelectMany( _ => types.Select( t => (INamedType) TypeFactory.GetType( t ) ) ), t => new[] { t } );
+        public static ITypeArchitectureVerifier<INamedType> WithTypes( this IArchitectureVerifier<ICompilation> verifier, IEnumerable<Type> types )
+            => new TypeArchitectureVerifier<INamedType>(
+                verifier.Receiver.SelectMany( _ => types.Select( t => (INamedType) TypeFactory.GetType( t ) ) ),
+                x => x );
 
         /// <summary>
         /// Represents a fluent <see cref="ArchitectureVerifier{T}"/> that allows to validate code referencing given types.
@@ -150,7 +186,7 @@ namespace Metalama.Extensions.Architecture.Fabrics
         /// </summary>
         /// <param name="verifier">The <see cref="ArchitectureVerifier{T}"/> returned by <see cref="AmenderExtensions.Verify(Metalama.Framework.Fabrics.IProjectAmender)"/>.</param>
         /// <param name="types">A list of types.</param>
-        public static ArchitectureVerifier<INamedType> WithTypes( this ArchitectureVerifier<ICompilation> verifier, params Type[] types )
+        public static ITypeArchitectureVerifier<INamedType> WithTypes( this IArchitectureVerifier<ICompilation> verifier, params Type[] types )
             => verifier.WithTypes( (IEnumerable<Type>) types );
     }
 }

@@ -17,25 +17,26 @@ namespace Metalama.Extensions.Architecture.Fabrics
         /// <summary>
         /// Gets the architecture validation fluent API for a <see cref="ProjectFabric"/>.
         /// </summary>
-        public static ArchitectureVerifier<ICompilation> Verify( this IProjectAmender amender ) => new( amender.Outbound, c => c.Types );
+        public static ITypeArchitectureVerifier<ICompilation> Verify( this IProjectAmender amender )
+            => new TypeArchitectureVerifier<ICompilation>( amender.Outbound, x => x.SelectMany( c => c.Types ) );
 
         /// <summary>
         /// Gets the architecture validation fluent API for a <see cref="NamespaceFabric"/>.
         /// </summary>
-        public static ArchitectureVerifier<INamespace> Verify( this INamespaceAmender amender, bool includeChildNamespaces = true )
+        public static ITypeArchitectureVerifier<INamespace> Verify( this INamespaceAmender amender, bool includeChildNamespaces = true )
         {
             if ( includeChildNamespaces )
             {
-                return new ArchitectureVerifier<INamespace>(
+                return new TypeArchitectureVerifier<INamespace>(
                     amender.Outbound.SelectMany( ns => ns.DescendantsAndSelf() ),
-                    ns => ns.DescendantsAndSelf().SelectMany( x => x.Types ),
+                    x => x.SelectMany( ns => ns.DescendantsAndSelf().SelectMany( x => x.Types ) ),
                     amender.Namespace );
             }
             else
             {
-                return new ArchitectureVerifier<INamespace>(
+                return new TypeArchitectureVerifier<INamespace>(
                     amender.Outbound,
-                    ns => ns.Types,
+                    x => x.SelectMany( ns => ns.Types ),
                     amender.Namespace );
             }
         }
@@ -43,7 +44,7 @@ namespace Metalama.Extensions.Architecture.Fabrics
         /// <summary>
         /// Gets the architecture validation fluent API for a <see cref="TypeFabric"/>.
         /// </summary>
-        public static ArchitectureVerifier<INamedType> Verify( this ITypeAmender amender )
-            => new( amender.Outbound, type => new[] { type }, amender.Type.Namespace.FullName );
+        public static ITypeArchitectureVerifier<INamedType> Verify( this ITypeAmender amender )
+            => new TypeArchitectureVerifier<INamedType>( amender.Outbound, x => x, amender.Type.Namespace.FullName );
     }
 }
