@@ -1,1 +1,1 @@
-// TODO: Replace this file with the correct transformed code. See the test output for the actual transformed code.
+// Warning LAMA0906 on `BadlyNamed`: `The type 'BadlyNamed' does not respect the naming convention set by a fabric. The type name should match the "^.*TextReader$" pattern.`
