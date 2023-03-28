@@ -5,7 +5,6 @@ using Metalama.Extensions.Architecture.Validators;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 using Metalama.Framework.Eligibility;
-using System.Diagnostics;
 
 namespace Metalama.Extensions.Architecture.Aspects;
 
@@ -21,8 +20,6 @@ public class CanOnlyBeUsedFromAttribute : BaseUsageValidationAttribute, IAspect<
 
     public void BuildAspect( IAspectBuilder<IMemberOrNamedType> builder )
     {
-        Debugger.Break();
-
         if ( !this.ValidateAndProcessProperties( builder ) )
         {
             return;
