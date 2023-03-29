@@ -1,0 +1,1 @@
+// Warning LAMA0905 on `BaseClass`: `The 'BaseClass' type cannot be referenced by the 'DerivedClass' type.`
