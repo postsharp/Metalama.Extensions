@@ -15,7 +15,7 @@ public class TargetClass
   {
     get
     {
-      return _formatProviderCache ??= _formatProviderFunc.Invoke();
+      return _formatProviderCache ??= _formatProviderFunc!.Invoke();
     }
   }
 }

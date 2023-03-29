@@ -5,7 +5,7 @@ public class TargetClass
   {
     get
     {
-      return _formatProviderCache ??= (IFormatProvider)_serviceProvider.GetService(typeof(IFormatProvider));
+      return _formatProviderCache ??= (IFormatProvider)_serviceProvider!.GetService(typeof(IFormatProvider));
     }
     init
     {
