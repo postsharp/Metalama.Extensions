@@ -20,12 +20,12 @@ public class InternalsCannotBeUsedFromAttribute : BaseUsageValidationAttribute, 
 {
     public void BuildAspect( IAspectBuilder<INamedType> builder )
     {
-        if ( !this.ValidateAndProcessProperties( builder ) )
+        if ( !this.TryCreatePredicate( builder, out var predicate ) )
         {
             return;
         }
 
-        var validator = new ReferencePredicateValidator( this.CreatePredicate( builder.Target.Namespace ).Not(), this.Description, this.ReferenceKinds );
+        var validator = new ReferencePredicateValidator( predicate.Not(), this.Description, this.ReferenceKinds );
 
         // Register a validator for all internal members.
         builder.Outbound.SelectMany(

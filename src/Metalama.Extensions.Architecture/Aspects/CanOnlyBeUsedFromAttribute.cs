@@ -1,6 +1,7 @@
 ﻿// Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
 using JetBrains.Annotations;
+using Metalama.Extensions.Architecture.Predicates;
 using Metalama.Extensions.Architecture.Validators;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
@@ -20,12 +21,12 @@ public class CanOnlyBeUsedFromAttribute : BaseUsageValidationAttribute, IAspect<
 
     public void BuildAspect( IAspectBuilder<IMemberOrNamedType> builder )
     {
-        if ( !this.ValidateAndProcessProperties( builder ) )
+        if ( !this.TryCreatePredicate( builder, out var predicate ) )
         {
             return;
         }
 
         builder.Outbound.ValidateReferences(
-            new ReferencePredicateValidator( this.CreatePredicate( builder.Target.GetClosestNamedType()!.Namespace ), this.Description, this.ReferenceKinds ) );
+            new ReferencePredicateValidator( new OrPredicate( new HasFamilyAccessPredicate(), predicate ), this.Description, this.ReferenceKinds ) );
     }
 }

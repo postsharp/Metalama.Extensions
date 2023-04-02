@@ -20,13 +20,13 @@ public class InternalsCanOnlyBeUsedFromAttribute : BaseUsageValidationAttribute,
 {
     public void BuildAspect( IAspectBuilder<INamedType> builder )
     {
-        if ( !this.ValidateAndProcessProperties( builder ) )
+        if ( !this.TryCreatePredicate( builder, out var predicate ) )
         {
             return;
         }
 
         var validator = new ReferencePredicateValidator(
-            new OrPredicate( new HasFamilyAccessPredicate(), this.CreatePredicate( builder.Target.Namespace ) ),
+            new OrPredicate( new HasFamilyAccessPredicate(), predicate ),
             this.Description,
             this.ReferenceKinds );
 

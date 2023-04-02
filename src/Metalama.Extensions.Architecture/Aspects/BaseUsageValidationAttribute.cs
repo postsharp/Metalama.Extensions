@@ -7,6 +7,7 @@ using Metalama.Framework.Code;
 using Metalama.Framework.Validation;
 using System;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using ReferencePredicate = Metalama.Extensions.Architecture.Predicates.ReferencePredicate;
 
 namespace Metalama.Extensions.Architecture.Aspects;
@@ -57,22 +58,36 @@ public abstract class BaseUsageValidationAttribute : Attribute, IConditionallyIn
     public ReferenceKinds ReferenceKinds { get; init; } = ReferenceKinds.All;
 
     /// <summary>
-    /// Validates the current custom attribute and sets the aspect state.
+    /// Creates a <see cref="ReferencePredicate"/> based on the properties of the custom attributes.
     /// </summary>
-    private protected bool ValidateAndProcessProperties( IAspectBuilder<IDeclaration> builder )
+    protected bool TryCreatePredicate( IAspectBuilder<IMemberOrNamedType> builder, [NotNullWhen( true )] out ReferencePredicate? predicate )
     {
-        // Report an error if the custom attribute was instantiated but no property was set.
-        var hasProperty = this.Namespaces is { Length: > 0 } || this.NamespaceOfTypes is { Length: > 0 } ||
-                          this.Types is { Length: > 0 } || this.CurrentNamespace;
+        var currentNamespace = builder.Target.GetClosestNamedType()!.Namespace;
 
-        if ( !hasProperty )
+        var predicates = ImmutableArray.CreateBuilder<ReferencePredicate>();
+
+        this.AddPredicatesFromAttributes( currentNamespace, predicates.Add );
+
+        switch ( predicates.Count )
         {
-            builder.Diagnostics.Report(
-                ArchitectureDiagnosticDefinitions.AtLeastOnePropertyMustBeSet.WithArguments( nameof(InternalsCanOnlyBeUsedFromAttribute) ) );
+            case 0:
+                builder.Diagnostics.Report( ArchitectureDiagnosticDefinitions.AtLeastOnePropertyMustBeSet.WithArguments( this.GetType().Namespace ) );
 
-            builder.SkipAspect();
+                builder.SkipAspect();
 
-            return false;
+                predicate = null;
+
+                return false;
+
+            case 1:
+                predicate = predicates[0];
+
+                return true;
+
+            default:
+                predicate = new AnyPredicate( predicates.ToImmutable() );
+
+                break;
         }
 
         return true;
@@ -81,35 +96,22 @@ public abstract class BaseUsageValidationAttribute : Attribute, IConditionallyIn
     bool IConditionallyInheritableAspect.IsInheritable => this.ValidateDerivedTypes;
 
     /// <summary>
-    /// Creates a <see cref="ReferencePredicate"/> based on the current attribute.
+    /// Adds the predicates defined by the properties of the current custom attribute. 
     /// </summary>
-    /// <param name="currentNamespace">The namespace in which the attribute is used.</param>
-    protected ReferencePredicate CreatePredicate( INamespace currentNamespace )
-    {
-        var predicates = ImmutableArray.CreateBuilder<ReferencePredicate>();
-
-        this.BuildPredicate( currentNamespace, predicates );
-
-        if ( predicates.Count > 0 )
-        {
-            return new AnyPredicate( predicates.ToImmutable() );
-        }
-        else
-        {
-            return new AlwaysPredicate();
-        }
-    }
-
-    private void BuildPredicate( INamespace currentNamespace, ImmutableArray<ReferencePredicate>.Builder predicates )
+    /// <param name="currentNamespace">The namespace in which the current attribute is used.</param>
+    /// <param name="addPredicate">A delegate to call to add a predicate. If many predicates are added, they will be combined
+    /// with the <see cref="ReferencePredicateExtensions.Or(Metalama.Extensions.Architecture.Predicates.ReferencePredicate,System.Func{Metalama.Extensions.Architecture.Predicates.ReferencePredicateBuilder,Metalama.Extensions.Architecture.Predicates.ReferencePredicate})"/>
+    /// method.</param>
+    protected virtual void AddPredicatesFromAttributes( INamespace currentNamespace, Action<ReferencePredicate> addPredicate )
     {
         if ( this.CurrentNamespace )
         {
-            predicates.Add( new ReferencingNamespacePredicate( currentNamespace.FullName ) );
+            addPredicate( new ReferencingNamespacePredicate( currentNamespace.FullName ) );
         }
 
         foreach ( var ns in this.Namespaces )
         {
-            predicates.Add( new ReferencingNamespacePredicate( ns ) );
+            addPredicate( new ReferencingNamespacePredicate( ns ) );
         }
 
         foreach ( var type in this.NamespaceOfTypes )
@@ -119,12 +121,12 @@ public abstract class BaseUsageValidationAttribute : Attribute, IConditionallyIn
                 throw new InvalidOperationException( $"The type '{type.FullName}' has no namespace." );
             }
 
-            predicates.Add( new ReferencingNamespacePredicate( type.Namespace ) );
+            addPredicate( new ReferencingNamespacePredicate( type.Namespace ) );
         }
 
         foreach ( var type in this.Types )
         {
-            predicates.Add( new ReferencingTypePredicate( type ) );
+            addPredicate( new ReferencingTypePredicate( type ) );
         }
     }
 }
