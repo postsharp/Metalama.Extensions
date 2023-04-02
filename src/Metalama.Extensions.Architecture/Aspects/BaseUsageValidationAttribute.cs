@@ -38,6 +38,13 @@ public abstract class BaseUsageValidationAttribute : Attribute, IConditionallyIn
     public Type[] Types { get; init; } = Array.Empty<Type>();
 
     /// <summary>
+    /// Gets the fukk names of the types that match the rule. Any type string can contain one of the following patterns: <c>*</c>
+    /// (matches any identifier character, but not the dot), <c>.**.</c> (matches any sub-namespace in the middle of a full type name), <c>**.</c>
+    /// (matches any sub-namespace at the beginning of the full type name) or <c>.**</c> (matches any sub-namespace and any type name at the end of a namespace). 
+    /// </summary>
+    public string[] TypeNames { get; init; } = Array.Empty<string>();
+
+    /// <summary>
     /// Gets a value indicating whether the rule is matched by the namespace of the type to which the aspect is defined.
     /// </summary>
     public bool CurrentNamespace { get; init; }
@@ -127,6 +134,11 @@ public abstract class BaseUsageValidationAttribute : Attribute, IConditionallyIn
         foreach ( var type in this.Types )
         {
             addPredicate( new ReferencingTypePredicate( type ) );
+        }
+
+        foreach ( var typeName in this.TypeNames )
+        {
+            addPredicate( new ReferencingTypeNamePredicate( typeName ) );
         }
     }
 }

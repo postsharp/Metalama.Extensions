@@ -23,4 +23,10 @@
     <ProjectReference Include="..\..\Metalama.Extensions.Architecture\Metalama.Extensions.Architecture.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="OnlyAccessibleFrom\FromTypeFabricName.t.cs" />
+    <None Include="OnlyAccessibleFrom\FromTypeFabricName_Pattern.t.cs" />
+    <None Include="OnlyAccessibleFrom\NamedType.t.cs" />
+  </ItemGroup>
+
 </Project>

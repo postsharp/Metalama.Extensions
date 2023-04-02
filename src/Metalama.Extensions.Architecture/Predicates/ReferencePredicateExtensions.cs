@@ -69,6 +69,11 @@ public static class ReferencePredicateExtensions
     /// <summary>
     /// Accepts code references contained in a given namespace.
     /// </summary>
+    /// <param name="builder">The <see cref="ReferencePredicateBuilder"/>.</param>
+    /// <param name="ns">The  namespace. The namespace string can contain one of the following patterns: <c>*</c>
+    /// (matches any identifier character, but not the dot), <c>.**.</c> (matches any sub-namespace in the middle of a namespace), <c>**.</c>
+    /// (matches any sub-namespace at the beginning of a namespace) or <c>.**</c> (matches any sub-namespace at the end of a namespace -- this pattern
+    /// is allowed but redundant). </param>
     public static ReferencePredicate Namespace( this ReferencePredicateBuilder builder, string ns ) => new ReferencingNamespacePredicate( ns, builder );
 
     /// <summary>
@@ -96,6 +101,16 @@ public static class ReferencePredicateExtensions
     /// Accepts code references contained in a given type.
     /// </summary>
     public static ReferencePredicate Type( this ReferencePredicateBuilder builder, Type type ) => new ReferencingTypePredicate( type, builder );
+    
+    /// <summary>
+    /// Accepts code references contained in a given type specified as a string, optionally containing wildcards <c>*</c> or <c>**</c>.
+    /// </summary>
+    /// <param name="builder">The <see cref="ReferencePredicateBuilder"/>.</param>
+    /// <param name="type">
+    /// (matches any identifier character, but not the dot), <c>.**.</c> (matches any sub-namespace in the middle of a full type name), <c>**.</c>
+    /// (matches any sub-namespace at the beginning of the full type name) or <c>.**</c> (matches any sub-namespace and any type name at the end of a namespace). </param>
+    /// <returns></returns>
+    public static ReferencePredicate Type( this ReferencePredicateBuilder builder, string type ) => new ReferencingTypeNamePredicate( type, builder );
 
     /// <summary>
     /// Accepts code references that are legitimate based on family access rules, but rejects code references that are legitimate according to other rules.

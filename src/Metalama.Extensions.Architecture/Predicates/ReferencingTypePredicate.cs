@@ -6,7 +6,7 @@ using System;
 
 namespace Metalama.Extensions.Architecture.Predicates;
 
-internal class ReferencingTypePredicate : ReferencePredicate
+internal partial class ReferencingTypePredicate : ReferencePredicate
 {
     private readonly IRef<IDeclaration> _typeRef;
 
@@ -17,17 +17,18 @@ internal class ReferencingTypePredicate : ReferencePredicate
 
         if ( iType is not INamedType namedType )
         {
-            throw new InvalidOperationException( $"The type '{type}' cannot be used as a referencing type predicate parameter. Arrays, type parameters and pointers are not allowed." );
+            throw new InvalidOperationException(
+                $"The type '{type}' cannot be used as a referencing type predicate parameter. Arrays, type parameters and pointers are not allowed." );
         }
 
         if ( namedType is { IsGeneric: true, IsCanonicalGenericInstance: false } )
         {
-            throw new InvalidOperationException( $"The type '{type}' cannot be used as a referencing type predicate parameter. Bound generic types are not allowed." );
+            throw new InvalidOperationException(
+                $"The type '{type}' cannot be used as a referencing type predicate parameter. Bound generic types are not allowed." );
         }
 
         this._typeRef = namedType.GetOriginalDefinition().ToRef();
     }
 
-    public override bool IsMatch( in ReferenceValidationContext context )
-        => context.ReferencingType.Equals( this._typeRef.GetTarget( options: default ) );
+    public override bool IsMatch( in ReferenceValidationContext context ) => context.ReferencingType.Equals( this._typeRef.GetTarget( options: default ) );
 }
