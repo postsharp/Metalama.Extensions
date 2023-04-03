@@ -8,7 +8,7 @@ namespace Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.GivenT
     internal class ConstrainedClass { }
 
     internal class ForbiddenClass
-    { 
+    {
         internal class InnerClass
         {
             private ConstrainedClass _field;

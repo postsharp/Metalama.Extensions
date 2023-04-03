@@ -13,7 +13,7 @@ namespace Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.GivenT
 
         public event EventHandler ConstrainedEvent
         {
-            [CanOnlyBeUsedFrom( Types = new[] { typeof( AllowedClass ) } )]
+            [CanOnlyBeUsedFrom( Types = new[] { typeof(AllowedClass) } )]
             add => this.PrivateEvent += value;
 
             remove => this.PrivateEvent -= value;
@@ -29,9 +29,7 @@ namespace Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.GivenT
             o.ConstrainedEvent -= HandleEvent;
         }
 
-        private static void HandleEvent( object? sender, EventArgs e )
-        {
-        }
+        private static void HandleEvent( object? sender, EventArgs e ) { }
     }
 
     internal class AllowedClass
@@ -43,8 +41,6 @@ namespace Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.GivenT
             o.ConstrainedEvent -= HandleEvent;
         }
 
-        private static void HandleEvent( object? sender, EventArgs e )
-        {
-        }
+        private static void HandleEvent( object? sender, EventArgs e ) { }
     }
 }

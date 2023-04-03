@@ -17,11 +17,11 @@ namespace Metalama.Extensions.Architecture.Aspects
     public class InternalOnlyImplementAttribute : TypeAspect
     {
         private string _projectName = null!;
-        
+
         public override void BuildAspect( IAspectBuilder<INamedType> builder )
         {
             builder.Outbound.ValidateReferences( this.ValidateReference, ReferenceKinds.BaseType );
-            
+
             // It is normally not recommended to store state in an aspect field (instead it is recommended for aspects to have an immutable design).
             // In this case, it does not matter because the aspect instance is not shared or inherited.
             this._projectName = builder.Project.Name ?? "unnamed";
@@ -35,8 +35,7 @@ namespace Metalama.Extensions.Architecture.Aspects
             }
 
             context.Diagnostics.Report(
-                ArchitectureDiagnosticDefinitions.InternalImplement.WithArguments(
-                    (context.ReferencedDeclaration, this._projectName) ) );
+                ArchitectureDiagnosticDefinitions.InternalImplement.WithArguments( (context.ReferencedDeclaration, this._projectName) ) );
         }
 
         public override void BuildEligibility( IEligibilityBuilder<INamedType> builder )

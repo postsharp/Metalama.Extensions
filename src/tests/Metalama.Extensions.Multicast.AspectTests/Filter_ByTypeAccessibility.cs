@@ -17,7 +17,7 @@ using Metalama.Extensions.Multicast.AspectTests;
     AttributeTargetElements = MulticastTargets.Method,
     AttributeTargetTypeAttributes = MulticastAttributes.Public )]
 
-namespace Metalama.Extensions.Multicast.AspectTests.Filter_ByTypeAccessibity
+namespace Metalama.Extensions.Multicast.AspectTests.Filter_ByTypeAccessibility
 {
     // <target>
     public class PublicClass

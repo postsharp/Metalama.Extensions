@@ -8,7 +8,7 @@ namespace Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.GivenT
     {
         public object? ConstrainedProperty
         {
-            [CanOnlyBeUsedFrom( Types = new[] { typeof( AllowedClass ) } )]
+            [CanOnlyBeUsedFrom( Types = new[] { typeof(AllowedClass) } )]
             get;
 
             set;

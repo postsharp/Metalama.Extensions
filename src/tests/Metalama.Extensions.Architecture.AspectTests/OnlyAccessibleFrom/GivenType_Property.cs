@@ -6,7 +6,7 @@ namespace Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.GivenT
 {
     internal class ConstrainedClass
     {
-        [CanOnlyBeUsedFrom( Types = new[] { typeof( AllowedClass ) } )]
+        [CanOnlyBeUsedFrom( Types = new[] { typeof(AllowedClass) } )]
         public object? ConstrainedProperty { get; set; }
     }
 

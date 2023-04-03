@@ -11,7 +11,6 @@ using Metalama.Extensions.Multicast.AspectTests;
 // ReSharper disable UnusedParameter.Local
 // ReSharper disable UnusedType.Local
 
-
 // <target>
 namespace Metalama.Extensions.Multicast.AspectTests.AddToAllFromCompilation
 {
