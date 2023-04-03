@@ -1,0 +1,6 @@
+[*.cs]
+resharper_check_namespace_highlighting = none
+resharper_unused_type_local_highlighting = none
+resharper_unused_member_local_highlighting = none
+resharper_unused_type_parameter_highlighting = none
+resharper_redundant_overridden_member_highlighting = none
