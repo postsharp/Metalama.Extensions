@@ -108,8 +108,8 @@ public partial class LazyDependencyInjectionStrategy : DefaultDependencyInjectio
         public IField? DependencyField { get; set; }
     }
 
-    [Template] // Bug: Cannot be private!
-    public static dynamic? GetDependencyTemplate( TemplateArgs args )
+    [Template]
+    private static dynamic? GetDependencyTemplate( TemplateArgs args )
         => args.CacheField!.Value ??= args.DependencyField!.Value!.Invoke();
 
     [Template]
