@@ -6,7 +6,7 @@ using System;
 
 namespace Metalama.Extensions.Architecture.Predicates;
 
-internal partial class ReferencingTypePredicate : ReferencePredicate
+internal class ReferencingTypePredicate : ReferencePredicate
 {
     private readonly IRef<IDeclaration> _typeRef;
 

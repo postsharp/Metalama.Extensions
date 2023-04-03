@@ -77,6 +77,16 @@ public static class ReferencePredicateExtensions
     public static ReferencePredicate Namespace( this ReferencePredicateBuilder builder, string ns ) => new ReferencingNamespacePredicate( ns, builder );
 
     /// <summary>
+    /// Accepts code references contained in a given assembly.
+    /// </summary>
+    /// <param name="builder">The <see cref="ReferencePredicateBuilder"/>.</param>
+    /// <param name="assemblyName">The assembly name. The string can contain one of the following patterns: <c>*</c>
+    /// (matches any identifier character, but not the dot), <c>.**.</c> (matches any dotted name in the middle of a namespace), <c>**.</c>
+    /// (matches any dotted name at the beginning of a the assembly name) or <c>.**</c> (matches any dotted name at the end of the assembly name). </param>
+    public static ReferencePredicate Assembly( this ReferencePredicateBuilder builder, string assemblyName )
+        => new ReferencingAssemblyPredicate( assemblyName, builder );
+
+    /// <summary>
     /// Accepts code references contained in the current namespace.
     /// </summary>
     public static ReferencePredicate CurrentNamespace( this ReferencePredicateBuilder builder )
@@ -87,6 +97,19 @@ public static class ReferencePredicateExtensions
         }
 
         return new ReferencingNamespacePredicate( builder.Namespace, builder );
+    }
+
+    /// <summary>
+    /// Accepts code references contained in the current assembly.
+    /// </summary>
+    public static ReferencePredicate CurrentAssembly( this ReferencePredicateBuilder builder )
+    {
+        if ( builder.AssemblyName == null )
+        {
+            throw new InvalidOperationException( "There is no assembly in the current context." );
+        }
+
+        return new ReferencingAssemblyPredicate( builder.AssemblyName, builder );
     }
 
     /// <summary>
@@ -101,7 +124,7 @@ public static class ReferencePredicateExtensions
     /// Accepts code references contained in a given type.
     /// </summary>
     public static ReferencePredicate Type( this ReferencePredicateBuilder builder, Type type ) => new ReferencingTypePredicate( type, builder );
-    
+
     /// <summary>
     /// Accepts code references contained in a given type specified as a string, optionally containing wildcards <c>*</c> or <c>**</c>.
     /// </summary>

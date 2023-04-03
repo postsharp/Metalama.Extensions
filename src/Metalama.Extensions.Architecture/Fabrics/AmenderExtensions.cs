@@ -28,7 +28,7 @@ namespace Metalama.Extensions.Architecture.Fabrics
             {
                 return new TypeSetVerifier<INamespace>(
                     amender.Outbound.SelectMany( ns => ns.DescendantsAndSelf() ),
-                    x => x.SelectMany( ns => ns.DescendantsAndSelf().SelectMany( x => x.Types ) ),
+                    x => x.SelectMany( ns => ns.DescendantsAndSelf().SelectMany( ns2 => ns2.Types ) ),
                     amender.Namespace );
             }
             else

@@ -29,9 +29,11 @@ public sealed class ReferencePredicateBuilder
     /// Initializes a new instance of the <see cref="ReferencePredicateBuilder"/> class.
     /// </summary>
     /// <param name="ns">The namespace of the current context, used to resolve methods like <see cref="ReferencePredicateExtensions.CurrentNamespace"/>.</param>
-    public ReferencePredicateBuilder( string? ns )
+    /// <param name="assemblyName">The name of the current assembly, used to resolve methods like <see cref="ReferencePredicateExtensions.CurrentAssembly"/>.</param>
+    public ReferencePredicateBuilder( string? ns, string? assemblyName )
     {
         this.Namespace = ns;
+        this.AssemblyName = assemblyName;
     }
 
     /// <summary>
@@ -40,4 +42,6 @@ public sealed class ReferencePredicateBuilder
     /// from a <see cref="ProjectFabric"/>. 
     /// </summary>
     public string? Namespace { get; }
+
+    public string? AssemblyName { get; }
 }
