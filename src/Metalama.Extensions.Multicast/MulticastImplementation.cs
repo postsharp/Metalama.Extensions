@@ -52,13 +52,11 @@ public sealed class MulticastImplementation
     public void BuildAspect<T>( IAspectBuilder<T> builder, Action<IAspectBuilder<T>>? implementConcreteAspect = null )
         where T : class, IDeclaration
     {
-        /*
         // Verifies the eligibility (implicitly reports an error if any).
-        if ( !builder.VerifyEligibility( this.EligibilityRule ) )
+        if ( !builder.VerifyEligibility( this.CreateEligibilityRule() ) )
         {
             return;
         }
-        */
 
         // Checks if there is anything to do anyway.
         var attributeGroup = new MulticastAttributeGroup( builder, this.ConcreteTargets );
@@ -138,13 +136,43 @@ public sealed class MulticastImplementation
     {
         List<Action<IEligibilityBuilder<IDeclaration>>> rules = new();
 
-        if ( this.ConcreteTargets.HasFlagFast( MulticastTargets.Assembly ) )
+        void AcceptAssembly()
         {
             rules.Add( builder => builder.MustBeOfType( typeof(ICompilation) ) );
         }
 
+        void AcceptClassOrStruct()
+        {
+            rules.Add(
+                builder => builder.Convert()
+                    .To<INamedType>()
+                    .MustSatisfy(
+                        t => t.TypeKind is TypeKind.RecordClass or TypeKind.Class or TypeKind.Struct or TypeKind.RecordStruct,
+                        t => $"{t} is neither a class, struct or record" ) );
+        }
+
+        void AcceptHasAccessor()
+        {
+            rules.Add( builder => builder.MustBeOfType( typeof(IHasAccessors) ) );
+        }
+
+        void AcceptHasParametersOrAncestor()
+        {
+            AcceptAssembly();
+            AcceptClassOrStruct();
+            AcceptHasAccessor();
+            rules.Add( builder => builder.MustBeOfType( typeof(IHasParameters) ) );
+        }
+
+        if ( this.ConcreteTargets.HasFlagFast( MulticastTargets.Assembly ) )
+        {
+            AcceptAssembly();
+        }
+
         if ( this.ConcreteTargets.HasFlagFast( MulticastTargets.Class ) )
         {
+            AcceptAssembly();
+
             rules.Add(
                 builder => builder.Convert()
                     .To<INamedType>()
@@ -153,6 +181,8 @@ public sealed class MulticastImplementation
 
         if ( this.ConcreteTargets.HasFlagFast( MulticastTargets.Struct ) )
         {
+            AcceptAssembly();
+
             rules.Add(
                 builder => builder.Convert()
                     .To<INamedType>()
@@ -161,21 +191,33 @@ public sealed class MulticastImplementation
 
         if ( this.ConcreteTargets.HasFlagFast( MulticastTargets.Method ) )
         {
+            AcceptAssembly();
+            AcceptClassOrStruct();
+            AcceptHasAccessor();
+
             rules.Add( builder => builder.MustBeOfType( typeof(IMethod) ) );
         }
 
         if ( this.ConcreteTargets.HasFlagFast( MulticastTargets.InstanceConstructor ) )
         {
+            AcceptAssembly();
+            AcceptClassOrStruct();
             rules.Add( builder => builder.Convert().To<IConstructor>().MustNotBeStatic() );
         }
 
         if ( this.ConcreteTargets.HasFlagFast( MulticastTargets.StaticConstructor ) )
         {
+            AcceptAssembly();
+            AcceptClassOrStruct();
+
             rules.Add( builder => builder.Convert().To<IConstructor>().MustBeStatic() );
         }
 
         if ( this.ConcreteTargets.HasFlagFast( MulticastTargets.Property ) )
         {
+            AcceptAssembly();
+            AcceptClassOrStruct();
+
             rules.Add(
                 builder =>
                 {
@@ -186,11 +228,17 @@ public sealed class MulticastImplementation
 
         if ( this.ConcreteTargets.HasFlagFast( MulticastTargets.Event ) )
         {
+            AcceptAssembly();
+            AcceptClassOrStruct();
+
             rules.Add( builder => builder.MustBeOfType( typeof(IEvent) ) );
         }
 
         if ( this.ConcreteTargets.HasFlagFast( MulticastTargets.Field ) )
         {
+            AcceptAssembly();
+            AcceptClassOrStruct();
+
             rules.Add(
                 builder =>
                 {
@@ -201,6 +249,8 @@ public sealed class MulticastImplementation
 
         if ( this.ConcreteTargets.HasFlagFast( MulticastTargets.Parameter ) )
         {
+            AcceptHasParametersOrAncestor();
+
             rules.Add(
                 builder =>
                 {
@@ -212,6 +262,8 @@ public sealed class MulticastImplementation
 
         if ( this.ConcreteTargets.HasFlagFast( MulticastTargets.ReturnValue ) )
         {
+            AcceptHasParametersOrAncestor();
+
             rules.Add(
                 builder =>
                 {

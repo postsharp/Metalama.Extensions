@@ -5,5 +5,4 @@ using Metalama.Extensions.Architecture.Aspects;
 namespace Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.SelfReference;
 
 [CanOnlyBeUsedFrom( Types = new[] { typeof(BaseClass) } )]
-public class BaseClass
-{ }
+public class BaseClass { }

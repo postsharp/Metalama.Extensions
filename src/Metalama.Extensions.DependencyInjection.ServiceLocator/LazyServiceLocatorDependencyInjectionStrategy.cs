@@ -120,12 +120,13 @@ internal class LazyServiceLocatorDependencyInjectionStrategy : DefaultDependency
         public IField? ServiceProviderField { get; set; }
     }
 
-    [Template] 
+    [Template]
     private static T GetDependencyTemplate<[CompileTime] T>( PropertyArgs args )
     {
         return args.CacheField!.Value ??= (T) args.ServiceProviderField!.Value!.GetService( typeof(T) );
     }
 
+    // ReSharper disable once UnusedParameter.Local
     [Template]
     private void SetDependencyTemplate<[CompileTime] T>( PropertyArgs args )
     {
