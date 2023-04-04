@@ -18,7 +18,7 @@ public sealed class DependencyInjectionOptions : ProjectExtension
         => frameworks[0];
 
     private ImmutableArray<IDependencyInjectionFramework> _registeredFrameworks =
-        ImmutableArray.Create<IDependencyInjectionFramework>( new DefaultDependencyInjectionFramework() );
+        ImmutableArray.Create<IDependencyInjectionFramework>( new LoggerDependencyInjectionFramework(), new DefaultDependencyInjectionFramework() );
 
     /// <summary>
     /// Gets or sets the list of frameworks that can be used to implement the <see cref="IntroduceDependencyAttribute"/> advice and <see cref="DependencyAttribute"/>
