@@ -21,10 +21,12 @@ var product = new Product( Dependencies.MetalamaExtensions )
         "Metalama.Extensions.Architecture.$(PackageVersion).nupkg" ),
     Dependencies = new[] { Dependencies.PostSharpEngineering, Dependencies.Metalama },
     MainVersionDependency = Dependencies.Metalama,
-    Configurations = Product.DefaultConfigurations
-        .WithValue(
-        BuildConfiguration.Public, Product.DefaultConfigurations.Public with { 
-            PublicPublishers = Product.DefaultPublicPublishers.Add( new MergePublisher() ).ToArray() } )
+    
+    // MergePublisher disabled for 2023.1.
+    // Configurations = Product.DefaultConfigurations
+    //     .WithValue(
+    //     BuildConfiguration.Public, Product.DefaultConfigurations.Public with { 
+    //         PublicPublishers = Product.DefaultPublicPublishers.Add( new MergePublisher() ).ToArray() } )
 };
 
 var commandApp = new CommandApp();
