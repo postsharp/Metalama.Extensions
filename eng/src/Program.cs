@@ -1,17 +1,14 @@
 ﻿// Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
 using PostSharp.Engineering.BuildTools;
-using PostSharp.Engineering.BuildTools.Build;
 using PostSharp.Engineering.BuildTools.Build.Model;
-using PostSharp.Engineering.BuildTools.Build.Publishers;
 using PostSharp.Engineering.BuildTools.Build.Solutions;
 using PostSharp.Engineering.BuildTools.Dependencies.Model;
 using Spectre.Console.Cli;
-using System.Linq;
 
 var product = new Product( Dependencies.MetalamaExtensions )
 {
-    Solutions = new[] { new DotNetSolution( "Metalama.Extensions.sln" ) { CanFormatCode = true } },
+    Solutions = new Solution[] { new DotNetSolution( "Metalama.Extensions.sln" ) { CanFormatCode = true } },
     PublicArtifacts = Pattern.Create(
         "Metalama.Extensions.DependencyInjection.$(PackageVersion).nupkg",
         "Metalama.Extensions.DependencyInjection.ServiceLocator.$(PackageVersion).nupkg",
