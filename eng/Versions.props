@@ -12,7 +12,7 @@
     
     <!-- Set the default versions of dependencies -->
     <PropertyGroup>
-        <PostSharpEngineeringVersion>1.0.140-preview</PostSharpEngineeringVersion>
+        <PostSharpEngineeringVersion>2023.0.144</PostSharpEngineeringVersion>
 		<MetalamaVersion>2023.0.102-rc</MetalamaVersion>
     </PropertyGroup>
 
