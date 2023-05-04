@@ -13,7 +13,7 @@
     <!-- Set the default versions of dependencies -->
     <PropertyGroup>
         <PostSharpEngineeringVersion>2023.0.144</PostSharpEngineeringVersion>
-		<MetalamaVersion>2023.0.114</MetalamaVersion>
+		<MetalamaVersion>2023.0.115</MetalamaVersion>
     </PropertyGroup>
 
     <!-- Override versions (both this product and dependencies) for the local build -->
