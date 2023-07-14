@@ -41,7 +41,8 @@ namespace Metalama.Extensions.Architecture.Aspects
             }
 
             // An experimental declaration an reference another experimental declaration.
-            if ( context.ReferencingDeclaration.ContainingAncestorsAndSelf().Any( d => d.DeclarationKind != DeclarationKind.Compilation && d.Enhancements().HasAspect<ExperimentalAttribute>() ) )
+            if ( context.ReferencingDeclaration.ContainingAncestorsAndSelf()
+                .Any( d => d.DeclarationKind != DeclarationKind.Compilation && d.Enhancements().HasAspect<ExperimentalAttribute>() ) )
             {
                 return;
             }
