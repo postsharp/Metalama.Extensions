@@ -4,6 +4,8 @@
 // @Include(_Tagging.cs)
 #endif
 
+// ReSharper disable UnusedParameter.Global
+
 // <target>
 
 namespace Metalama.Extensions.Multicast.AspectTests.Filter_ByParameterKind

@@ -1,5 +1,6 @@
 ﻿// Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
+using JetBrains.Annotations;
 using Metalama.Framework.Advising;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
@@ -16,6 +17,7 @@ namespace Metalama.Extensions.Multicast;
 [AttributeUsage(
     AttributeTargets.Method | AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Property | AttributeTargets.Event,
     AllowMultiple = true )]
+[PublicAPI]
 public abstract class OverrideMethodMulticastAspect : MulticastAspect, IAspect<IProperty>,
                                                       IAspect<IEvent>, IAspect<IMethod>
 {

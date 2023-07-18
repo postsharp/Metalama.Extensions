@@ -1,5 +1,6 @@
 ﻿// Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
+using JetBrains.Annotations;
 using Metalama.Framework.Aspects;
 using System;
 
@@ -12,6 +13,7 @@ namespace Metalama.Extensions.Multicast;
 /// Multicast aspects in Metalama should implement this interface. All properties should be implemented as automatic properties. 
 /// </summary>
 [RunTimeOrCompileTime]
+[PublicAPI]
 public interface IMulticastAttribute : IAspect
 {
     /// <summary>

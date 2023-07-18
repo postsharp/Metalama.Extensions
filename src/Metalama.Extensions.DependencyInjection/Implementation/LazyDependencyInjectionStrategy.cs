@@ -108,12 +108,11 @@ public partial class LazyDependencyInjectionStrategy : DefaultDependencyInjectio
         public IField? DependencyField { get; set; }
     }
 
-    [Template] // Bug: Cannot be private!
-    public static dynamic? GetDependencyTemplate( TemplateArgs args ) => args.CacheField!.Value ??= args.DependencyField!.Value!.Invoke();
-
     [Template]
-    public void SetDependencyTemplate( TemplateArgs args )
-    {
-        throw new NotSupportedException( $"Cannot set '{this.Context.FieldOrProperty.Name}' because of the dependency aspect." );
-    }
+    private static dynamic? GetDependencyTemplate( TemplateArgs args ) => args.CacheField!.Value ??= args.DependencyField!.Value!.Invoke();
+
+    // ReSharper disable once UnusedParameter.Local
+    [Template]
+    private void SetDependencyTemplate( TemplateArgs args )
+        => throw new NotSupportedException( $"Cannot set '{this.Context.FieldOrProperty.Name}' because of the dependency aspect." );
 }
