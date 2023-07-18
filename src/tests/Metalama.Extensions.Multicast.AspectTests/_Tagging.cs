@@ -69,7 +69,7 @@ namespace Metalama.Extensions.Multicast.AspectTests
 
     [AttributeUsage( AttributeTargets.All, AllowMultiple = true )]
     [Inheritable]
-    internal class AddTagInheritedAttribute : MulticastAspect, IAspect<IMethod>, IAspect<IConstructor>
+    internal class AddTagInheritedAttribute : MulticastAspect, IAspect<IMethod>, IAspect<IConstructor>, IAspect<IFieldOrProperty>, IAspect<IEvent>
     {
         private readonly string _tag;
 

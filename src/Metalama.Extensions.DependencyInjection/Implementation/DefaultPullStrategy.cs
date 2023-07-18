@@ -28,12 +28,12 @@ public class DefaultPullStrategy : IPullStrategy
     /// <summary>
     /// Gets the <see cref="IntroduceDependencyContext"/>.
     /// </summary>
-    public DependencyContext Context { get; }
+    private DependencyContext Context { get; }
 
     /// <summary>
     /// Gets the dependency field or property in the target type. 
     /// </summary>
-    public IFieldOrProperty IntroducedFieldOrProperty { get; }
+    protected IFieldOrProperty IntroducedFieldOrProperty { get; }
 
     /// <summary>
     /// Gets the field or property that must be assigned by the <see cref="GetAssignmentStatement(IParameter)"/> method.
@@ -47,10 +47,10 @@ public class DefaultPullStrategy : IPullStrategy
     /// <summary>
     /// Gets the name of the new constructor parameter.
     /// </summary>
-    protected virtual string GetNewParameterName( IConstructor constructor )
+    private string GetNewParameterName( IConstructor constructor )
     {
         // Apply naming conventions.
-        var parameterName = this.CleanParameterName( this.IntroducedFieldOrProperty.Name );
+        var parameterName = CleanParameterName( this.IntroducedFieldOrProperty.Name );
 
         // Deduplicate.
         var deduplicate = 0;
@@ -74,7 +74,7 @@ public class DefaultPullStrategy : IPullStrategy
     /// </summary>
     /// <param name="parameterName">The input parameter name.</param>
     /// <returns>The normalized parameter name.</returns>
-    protected virtual string CleanParameterName( string parameterName )
+    private static string CleanParameterName( string parameterName )
     {
         // Take the parameter name from the name of the field or property.
         parameterName = parameterName.TrimStart( '_' );

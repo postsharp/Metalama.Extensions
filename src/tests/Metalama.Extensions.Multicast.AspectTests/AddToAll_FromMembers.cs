@@ -4,6 +4,8 @@
 // @Include(_Tagging.cs)
 #endif
 
+// ReSharper disable EventNeverSubscribedTo.Global, UnusedParameter.Global
+
 namespace Metalama.Extensions.Multicast.AspectTests.AddToAll_FromMembers
 {
     // <target>

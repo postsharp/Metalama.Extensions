@@ -19,6 +19,7 @@ namespace Metalama.Extensions.Architecture.AspectTests.InternalsOnlyAccessibleFr
 
         internal class InternalClass { }
 
+        // ReSharper disable once ClassNeverInstantiated.Global
         public class PublicClass
         {
             public static void PublicMethod() { }

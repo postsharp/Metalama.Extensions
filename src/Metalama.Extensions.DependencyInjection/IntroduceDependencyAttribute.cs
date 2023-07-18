@@ -23,7 +23,6 @@ public class IntroduceDependencyAttribute : DeclarativeAdviceAttribute, IDepende
     {
         var context = new IntroduceDependencyContext(
             (IFieldOrProperty) templateMember,
-            templateMemberId,
             this,
             builder.Target.GetClosestNamedType()!,
             builder.Diagnostics,

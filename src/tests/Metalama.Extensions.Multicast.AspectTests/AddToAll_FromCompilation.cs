@@ -8,8 +8,7 @@ using Metalama.Extensions.Multicast.AspectTests;
 
 [assembly: AddTag( "Tagged" )]
 
-// ReSharper disable UnusedParameter.Local
-// ReSharper disable UnusedType.Local
+// ReSharper disable EventNeverSubscribedTo.Global, UnusedParameter.Global
 
 // <target>
 namespace Metalama.Extensions.Multicast.AspectTests.AddToAllFromCompilation
