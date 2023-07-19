@@ -141,11 +141,20 @@ public abstract class BaseUsageValidationAttribute : Attribute, IConditionallyIn
             addPredicate( new ReferencingNamespacePredicate( type.Namespace ) );
         }
 
-        foreach ( var type in this.Types )
+        switch ( this.Types.Length )
         {
-            addPredicate( new ReferencingTypePredicate( type ) );
+            case 0:
+                break;
+            
+            case 1:
+                addPredicate( new ReferencingTypePredicate( this.Types[0] ) );    
+                break;
+            
+            default:
+                addPredicate( new AnyReferencingTypePredicate( this.Types ) );
+                break;
         }
-
+        
         foreach ( var typeName in this.TypeNames )
         {
             addPredicate( new ReferencingTypeNamePredicate( typeName ) );

@@ -123,7 +123,20 @@ public static class ReferencePredicateExtensions
     /// <summary>
     /// Accepts code references contained in a given type.
     /// </summary>
+    /// <seealso cref="AnyType(Metalama.Extensions.Architecture.Predicates.ReferencePredicateBuilder,System.Type[])"/>
     public static ReferencePredicate Type( this ReferencePredicateBuilder builder, Type type ) => new ReferencingTypePredicate( type, builder );
+
+    /// <summary>
+    /// Accepts code references contained in any type in a given list.
+    /// </summary>
+    /// <seealso cref="AnyType(Metalama.Extensions.Architecture.Predicates.ReferencePredicateBuilder,System.Type[])"/>
+    public static ReferencePredicate AnyType( this ReferencePredicateBuilder builder, params Type[] types ) => new AnyReferencingTypePredicate( types, builder );
+    
+    /// <summary>
+    /// Accepts code references contained in any type in a given list.
+    /// </summary>
+    /// <seealso cref="AnyType(Metalama.Extensions.Architecture.Predicates.ReferencePredicateBuilder,System.Type[])"/>
+    public static ReferencePredicate AnyType( this ReferencePredicateBuilder builder, IEnumerable<Type> types ) => new AnyReferencingTypePredicate( types, builder );
 
     /// <summary>
     /// Accepts code references contained in a given type specified as a string, optionally containing wildcards <c>*</c> or <c>**</c>.

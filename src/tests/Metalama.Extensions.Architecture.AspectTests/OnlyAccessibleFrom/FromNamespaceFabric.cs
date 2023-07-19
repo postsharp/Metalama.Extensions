@@ -12,8 +12,6 @@ namespace Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.FromNa
     {
         public override void AmendNamespace( INamespaceAmender amender )
         {
-            Debugger.Break();
-
             amender.Verify().CanOnlyBeUsedFrom( r => r.Namespace( typeof(AllowedClass).Namespace! ) );
         }
     }
