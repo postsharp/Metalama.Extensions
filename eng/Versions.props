@@ -1,4 +1,4 @@
-﻿
+
 <Project>
 
     <!-- Set the default version of the current product -->
@@ -13,7 +13,7 @@
     <!-- Set the default versions of dependencies -->
     <PropertyGroup>
         <PostSharpEngineeringVersion>2023.2.24</PostSharpEngineeringVersion>
-		<MetalamaVersion>2023.2.1-preview</MetalamaVersion>
+		<MetalamaVersion>2023.2.2-rc</MetalamaVersion>
     </PropertyGroup>
 
     <!-- Override versions (both this product and dependencies) for the local build -->
