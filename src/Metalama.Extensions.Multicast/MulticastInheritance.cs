@@ -1,5 +1,6 @@
 // Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
+using JetBrains.Annotations;
 using Metalama.Framework.Aspects;
 using System;
 
@@ -14,6 +15,7 @@ namespace Metalama.Extensions.Multicast;
     "Inheritance is Metalama is implemented at the aspect class level with the [Inheritable] attribute, and the difference between Strict and " +
     "Multicast is made by an argument passed to the MulticastImplementation constructor." )]
 [RunTimeOrCompileTime]
+[PublicAPI]
 public enum MulticastInheritance
 {
     /// <summary>

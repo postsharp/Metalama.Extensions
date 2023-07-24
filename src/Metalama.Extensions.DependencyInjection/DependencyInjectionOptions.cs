@@ -1,5 +1,6 @@
 ﻿// Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
+using JetBrains.Annotations;
 using Metalama.Extensions.DependencyInjection.Implementation;
 using Metalama.Framework.Project;
 using System;
@@ -12,6 +13,7 @@ namespace Metalama.Extensions.DependencyInjection;
 /// <summary>
 /// Options that influence the processing of <see cref="IntroduceDependencyAttribute"/>.
 /// </summary>
+[PublicAPI]
 public sealed class DependencyInjectionOptions : ProjectExtension
 {
     private Func<DependencyContext, ImmutableArray<IDependencyInjectionFramework>, IDependencyInjectionFramework?> _selector = ( _, frameworks )
@@ -38,17 +40,15 @@ public sealed class DependencyInjectionOptions : ProjectExtension
         }
     }
 
-#pragma warning disable SA1623
     /// <summary>
-    /// Gets or sets the default value for the <see cref="DependencyAttribute.IsRequired"/> property of <see cref="DependencyAttribute"/> and <see cref="IntroduceDependencyAttribute"/>.
+    /// Gets or sets a value indicating whether the default value for the <see cref="DependencyAttribute.IsRequired"/> property of <see cref="DependencyAttribute"/> and <see cref="IntroduceDependencyAttribute"/>.
     /// </summary>
     public bool IsRequiredByDefault { get; set; } = true;
 
     /// <summary>
-    /// Gets or sets the default value for the <see cref="DependencyAttribute.IsLazy"/> property of <see cref="DependencyAttribute"/> and <see cref="IntroduceDependencyAttribute"/>.
+    /// Gets or sets a value indicating whether the default value for the <see cref="DependencyAttribute.IsLazy"/> property of <see cref="DependencyAttribute"/> and <see cref="IntroduceDependencyAttribute"/>.
     /// </summary>
     public bool IsLazyByDefault { get; set; }
-#pragma warning restore SA1623
 
     /// <summary>
     /// Registers an implementation of the <see cref="IDependencyInjectionFramework"/> interface with highest priority.
@@ -99,16 +99,11 @@ public sealed class DependencyInjectionOptions : ProjectExtension
 
         if ( eligibleFrameworks.IsEmpty )
         {
-            if ( this.RegisteredFrameworks.IsDefaultOrEmpty )
-            {
-                context.Diagnostics.Report(
-                    DiagnosticDescriptors.NoDependencyInjectionFrameworkRegistered.WithArguments( (context.FieldOrProperty, context.TargetType) ) );
-            }
-            else
-            {
-                context.Diagnostics.Report(
-                    DiagnosticDescriptors.NoSuitableDependencyInjectionFramework.WithArguments( (context.FieldOrProperty, context.TargetType) ) );
-            }
+            var diagnostic = this.RegisteredFrameworks.IsDefaultOrEmpty
+                ? DiagnosticDescriptors.NoDependencyInjectionFrameworkRegistered
+                : DiagnosticDescriptors.NoSuitableDependencyInjectionFramework;
+
+            context.Diagnostics.Report( diagnostic.WithArguments( (context.FieldOrProperty, context.TargetType) ) );
 
             framework = null;
 

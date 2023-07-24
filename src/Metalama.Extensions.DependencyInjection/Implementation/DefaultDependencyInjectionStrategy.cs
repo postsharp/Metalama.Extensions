@@ -20,7 +20,7 @@ public class DefaultDependencyInjectionStrategy
     /// <summary>
     /// Gets the <see cref="IntroduceDependencyContext"/> for which the current object was created.
     /// </summary>
-    public DependencyContext Context { get; }
+    protected DependencyContext Context { get; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DefaultDependencyInjectionStrategy"/> class.
@@ -36,7 +36,7 @@ public class DefaultDependencyInjectionStrategy
     /// <param name="builder">An <see cref="IAspectBuilder{TAspectTarget}"/> for the target class.</param>
     /// <param name="introducedFieldOrProperty">At output, the created field or property.</param>
     /// <returns><c>true</c> if the dependency was introduced, <c>false</c> if the dependency was ignored (for instance because it already existed) or in case or error.</returns>
-    protected virtual bool TryIntroduceFieldOrProperty(
+    private bool TryIntroduceFieldOrProperty(
         IAspectBuilder<INamedType> builder,
         [NotNullWhen( true )] out IFieldOrProperty? introducedFieldOrProperty )
     {
@@ -104,7 +104,7 @@ public class DefaultDependencyInjectionStrategy
     /// </summary>
     /// <param name="type">The type in which the dependency is being injected.</param>
     /// <returns></returns>
-    protected virtual IEnumerable<IConstructor> GetConstructors( INamedType type )
+    private static IEnumerable<IConstructor> GetConstructors( INamedType type )
         => type.Constructors.Where( c => c.InitializerKind != ConstructorInitializerKind.This );
 
     /// <summary>
@@ -113,9 +113,9 @@ public class DefaultDependencyInjectionStrategy
     /// </summary>
     /// <param name="aspectBuilder">An <see cref="IAspectBuilder{TAspectTarget}"/> for the target type.</param>
     /// <param name="pullStrategy">A pull strategy (typically the one returned by <see cref="GetPullStrategy"/>).</param>
-    protected virtual void PullDependency( IAspectBuilder<INamedType> aspectBuilder, IPullStrategy pullStrategy )
+    protected void PullDependency( IAspectBuilder<INamedType> aspectBuilder, IPullStrategy pullStrategy )
     {
-        foreach ( var constructor in this.GetConstructors( aspectBuilder.Target ) )
+        foreach ( var constructor in GetConstructors( aspectBuilder.Target ) )
         {
             if ( constructor.InitializerKind != ConstructorInitializerKind.This )
             {
