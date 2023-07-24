@@ -118,7 +118,7 @@ namespace Metalama.Extensions.Architecture.Fabrics
         /// </summary>
         public static void DerivedTypesMustRespectNamingConvention( this ITypeSetVerifier<IDeclaration> setVerifier, string pattern )
         {
-            setVerifier.Receiver.ValidateReferences( NamingConventionValidator.CreateStarPatternValidator( pattern ) );
+            setVerifier.Receiver.ValidateReferences( DerivedTypeNamingConventionValidator.CreateStarPatternValidator( pattern ) );
         }
 
         /// <summary>
@@ -127,7 +127,7 @@ namespace Metalama.Extensions.Architecture.Fabrics
         /// </summary>
         public static void DerivedTypesMustRespectRegexNamingConvention( this ITypeSetVerifier<IDeclaration> setVerifier, string pattern )
         {
-            setVerifier.Receiver.ValidateReferences( NamingConventionValidator.CreateRegexValidator( pattern ) );
+            setVerifier.Receiver.ValidateReferences( DerivedTypeNamingConventionValidator.CreateRegexValidator( pattern ) );
         }
 
         /// <summary>

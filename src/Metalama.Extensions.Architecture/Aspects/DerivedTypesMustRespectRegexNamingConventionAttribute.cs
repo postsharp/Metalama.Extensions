@@ -38,6 +38,8 @@ public class DerivedTypesMustRespectRegexNamingConventionAttribute : TypeAspect
             return;
         }
 
-        builder.Outbound.ValidateReferences( NamingConventionValidator.CreateRegexValidator( this.Pattern ) );
+        builder.Outbound.ValidateReferences( DerivedTypeNamingConventionValidator.CreateRegexValidator( this.Pattern ) );
     }
+    
+    public override string ToString() => $"DerivedTypesMustRespectRegexNamingConvention( \"{this.Pattern}\" )";
 }
