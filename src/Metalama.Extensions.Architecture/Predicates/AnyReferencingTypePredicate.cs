@@ -1,4 +1,6 @@
-﻿using Metalama.Framework.Code;
+﻿// Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
+
+using Metalama.Framework.Code;
 using Metalama.Framework.Validation;
 using System;
 using System.Collections.Generic;
@@ -18,7 +20,6 @@ internal class AnyReferencingTypePredicate : ReferencePredicate
 
         foreach ( var iType in iTypes )
         {
-
             if ( iType is not INamedType namedType )
             {
                 throw new InvalidOperationException(
@@ -40,6 +41,7 @@ internal class AnyReferencingTypePredicate : ReferencePredicate
     public override bool IsMatch( in ReferenceValidationContext context )
     {
         var contextCopy = context;
+
         return this._typeRefs.Any( t => contextCopy.ReferencingType.Equals( t.GetTarget( options: default ) ) );
     }
 }
