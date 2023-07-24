@@ -6,6 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="InternalsAccess\InternalsCannotBeUsedFrom_Aspect - Copy.t.cs" />
+    <Compile Remove="InternalsAccess\InternalsCanOnlyBeUsedFrom_Fabric.t.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
 	  <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
 	  <PackageReference Include="coverlet.collector" Version="3.1.2">
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -24,6 +29,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="InternalsAccess\InternalsCannotBeUsedFrom_Fabric.t.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>InternalsCannotBeUsedFrom_Fabric.cs</DependentUpon>
+    </None>
+    <None Include="InternalsAccess\InternalsCanOnlyBeUsedFrom_Fabric.t.cs" />
+    <None Include="InternalsAccess\InternalsCanOnlyBeUsedFrom_Aspect.t.cs" />
     <None Include="OnlyAccessibleFrom\FromTypeFabricName.t.cs" />
     <None Include="OnlyAccessibleFrom\FromTypeFabricName_Pattern.t.cs" />
     <None Include="OnlyAccessibleFrom\NamedType.t.cs" />

@@ -25,7 +25,10 @@ public class InternalsCannotBeUsedFromAttribute : BaseUsageValidationAttribute, 
             return;
         }
 
-        var validator = new ReferencePredicateValidator( predicate.Not(), this.Description, this.ReferenceKinds );
+        var validator = new ReferencePredicateValidator(
+           new OrPredicate( new HasFamilyAccessPredicate(), predicate.Not() ),
+           this.Description,
+           this.ReferenceKinds );
 
         // Register a validator for all internal members.
         builder.Outbound.SelectMany(

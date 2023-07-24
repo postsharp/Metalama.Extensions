@@ -4,7 +4,6 @@ using Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.FromNamesp
 using Metalama.Extensions.Architecture.Fabrics;
 using Metalama.Extensions.Architecture.Predicates;
 using Metalama.Framework.Fabrics;
-using System.Diagnostics;
 
 namespace Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.FromNamespaceFabric
 {
