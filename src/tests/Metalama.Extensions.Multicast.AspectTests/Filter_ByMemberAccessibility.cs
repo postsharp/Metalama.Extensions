@@ -7,6 +7,8 @@
 using Metalama.Extensions.Multicast;
 using Metalama.Extensions.Multicast.AspectTests;
 
+// ReSharper disable EventNeverSubscribedTo.Global
+
 [assembly: AddTag(
     "PublicMember",
     AttributeTargetElements = MulticastTargets.Method | MulticastTargets.Property | MulticastTargets.Event | MulticastTargets.Field,

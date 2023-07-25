@@ -15,13 +15,11 @@ internal class MulticastAttributeInfo : IComparable<MulticastAttributeInfo>
 {
     public IMulticastAttribute Attribute { get; }
 
-    public bool HasError { get; private set; }
+    private Regex? AttributeTargetParametersRegex { get; }
 
-    public Regex? AttributeTargetParametersRegex { get; }
+    private Regex? AttributeTargetMembersRegex { get; }
 
-    public Regex? AttributeTargetMembersRegex { get; }
-
-    public Regex? AttributeTargetTypesRegex { get; }
+    private Regex? AttributeTargetTypesRegex { get; }
 
     public MulticastAttributeInfo( IAspectInstance aspectInstance, IAspectBuilder aspectBuilder )
     {
@@ -44,7 +42,6 @@ internal class MulticastAttributeInfo : IComparable<MulticastAttributeInfo>
                 }
                 catch ( ArgumentException e )
                 {
-                    this.HasError = true;
                     var declaration = aspectInstance.TargetDeclaration.GetTarget( aspectBuilder.Target.Compilation );
 
                     aspectBuilder.Diagnostics.Report(

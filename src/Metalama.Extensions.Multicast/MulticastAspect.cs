@@ -46,11 +46,6 @@ public abstract class MulticastAspect : Aspect, IMulticastAttribute, IAspect<ICo
         this._multicastOnInheritance = multicastOnInheritance;
     }
 
-    protected MulticastAspect()
-    {
-        // TODO: remove.
-    }
-
     protected MulticastImplementation Implementation => this._implementation ??= new MulticastImplementation( this._targets, this._multicastOnInheritance );
 
     /// <inheritdoc />

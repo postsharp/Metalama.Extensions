@@ -3,12 +3,11 @@
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 using Metalama.Framework.Diagnostics;
-using Metalama.Framework.Fabrics;
 
 namespace Metalama.Extensions.DependencyInjection.Implementation;
 
 [CompileTime]
-internal class DiagnosticDescriptors : ProjectFabric
+internal static class DiagnosticDescriptors
 {
     private const string _category = "Metalama.Extensions.DependencyInjection";
 

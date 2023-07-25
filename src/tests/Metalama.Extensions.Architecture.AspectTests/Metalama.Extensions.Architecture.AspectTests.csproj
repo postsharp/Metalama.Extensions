@@ -1,43 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-	  <NoWarn>$(NoWarn);CS8616;CS8618;CA1822;CS0067;CS0169</NoWarn>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <NoWarn>$(NoWarn);CS8616;CS8618;CA1822;CS0067;CS0169</NoWarn>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="InternalsAccess\InternalsCannotBeUsedFrom_Aspect - Copy.t.cs" />
-    <Compile Remove="InternalsAccess\InternalsCanOnlyBeUsedFrom_Fabric.t.cs" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
+        <PackageReference Include="xunit" Version="2.4.1" />
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="coverlet.collector" Version="3.1.2">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="Metalama.Framework" Version="$(MetalamaVersion)" />
+        <PackageReference Include="Metalama.Testing.AspectTesting" Version="$(MetalamaVersion)" />
+    </ItemGroup>
 
-  <ItemGroup>
-	  <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
-	  <PackageReference Include="coverlet.collector" Version="3.1.2">
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		  <PrivateAssets>all</PrivateAssets>
-	  </PackageReference>
-      <PackageReference Include="xunit" Version="2.4.1" />
-      <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-          <PrivateAssets>all</PrivateAssets>
-      </PackageReference>
-    <PackageReference Include="Metalama.Testing.AspectTesting" Version="$(MetalamaVersion)" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\Metalama.Extensions.Architecture\Metalama.Extensions.Architecture.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="InternalsAccess\InternalsCannotBeUsedFrom_Fabric.t.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>InternalsCannotBeUsedFrom_Fabric.cs</DependentUpon>
-    </None>
-    <None Include="InternalsAccess\InternalsCanOnlyBeUsedFrom_Fabric.t.cs" />
-    <None Include="InternalsAccess\InternalsCanOnlyBeUsedFrom_Aspect.t.cs" />
-    <None Include="OnlyAccessibleFrom\FromTypeFabricName.t.cs" />
-    <None Include="OnlyAccessibleFrom\FromTypeFabricName_Pattern.t.cs" />
-    <None Include="OnlyAccessibleFrom\NamedType.t.cs" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\Metalama.Extensions.Architecture\Metalama.Extensions.Architecture.csproj" />
+    </ItemGroup>
 
 </Project>
