@@ -11,7 +11,7 @@ namespace Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.Exclus
     internal class ConstrainedClass { }
 
     internal class Forbidden : ConstrainedClass {
-        class AllowedBecauseNested : ConstrainedClass { }
+        private class AllowedBecauseNested : ConstrainedClass { }
     }
 
     internal class AllowedClass : ConstrainedClass { }
