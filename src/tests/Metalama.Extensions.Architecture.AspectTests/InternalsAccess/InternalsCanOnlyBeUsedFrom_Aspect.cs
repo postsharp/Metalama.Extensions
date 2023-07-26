@@ -1,13 +1,16 @@
 ﻿// Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
 using Metalama.Extensions.Architecture.Aspects;
-using Metalama.Extensions.Architecture.AspectTests.InternalsOnlyAccessibleFrom.AllowedNs;
+using Metalama.Extensions.Architecture.AspectTests.InternalsCanOnlyBeUsedFrom_Aspect.AllowedNs;
+using Metalama.Extensions.Architecture.Predicates;
+using Metalama.Framework.Code;
+using Metalama.Framework.Validation;
 
-namespace Metalama.Extensions.Architecture.AspectTests.InternalsOnlyAccessibleFrom
+namespace Metalama.Extensions.Architecture.AspectTests.InternalsCanOnlyBeUsedFrom_Aspect
 {
     namespace AllowedNs
     {
-        [InternalsCanOnlyBeUsedFrom( CurrentNamespace = true )]
+        [InternalsCanOnlyBeUsedFrom( CurrentNamespace = true, ExclusionPredicateType = typeof(ExcludeNestedTypesPredicate) )]
         public class ConstrainedClass
         {
             public static void PublicMethod() { }
@@ -50,6 +53,16 @@ namespace Metalama.Extensions.Architecture.AspectTests.InternalsOnlyAccessibleFr
             ConstrainedClass.InternalMethod();
             ConstrainedClass.InternalProtectedMethod();
         }
+
+        private class AllowedNestedClass
+        {
+            public static void ForbiddenCalls()
+            {
+                // These calls should be forbidden.
+                ConstrainedClass.InternalMethod();
+                ConstrainedClass.InternalProtectedMethod();
+            }
+        }
     }
 
     internal class DerivedClassWithAllowedCalls : ConstrainedClass
@@ -71,5 +84,10 @@ namespace Metalama.Extensions.Architecture.AspectTests.InternalsOnlyAccessibleFr
             InternalMethod();
             PrivateProtectedMethod();
         }
+    }
+
+    internal class ExcludeNestedTypesPredicate : ReferencePredicate
+    {
+        public override bool IsMatch( in ReferenceValidationContext context ) => context.ReferencingDeclaration.GetClosestNamedType()?.DeclaringType != null;
     }
 }

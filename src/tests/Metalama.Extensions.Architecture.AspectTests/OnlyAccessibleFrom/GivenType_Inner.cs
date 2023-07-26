@@ -11,7 +11,7 @@ namespace Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.GivenT
     {
         internal class InnerClass
         {
-            private ConstrainedClass _field;
+            private readonly ConstrainedClass _field;
         }
     }
 
@@ -19,7 +19,7 @@ namespace Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.GivenT
     {
         internal class InnerClass
         {
-            private ConstrainedClass _field;
+            private readonly ConstrainedClass _field;
         }
     }
 }

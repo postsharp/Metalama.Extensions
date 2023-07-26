@@ -19,14 +19,14 @@ public class CannotBeUsedFromAttribute : BaseUsageValidationAttribute, IAspect<I
 
     public void BuildAspect( IAspectBuilder<IMemberOrNamedType> builder )
     {
-        if ( !this.TryCreatePredicate( builder, out var predicate ) )
+        if ( !this.TryCreatePredicate( builder, out var predicate ) || !this.TryCreateExclusionPredicate( builder, out var exclusionPredicate ) )
         {
             return;
         }
 
         builder.Outbound.ValidateReferences(
             new ReferencePredicateValidator(
-                predicate.Not(),
+                predicate.Not().Or( exclusionPredicate ),
                 this.Description,
                 this.ReferenceKinds ) );
     }

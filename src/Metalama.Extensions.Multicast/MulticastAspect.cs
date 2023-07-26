@@ -19,7 +19,12 @@ public abstract class MulticastAspect : Aspect, IMulticastAttribute, IAspect<ICo
     internal static readonly DiagnosticDefinition<(string PropertyName, string AspectName, DeclarationKind DeclarationKind, IDeclaration Declaration, string
             Message)>
         InvalidRegexError
-            = new( "PS0093", Severity.Error, "Invalid expression for property {0} of custom attribute {1} on {2} {3}: {4}", "Invalid regular expression." );
+            = new(
+                "PS0093",
+                Severity.Error,
+                "Invalid expression for property {0} of custom attribute {1} on {2} {3}: {4}",
+                "Invalid regular expression.",
+                "Metalama.Extensions.Multicast" );
 
     private readonly MulticastTargets _targets;
     private readonly bool _multicastOnInheritance;

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
 using JetBrains.Annotations;
+using Metalama.Extensions.Architecture.Predicates;
 using Metalama.Extensions.Architecture.Validators;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
@@ -16,28 +17,54 @@ namespace Metalama.Extensions.Architecture.Aspects;
 [PublicAPI]
 public class DerivedTypesMustRespectRegexNamingConventionAttribute : TypeAspect
 {
-    public DerivedTypesMustRespectRegexNamingConventionAttribute( string pattern )
+    public DerivedTypesMustRespectRegexNamingConventionAttribute( string regexPattern ) : this( regexPattern, regexPattern ) { }
+
+    protected DerivedTypesMustRespectRegexNamingConventionAttribute( string regexPattern, string displayPattern )
     {
-        this.Pattern = pattern;
+        this.RegexPattern = regexPattern;
+        this.DisplayPattern = displayPattern;
     }
 
-    public string Pattern { get; }
+    public string DisplayPattern { get; }
+
+    public string RegexPattern { get; }
+
+    /// <summary>
+    /// Gets a <see cref="Type"/>, derived from <see cref="ReferencePredicate"/>, that determines exclusions for the current
+    /// architecture rule. Specifically, no warning will be reported if the  <see cref="ReferencePredicate.IsMatch"/> method
+    /// of the <see cref="ReferencePredicate"/> returns <c>true</c>. This type must have a default constructor.
+    /// </summary>
+    public Type? ExclusionPredicateType { get; init; }
 
     public override void BuildAspect( IAspectBuilder<INamedType> builder )
     {
-        // Validate the regex.
-        try
+        // Validate the predicate type.
+        if ( !ExclusionPredicateTypeHelper.ValidateExclusionPredicateType( this.ExclusionPredicateType, builder.Diagnostics ) )
         {
-            _ = new Regex( this.Pattern );
-        }
-        catch ( Exception e )
-        {
-            builder.Diagnostics.Report( ArchitectureDiagnosticDefinitions.InvalidRegex.WithArguments( (this.Pattern, e.Message) ) );
             builder.SkipAspect();
 
             return;
         }
 
-        builder.Outbound.ValidateReferences( NamingConventionValidator.CreateRegexValidator( this.Pattern ) );
+        // Validate the regex.
+        try
+        {
+            _ = new Regex( this.RegexPattern );
+        }
+        catch ( Exception e )
+        {
+            builder.Diagnostics.Report( ArchitectureDiagnosticDefinitions.InvalidRegex.WithArguments( (this.RegexPattern, e.Message) ) );
+            builder.SkipAspect();
+
+            return;
+        }
+
+        builder.Outbound.ValidateReferences(
+            DerivedTypeNamingConventionValidator.CreateRegexValidator(
+                this.RegexPattern,
+                this.DisplayPattern,
+                ExclusionPredicateTypeHelper.GetExclusionPredicate( this.ExclusionPredicateType ) ) );
     }
+
+    public override string ToString() => $"DerivedTypesMustRespectRegexNamingConvention( \"{this.DisplayPattern}\" )";
 }

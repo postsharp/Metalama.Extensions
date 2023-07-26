@@ -21,12 +21,12 @@ public class CanOnlyBeUsedFromAttribute : BaseUsageValidationAttribute, IAspect<
 
     public void BuildAspect( IAspectBuilder<IMemberOrNamedType> builder )
     {
-        if ( !this.TryCreatePredicate( builder, out var predicate ) )
+        if ( !this.TryCreatePredicate( builder, out var predicate ) || !this.TryCreateExclusionPredicate( builder, out var exclusionPredicate ) )
         {
             return;
         }
 
         builder.Outbound.ValidateReferences(
-            new ReferencePredicateValidator( new OrPredicate( new HasFamilyAccessPredicate(), predicate ), this.Description, this.ReferenceKinds ) );
+            new ReferencePredicateValidator( new HasFamilyAccessPredicate().Or( predicate ).Or( exclusionPredicate ), this.Description, this.ReferenceKinds ) );
     }
 }

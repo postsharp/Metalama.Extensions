@@ -2,8 +2,6 @@
 
 using Metalama.Extensions.Architecture.Aspects;
 
-#pragma warning disable CS8618, CS0169
-
 namespace Metalama.Extensions.Architecture.AspectTests.Experimental
 {
     [Experimental]

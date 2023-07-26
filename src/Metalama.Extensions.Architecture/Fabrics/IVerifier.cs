@@ -17,6 +17,11 @@ public interface IVerifier<out T>
     where T : class, IDeclaration
 {
     /// <summary>
+    /// Gets assembly name the project that instantiated the current <see cref="IVerifier{T}"/>.
+    /// </summary>
+    string AssemblyName { get; }
+
+    /// <summary>
     /// Gets the namespace from which the current <see cref="IVerifier{T}"/> was instantiated, i.e. the namespace of the
     /// <see cref="NamespaceFabric"/> or the <see cref="TypeFabric"/>. Returns <c>null</c> if the <see cref="IVerifier{T}"/> was instantiated
     /// from a <see cref="ProjectFabric"/>. 

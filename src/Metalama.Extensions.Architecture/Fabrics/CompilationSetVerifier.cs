@@ -8,10 +8,10 @@ namespace Metalama.Extensions.Architecture.Fabrics;
 
 internal class CompilationSetVerifier : Verifier<ICompilation>, ITypeSetVerifier<ICompilation>
 {
-    public CompilationSetVerifier( IAspectReceiver<ICompilation> receiver ) : base( receiver, null ) { }
+    public CompilationSetVerifier( IAspectReceiver<ICompilation> receiver, string assemblyName ) : base( receiver, assemblyName, null ) { }
 
     public IAspectReceiver<INamedType> TypeReceiver => this.Receiver.SelectMany( x => x.Types );
 
     public ITypeSetVerifier<INamedType> SelectTypesDerivedFrom( Type type, DerivedTypesOptions options = DerivedTypesOptions.Default )
-        => new TypeSetVerifier<INamedType>( this.Receiver.SelectMany( c => c.GetDerivedTypes( type, options ) ), x => x );
+        => new TypeSetVerifier<INamedType>( this.Receiver.SelectMany( c => c.GetDerivedTypes( type, options ) ), x => x, this.AssemblyName, null );
 }

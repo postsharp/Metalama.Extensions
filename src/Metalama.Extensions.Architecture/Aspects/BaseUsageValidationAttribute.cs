@@ -4,6 +4,7 @@ using JetBrains.Annotations;
 using Metalama.Extensions.Architecture.Predicates;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
+using Metalama.Framework.Diagnostics;
 using Metalama.Framework.Validation;
 using System;
 using System.Collections.Immutable;
@@ -70,6 +71,13 @@ public abstract class BaseUsageValidationAttribute : Attribute, IConditionallyIn
     public ReferenceKinds ReferenceKinds { get; init; } = ReferenceKinds.All;
 
     /// <summary>
+    /// Gets a <see cref="Type"/>, derived from <see cref="ReferencePredicate"/>, that determines exclusions for the current
+    /// architecture rule. Specifically, no warning will be reported if the  <see cref="ReferencePredicate.IsMatch"/> method
+    /// of the <see cref="ReferencePredicate"/> returns <c>true</c>. This type must have a default constructor.
+    /// </summary>
+    public Type? ExclusionPredicateType { get; init; }
+
+    /// <summary>
     /// Creates a <see cref="ReferencePredicate"/> based on the properties of the custom attributes.
     /// </summary>
     protected bool TryCreatePredicate( IAspectBuilder<IMemberOrNamedType> builder, [NotNullWhen( true )] out ReferencePredicate? predicate )
@@ -78,7 +86,13 @@ public abstract class BaseUsageValidationAttribute : Attribute, IConditionallyIn
 
         var predicates = ImmutableArray.CreateBuilder<ReferencePredicate>();
 
-        this.AddPredicatesFromAttributes( currentNamespace, predicates.Add );
+        if ( !this.AddPredicatesFromAttributes( currentNamespace, predicates.Add, builder.Diagnostics ) )
+        {
+            builder.SkipAspect();
+            predicate = null;
+
+            return false;
+        }
 
         switch ( predicates.Count )
         {
@@ -105,6 +119,28 @@ public abstract class BaseUsageValidationAttribute : Attribute, IConditionallyIn
         return true;
     }
 
+    protected bool TryCreateExclusionPredicate( IAspectBuilder<IMemberOrNamedType> builder, out ReferencePredicate? predicate )
+    {
+        if ( this.ExclusionPredicateType != null )
+        {
+            if ( !ExclusionPredicateTypeHelper.ValidateExclusionPredicateType( this.ExclusionPredicateType, builder.Diagnostics ) )
+            {
+                builder.SkipAspect();
+                predicate = null;
+
+                return false;
+            }
+
+            predicate = ExclusionPredicateTypeHelper.GetExclusionPredicate( this.ExclusionPredicateType );
+        }
+        else
+        {
+            predicate = null;
+        }
+
+        return true;
+    }
+
     bool IConditionallyInheritableAspect.IsInheritable => this.ValidateDerivedTypes;
 
     /// <summary>
@@ -112,9 +148,13 @@ public abstract class BaseUsageValidationAttribute : Attribute, IConditionallyIn
     /// </summary>
     /// <param name="currentNamespace">The namespace in which the current attribute is used.</param>
     /// <param name="addPredicate">A delegate to call to add a predicate. If many predicates are added, they will be combined
-    /// with the <see cref="ReferencePredicateExtensions.Or(Metalama.Extensions.Architecture.Predicates.ReferencePredicate,System.Func{Metalama.Extensions.Architecture.Predicates.ReferencePredicateBuilder,Metalama.Extensions.Architecture.Predicates.ReferencePredicate})"/>
-    /// method.</param>
-    protected virtual void AddPredicatesFromAttributes( INamespace currentNamespace, Action<ReferencePredicate> addPredicate )
+    ///     with the <see cref="ReferencePredicateExtensions.Or(Metalama.Extensions.Architecture.Predicates.ReferencePredicate,System.Func{Metalama.Extensions.Architecture.Predicates.ReferencePredicateBuilder,Metalama.Extensions.Architecture.Predicates.ReferencePredicate})"/>
+    ///     method.</param>
+    /// <param name="diagnostics"></param>
+    protected virtual bool AddPredicatesFromAttributes(
+        INamespace currentNamespace,
+        Action<ReferencePredicate> addPredicate,
+        in ScopedDiagnosticSink diagnostics )
     {
         if ( this.CurrentNamespace )
         {
@@ -135,20 +175,33 @@ public abstract class BaseUsageValidationAttribute : Attribute, IConditionallyIn
         {
             if ( type.Namespace == null )
             {
-                throw new InvalidOperationException( $"The type '{type.FullName}' has no namespace." );
+                continue;
             }
 
             addPredicate( new ReferencingNamespacePredicate( type.Namespace ) );
         }
 
-        foreach ( var type in this.Types )
+        switch ( this.Types.Length )
         {
-            addPredicate( new ReferencingTypePredicate( type ) );
+            case 0:
+                break;
+
+            case 1:
+                addPredicate( new ReferencingTypePredicate( this.Types[0] ) );
+
+                break;
+
+            default:
+                addPredicate( new AnyReferencingTypePredicate( this.Types ) );
+
+                break;
         }
 
         foreach ( var typeName in this.TypeNames )
         {
             addPredicate( new ReferencingTypeNamePredicate( typeName ) );
         }
+
+        return true;
     }
 }
