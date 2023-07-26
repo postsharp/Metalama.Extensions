@@ -44,6 +44,4 @@ internal static class DiagnosticDescriptors
             "The DependencyInjectionOptions.Selector implementation did not select any framework for dependency '{0}' in type '{1}'.",
             "The DependencyInjectionOptions.Selector implementation did not select any framework.",
             _category );
-
-    public override void AmendProject( IProjectAmender amender ) { }
 }

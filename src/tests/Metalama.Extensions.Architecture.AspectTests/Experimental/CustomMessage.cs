@@ -5,7 +5,7 @@ using Metalama.Extensions.Architecture.Aspects;
 namespace Metalama.Extensions.Architecture.AspectTests.Experimental.CustomMessage
 {
     [Experimental( "This is the custom message." )]
-    internal class C { }
+    public class C { }
 
     internal class D : C { }
 }

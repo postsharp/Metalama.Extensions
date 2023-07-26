@@ -16,7 +16,20 @@ namespace Metalama.Extensions.Architecture.Aspects;
 /// <see cref="BaseUsageValidationAttribute.NamespaceOfTypes"/> or <see cref="BaseUsageValidationAttribute.CurrentNamespace"/> properties.
 /// </summary>
 [PublicAPI]
-public class InternalsCanOnlyBeUsedFromAttribute : BaseUsageValidationAttribute, IAspect<INamedType>
+public class InternalsCanOnlyBeUsedFromAttribute : InternalsUsageValidationAttribute
+{
+    protected override ReferencePredicateValidator CreateValidator( ReferencePredicate predicate )
+    {
+        return new ReferencePredicateValidator(
+            new OrPredicate( new HasFamilyAccessPredicate(), predicate ),
+            this.Description,
+            this.ReferenceKinds );
+    }
+
+    public void BuildEligibility( IEligibilityBuilder<INamedType> builder ) => builder.MustHaveAccessibility( Accessibility.Public );
+}
+
+public abstract class InternalsUsageValidationAttribute : BaseUsageValidationAttribute, IAspect<INamedType>
 {
     public void BuildAspect( IAspectBuilder<INamedType> builder )
     {
@@ -25,16 +38,21 @@ public class InternalsCanOnlyBeUsedFromAttribute : BaseUsageValidationAttribute,
             return;
         }
 
-        var validator = new ReferencePredicateValidator(
-            new OrPredicate( new HasFamilyAccessPredicate(), predicate ),
-            this.Description,
-            this.ReferenceKinds );
+        var validator = this.CreateValidator( predicate );
 
         // Register a validator for all internal members.
         builder.Outbound.SelectMany(
                 t => t.Members().Where( m => m.Accessibility is Accessibility.Internal or Accessibility.PrivateProtected or Accessibility.ProtectedInternal ) )
             .ValidateReferences( validator );
+
+        // Also register internal accessors of public properties.
+        builder.Outbound.SelectMany( t => t.Properties.Where( p => p.Accessibility is Accessibility.Public or Accessibility.Protected ) )
+            .SelectMany(
+                p => p.Accessors.Where( m => m.Accessibility is Accessibility.Internal or Accessibility.PrivateProtected or Accessibility.ProtectedInternal ) )
+            .ValidateReferences( validator );
     }
+
+    protected abstract ReferencePredicateValidator CreateValidator( ReferencePredicate predicate );
 
     public void BuildEligibility( IEligibilityBuilder<INamedType> builder ) => builder.MustHaveAccessibility( Accessibility.Public );
 }

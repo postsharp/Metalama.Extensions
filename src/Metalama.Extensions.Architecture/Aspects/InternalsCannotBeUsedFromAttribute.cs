@@ -16,25 +16,13 @@ namespace Metalama.Extensions.Architecture.Aspects;
 /// <see cref="BaseUsageValidationAttribute.NamespaceOfTypes"/> or <see cref="BaseUsageValidationAttribute.CurrentNamespace"/> properties.
 /// </summary>
 [PublicAPI]
-public class InternalsCannotBeUsedFromAttribute : BaseUsageValidationAttribute, IAspect<INamedType>
+public class InternalsCannotBeUsedFromAttribute : InternalsUsageValidationAttribute
 {
-    public void BuildAspect( IAspectBuilder<INamedType> builder )
+    protected override ReferencePredicateValidator CreateValidator( ReferencePredicate predicate )
     {
-        if ( !this.TryCreatePredicate( builder, out var predicate ) )
-        {
-            return;
-        }
-
-        var validator = new ReferencePredicateValidator(
-           new OrPredicate( new HasFamilyAccessPredicate(), predicate.Not() ),
-           this.Description,
-           this.ReferenceKinds );
-
-        // Register a validator for all internal members.
-        builder.Outbound.SelectMany(
-                t => t.Members().Where( m => m.Accessibility is Accessibility.Internal or Accessibility.PrivateProtected or Accessibility.ProtectedInternal ) )
-            .ValidateReferences( validator );
+        return new ReferencePredicateValidator(
+            new OrPredicate( new HasFamilyAccessPredicate(), predicate.Not() ),
+            this.Description,
+            this.ReferenceKinds );
     }
-
-    public void BuildEligibility( IEligibilityBuilder<INamedType> builder ) => builder.MustHaveAccessibility( Accessibility.Public );
 }

@@ -58,6 +58,42 @@ namespace Metalama.Extensions.Architecture.Fabrics
                     new ReferencePredicateValidator( predicate( new ReferencePredicateBuilder( verifier ) ).Not(), description, referenceKinds ) );
         }
 
+        private static void VerifyInternalsAccess(
+            this ITypeSetVerifier<IDeclaration> setVerifier,
+            Func<ReferencePredicateBuilder, ReferencePredicate> predicate,
+            string? description,
+            ReferenceKinds referenceKinds,
+            Func<ReferencePredicate, ReferencePredicate> transformPredicate )
+        {
+            var predicateBuilder = new ReferencePredicateBuilder( setVerifier );
+            var builtPredicate = predicate( predicateBuilder );
+            var typePredicate = builtPredicate;
+            var memberPredicate = predicateBuilder.HasFamilyAccess().Or( transformPredicate( builtPredicate ) );
+
+            var typeValidator = new ReferencePredicateValidator( typePredicate, description, referenceKinds );
+
+            setVerifier.TypeReceiver
+                .Where( t => t.Accessibility == Accessibility.Internal )
+                .ValidateReferences( typeValidator );
+
+            var memberValidator = new ReferencePredicateValidator( memberPredicate, description, referenceKinds );
+
+            setVerifier.TypeReceiver
+                .Where( t => t.Accessibility != Accessibility.Internal )
+                .SelectMany(
+                    t => t.Members()
+                        .Where( m => m.Accessibility is Accessibility.Internal or Accessibility.PrivateProtected or Accessibility.ProtectedInternal ) )
+                .ValidateReferences( memberValidator );
+
+            setVerifier.TypeReceiver
+                .Where( t => t.Accessibility != Accessibility.Internal )
+                .SelectMany(
+                    t => t.Properties.Where( p => p.Accessibility is Accessibility.Public or Accessibility.Protected )
+                        .SelectMany( p => p.Accessors )
+                        .Where( m => m.Accessibility is Accessibility.Internal or Accessibility.PrivateProtected or Accessibility.ProtectedInternal ) )
+                .ValidateReferences( memberValidator );
+        }
+
         /// <summary>
         /// Reports a warning when any of the internal APIs of the current scope in used from a different context than the one allowed,
         /// except if this concept has access to the type using inheritance rules.
@@ -67,23 +103,7 @@ namespace Metalama.Extensions.Architecture.Fabrics
             Func<ReferencePredicateBuilder, ReferencePredicate> predicate,
             string? description = null,
             ReferenceKinds referenceKinds = ReferenceKinds.All )
-        {
-            var predicateBuilder = new ReferencePredicateBuilder( setVerifier );
-            var builtPredicate = predicate( predicateBuilder );
-            var internalPredicate = builtPredicate;
-            var nonInternalPredicate = predicateBuilder.HasFamilyAccess().Or( builtPredicate );
-
-            setVerifier.TypeReceiver
-                .Where( t => t.Accessibility == Accessibility.Internal )
-                .ValidateReferences( new ReferencePredicateValidator( internalPredicate, description, referenceKinds ) );
-
-            setVerifier.TypeReceiver
-                .Where( t => t.Accessibility != Accessibility.Internal )
-                .SelectMany(
-                    t => t.Members()
-                        .Where( m => m.Accessibility is Accessibility.Internal or Accessibility.PrivateProtected or Accessibility.ProtectedInternal ) )
-                .ValidateReferences( new ReferencePredicateValidator( nonInternalPredicate, description, referenceKinds ) );
-        }
+            => setVerifier.VerifyInternalsAccess( predicate, description, referenceKinds, x => x );
 
         /// <summary>
         /// Reports a warning when any of the internal APIs of the current scope in used from a different context different than the one allowed,
@@ -94,23 +114,7 @@ namespace Metalama.Extensions.Architecture.Fabrics
             Func<ReferencePredicateBuilder, ReferencePredicate> predicate,
             string? description = null,
             ReferenceKinds referenceKinds = ReferenceKinds.All )
-        {
-            var predicateBuilder = new ReferencePredicateBuilder( setVerifier );
-            var builtPredicate = predicate( predicateBuilder );
-            var internalPredicate = builtPredicate;
-            var nonInternalPredicate = predicateBuilder.HasFamilyAccess().Or( builtPredicate.Not() );
-
-            setVerifier.TypeReceiver
-                .Where( t => t.Accessibility == Accessibility.Internal )
-                .ValidateReferences( new ReferencePredicateValidator( internalPredicate, description, referenceKinds ) );
-
-            setVerifier.TypeReceiver
-                .Where( t => t.Accessibility != Accessibility.Internal )
-                .SelectMany(
-                    t => t.Members()
-                        .Where( m => m.Accessibility is Accessibility.Internal or Accessibility.PrivateProtected or Accessibility.ProtectedInternal ) )
-                .ValidateReferences( new ReferencePredicateValidator( nonInternalPredicate, description, referenceKinds ) );
-        }
+            => setVerifier.VerifyInternalsAccess( predicate, description, referenceKinds, x => x.Not() );
 
         /// <summary>
         /// Reports a warning when any type that inherits any type in the current scope does not follow a given convention, where the convention
