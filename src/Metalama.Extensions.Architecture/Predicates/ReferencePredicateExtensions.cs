@@ -132,14 +132,14 @@ public static class ReferencePredicateExtensions
     /// <summary>
     /// Accepts code references contained in any type in a given list.
     /// </summary>
-    /// <seealso cref="AnyType(Metalama.Extensions.Architecture.Predicates.ReferencePredicateBuilder,System.Type[])"/>
+    /// <seealso cref="Type(Metalama.Extensions.Architecture.Predicates.ReferencePredicateBuilder,System.Type)"/>
     public static ReferencePredicate AnyType( this ReferencePredicateBuilder builder, params Type[] types )
         => new AnyReferencingTypePredicate( types, builder );
 
     /// <summary>
     /// Accepts code references contained in any type in a given list.
     /// </summary>
-    /// <seealso cref="AnyType(Metalama.Extensions.Architecture.Predicates.ReferencePredicateBuilder,System.Type[])"/>
+    /// <seealso cref="Type(Metalama.Extensions.Architecture.Predicates.ReferencePredicateBuilder,System.Type)"/>
     public static ReferencePredicate AnyType( this ReferencePredicateBuilder builder, IEnumerable<Type> types )
         => new AnyReferencingTypePredicate( types, builder );
 
