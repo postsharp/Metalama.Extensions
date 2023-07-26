@@ -36,12 +36,12 @@ namespace Metalama.Extensions.Architecture.Fabrics
         /// </summary>
         public static void CanOnlyBeUsedFrom(
             this IVerifier<IDeclaration> verifier,
-            Func<ReferencePredicateBuilder, ReferencePredicate> predicate,
+            Func<ReferencePredicateBuilder, ReferencePredicate> scope,
             string? description = null,
             ReferenceKinds referenceKinds = ReferenceKinds.All )
         {
             verifier.Receiver.ValidateReferences(
-                new ReferencePredicateValidator( predicate( new ReferencePredicateBuilder( verifier ) ), description, referenceKinds ) );
+                new ReferencePredicateValidator( scope( new ReferencePredicateBuilder( verifier ) ), description, referenceKinds ) );
         }
 
         /// <summary>
@@ -49,24 +49,23 @@ namespace Metalama.Extensions.Architecture.Fabrics
         /// </summary>
         public static void CannotBeUsedFrom(
             this IVerifier<IDeclaration> verifier,
-            Func<ReferencePredicateBuilder, ReferencePredicate> predicate,
+            Func<ReferencePredicateBuilder, ReferencePredicate> scope,
             string? description = null,
             ReferenceKinds referenceKinds = ReferenceKinds.All )
         {
             verifier.Receiver
-                .ValidateReferences(
-                    new ReferencePredicateValidator( predicate( new ReferencePredicateBuilder( verifier ) ).Not(), description, referenceKinds ) );
+                .ValidateReferences( new ReferencePredicateValidator( scope( new ReferencePredicateBuilder( verifier ) ).Not(), description, referenceKinds ) );
         }
 
         private static void VerifyInternalsAccess(
             this ITypeSetVerifier<IDeclaration> setVerifier,
-            Func<ReferencePredicateBuilder, ReferencePredicate> predicate,
+            Func<ReferencePredicateBuilder, ReferencePredicate> scope,
             string? description,
             ReferenceKinds referenceKinds,
             Func<ReferencePredicate, ReferencePredicate> transformPredicate )
         {
             var predicateBuilder = new ReferencePredicateBuilder( setVerifier );
-            var builtPredicate = predicate( predicateBuilder );
+            var builtPredicate = scope( predicateBuilder );
             var typePredicate = builtPredicate;
             var memberPredicate = predicateBuilder.HasFamilyAccess().Or( transformPredicate( builtPredicate ) );
 
@@ -100,10 +99,10 @@ namespace Metalama.Extensions.Architecture.Fabrics
         /// </summary>
         public static void InternalsCanOnlyBeUsedFrom(
             this ITypeSetVerifier<IDeclaration> setVerifier,
-            Func<ReferencePredicateBuilder, ReferencePredicate> predicate,
+            Func<ReferencePredicateBuilder, ReferencePredicate> scope,
             string? description = null,
             ReferenceKinds referenceKinds = ReferenceKinds.All )
-            => setVerifier.VerifyInternalsAccess( predicate, description, referenceKinds, x => x );
+            => setVerifier.VerifyInternalsAccess( scope, description, referenceKinds, x => x );
 
         /// <summary>
         /// Reports a warning when any of the internal APIs of the current scope in used from a different context different than the one allowed,
@@ -111,27 +110,35 @@ namespace Metalama.Extensions.Architecture.Fabrics
         /// </summary>
         public static void InternalsCannotBeUsedFrom(
             this ITypeSetVerifier<IDeclaration> setVerifier,
-            Func<ReferencePredicateBuilder, ReferencePredicate> predicate,
+            Func<ReferencePredicateBuilder, ReferencePredicate> scope,
             string? description = null,
             ReferenceKinds referenceKinds = ReferenceKinds.All )
-            => setVerifier.VerifyInternalsAccess( predicate, description, referenceKinds, x => x.Not() );
+            => setVerifier.VerifyInternalsAccess( scope, description, referenceKinds, x => x.Not() );
 
         /// <summary>
         /// Reports a warning when any type that inherits any type in the current scope does not follow a given convention, where the convention
         /// is given as a star pattern, i.e. where the <c>*</c> matches any sequence of characters, even empty.
         /// </summary>
-        public static void DerivedTypesMustRespectNamingConvention( this ITypeSetVerifier<IDeclaration> setVerifier, string pattern )
+        public static void DerivedTypesMustRespectNamingConvention(
+            this ITypeSetVerifier<IDeclaration> setVerifier,
+            string pattern,
+            Func<ReferencePredicateBuilder, ReferencePredicate>? exclusions = null )
         {
-            setVerifier.Receiver.ValidateReferences( DerivedTypeNamingConventionValidator.CreateStarPatternValidator( pattern ) );
+            setVerifier.Receiver.ValidateReferences(
+                DerivedTypeNamingConventionValidator.CreateStarPatternValidator( pattern, ReferencePredicateBuilder.Build( exclusions, setVerifier ) ) );
         }
 
         /// <summary>
         /// Reports a warning when any type that inherits any type in the current scope does not follow a given convention, where the convention
         /// is given as a regular expression.
         /// </summary>
-        public static void DerivedTypesMustRespectRegexNamingConvention( this ITypeSetVerifier<IDeclaration> setVerifier, string pattern )
+        public static void DerivedTypesMustRespectRegexNamingConvention(
+            this ITypeSetVerifier<IDeclaration> setVerifier,
+            string pattern,
+            Func<ReferencePredicateBuilder, ReferencePredicate>? exclusions = null )
         {
-            setVerifier.Receiver.ValidateReferences( DerivedTypeNamingConventionValidator.CreateRegexValidator( pattern ) );
+            setVerifier.Receiver.ValidateReferences(
+                DerivedTypeNamingConventionValidator.CreateRegexValidator( pattern, ReferencePredicateBuilder.Build( exclusions, setVerifier ) ) );
         }
 
         /// <summary>
@@ -163,21 +170,23 @@ namespace Metalama.Extensions.Architecture.Fabrics
         public static ITypeSetVerifier<IAssembly> WithReferencedAssembly( this ITypeSetVerifier<ICompilation> setVerifier, string assemblyName )
             => new TypeSetVerifier<IAssembly>(
                 setVerifier.Receiver.SelectMany( c => c.ReferencedAssemblies.OfName( assemblyName ) ),
-                x => x.SelectMany( a => a.Types ) );
+                x => x.SelectMany( a => a.Types ),
+                setVerifier.AssemblyName,
+                null );
 
         /// <summary>
         /// Selects a single type of the current <see cref="ICompilation"/> or <see cref="INamespace"/>.
         /// </summary>
         public static ITypeSetVerifier<INamedType> Select<T>( this IVerifier<T> verifier, Func<T, INamedType> func )
             where T : class, IDeclaration
-            => new TypeSetVerifier<INamedType>( verifier.Receiver.Select( func ), x => x, verifier.Namespace );
+            => new TypeSetVerifier<INamedType>( verifier.Receiver.Select( func ), x => x, verifier.AssemblyName, verifier.Namespace );
 
         /// <summary>
         /// Selects types of the current <see cref="ICompilation"/> or <see cref="INamespace"/>.
         /// </summary>
         public static ITypeSetVerifier<INamedType> SelectMany<T>( this IVerifier<T> verifier, Func<T, IEnumerable<INamedType>> func )
             where T : class, IDeclaration
-            => new TypeSetVerifier<INamedType>( verifier.Receiver.SelectMany( func ), x => x, verifier.Namespace );
+            => new TypeSetVerifier<INamedType>( verifier.Receiver.SelectMany( func ), x => x, verifier.AssemblyName, verifier.Namespace );
 
         /// <summary>
         /// Selects a member of the current declaration.
@@ -185,7 +194,7 @@ namespace Metalama.Extensions.Architecture.Fabrics
         public static IVerifier<TOut> Select<TIn, TOut>( this IVerifier<TIn> verifier, Func<TIn, TOut> func )
             where TIn : class, IDeclaration
             where TOut : class, IDeclaration
-            => new Verifier<TOut>( verifier.Receiver.Select( func ), verifier.Namespace );
+            => new Verifier<TOut>( verifier.Receiver.Select( func ), verifier.AssemblyName, verifier.Namespace );
 
         /// <summary>
         /// Selects several members of the current declaration.
@@ -193,20 +202,20 @@ namespace Metalama.Extensions.Architecture.Fabrics
         public static IVerifier<TOut> SelectMany<TIn, TOut>( this IVerifier<TIn> verifier, Func<TIn, IEnumerable<TOut>> func )
             where TIn : class, IDeclaration
             where TOut : class, IDeclaration
-            => new Verifier<TOut>( verifier.Receiver.SelectMany( func ), verifier.Namespace );
+            => new Verifier<TOut>( verifier.Receiver.SelectMany( func ), verifier.AssemblyName, verifier.Namespace );
 
         /// <summary>
         /// Filters the declarations in the current set.
         /// </summary>
         public static IVerifier<T> Where<T>( this IVerifier<T> verifier, Func<T, bool> predicate )
             where T : class, IDeclaration
-            => new Verifier<T>( verifier.Receiver.Where( predicate ), verifier.Namespace );
+            => new Verifier<T>( verifier.Receiver.Where( predicate ), verifier.AssemblyName, verifier.Namespace );
 
         /// <summary>
         /// Gets the set of types in the current <see cref="ICompilation"/> or <see cref="INamespace"/>.
         /// </summary>
         public static ITypeSetVerifier<INamedType> Types( this ITypeSetVerifier<IDeclaration> verifier )
-            => new TypeSetVerifier<INamedType>( verifier.TypeReceiver, x => x, verifier.Namespace );
+            => new TypeSetVerifier<INamedType>( verifier.TypeReceiver, x => x, verifier.AssemblyName, verifier.Namespace );
 
         /// <summary>
         /// Gets a new set of types obtained by filtering the current set.
@@ -215,6 +224,7 @@ namespace Metalama.Extensions.Architecture.Fabrics
             => new TypeSetVerifier<INamedType>(
                 verifier.TypeReceiver.Where( predicate ),
                 x => x,
+                verifier.AssemblyName,
                 verifier.Namespace );
 
         /// <summary>
@@ -225,7 +235,9 @@ namespace Metalama.Extensions.Architecture.Fabrics
         public static ITypeSetVerifier<INamedType> SelectTypes( this IVerifier<ICompilation> verifier, IEnumerable<Type> types )
             => new TypeSetVerifier<INamedType>(
                 verifier.Receiver.SelectMany( _ => types.Select( t => (INamedType) TypeFactory.GetType( t ) ) ),
-                x => x );
+                x => x,
+                verifier.AssemblyName,
+                null );
 
         /// <summary>
         /// Gets a set of types in the current <see cref="ICompilation"/>, where types are given as a list of array of <see cref="Type"/>.

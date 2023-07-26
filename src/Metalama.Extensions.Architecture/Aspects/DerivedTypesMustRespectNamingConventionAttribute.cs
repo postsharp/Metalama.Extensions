@@ -16,7 +16,7 @@ public class DerivedTypesMustRespectNamingConventionAttribute : DerivedTypesMust
 {
     private readonly string _starPattern;
 
-    public DerivedTypesMustRespectNamingConventionAttribute( string pattern ) : base( NamingConventionHelper.StarPatternToRegex( pattern ) )
+    public DerivedTypesMustRespectNamingConventionAttribute( string pattern ) : base( NamingConventionHelper.StarPatternToRegex( pattern ), pattern )
     {
         this._starPattern = pattern;
     }

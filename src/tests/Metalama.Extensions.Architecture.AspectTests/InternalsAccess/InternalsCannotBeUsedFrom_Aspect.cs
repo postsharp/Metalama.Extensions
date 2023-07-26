@@ -1,39 +1,41 @@
 ﻿// Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
 using Metalama.Extensions.Architecture.Aspects;
-
+using Metalama.Extensions.Architecture.Predicates;
+using Metalama.Framework.Code;
+using Metalama.Framework.Validation;
 
 namespace Metalama.Extensions.Architecture.AspectTests.InternalsCannotBeUsedFrom_Aspect
 {
-   
-        [InternalsCannotBeUsedFrom( Namespaces = new[] { "Metalama.Extensions.Architecture.AspectTests.InternalsCannotBeUsedFrom_Aspect.ForbiddenNamespace" } )]
-        public class ConstrainedClass
+    [InternalsCannotBeUsedFrom(
+        Namespaces = new[] { "Metalama.Extensions.Architecture.AspectTests.InternalsCannotBeUsedFrom_Aspect.ForbiddenNamespace" },
+        ExclusionPredicateType = typeof(ExcludeNestedTypesPredicate) )]
+    public class ConstrainedClass
+    {
+        public static void PublicMethod() { }
+
+        protected static void ProtectedMethod() { }
+
+        internal static void InternalMethod() { }
+
+        protected internal static void InternalProtectedMethod() { }
+
+        private protected static void PrivateProtectedMethod() { }
+    }
+
+    internal class AllowedClass
+    {
+        public static void Method()
         {
-            public static void PublicMethod() { }
-
-            protected static void ProtectedMethod() { }
-
-            internal static void InternalMethod() { }
-
-            protected internal static void InternalProtectedMethod() { }
-
-            private protected static void PrivateProtectedMethod() { }
+            // All usages are allowed.
+            ConstrainedClass.PublicMethod();
+            ConstrainedClass.InternalProtectedMethod();
+            ConstrainedClass.InternalMethod();
         }
-
-        internal class AllowedClass
-        {
-            public static void Method()
-            {
-                // All usages are allowed.
-                ConstrainedClass.PublicMethod();
-                ConstrainedClass.InternalProtectedMethod();
-                ConstrainedClass.InternalMethod();
-            }
-        }
+    }
 
     namespace ForbiddenNamespace
     {
-
         internal class ForbiddenClassWithAllowedCalls
         {
             public static void AllowedCalls()
@@ -50,6 +52,16 @@ namespace Metalama.Extensions.Architecture.AspectTests.InternalsCannotBeUsedFrom
                 // These calls should be forbidden.
                 ConstrainedClass.InternalMethod();
                 ConstrainedClass.InternalProtectedMethod();
+            }
+
+            internal class AllowedNestedClass
+            {
+                public static void Method()
+                {
+                    // These calls should be allowed.
+                    ConstrainedClass.InternalMethod();
+                    ConstrainedClass.InternalProtectedMethod();
+                }
             }
         }
 
@@ -73,5 +85,10 @@ namespace Metalama.Extensions.Architecture.AspectTests.InternalsCannotBeUsedFrom
                 PrivateProtectedMethod();
             }
         }
+    }
+
+    internal class ExcludeNestedTypesPredicate : ReferencePredicate
+    {
+        public override bool IsMatch( in ReferenceValidationContext context ) => context.ReferencingDeclaration.GetClosestNamedType()?.DeclaringType != null;
     }
 }

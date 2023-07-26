@@ -31,7 +31,8 @@ public static class ReferencePredicateExtensions
     /// <summary>
     /// Combines two predicates with the <c>or</c> condition. This overload accepts the second predicate as a <see cref="ReferencePredicate"/>.
     /// </summary>
-    public static ReferencePredicate Or( this ReferencePredicate predicate, ReferencePredicate otherPredicate ) => new OrPredicate( predicate, otherPredicate );
+    public static ReferencePredicate Or( this ReferencePredicate predicate, ReferencePredicate? otherPredicate )
+        => otherPredicate == null ? predicate : new OrPredicate( predicate, otherPredicate );
 
     /// <summary>
     /// Combines two predicates with the <c>and</c> condition. This overload accepts the second predicate as a delegate.
@@ -132,13 +133,15 @@ public static class ReferencePredicateExtensions
     /// Accepts code references contained in any type in a given list.
     /// </summary>
     /// <seealso cref="AnyType(Metalama.Extensions.Architecture.Predicates.ReferencePredicateBuilder,System.Type[])"/>
-    public static ReferencePredicate AnyType( this ReferencePredicateBuilder builder, params Type[] types ) => new AnyReferencingTypePredicate( types, builder );
-    
+    public static ReferencePredicate AnyType( this ReferencePredicateBuilder builder, params Type[] types )
+        => new AnyReferencingTypePredicate( types, builder );
+
     /// <summary>
     /// Accepts code references contained in any type in a given list.
     /// </summary>
     /// <seealso cref="AnyType(Metalama.Extensions.Architecture.Predicates.ReferencePredicateBuilder,System.Type[])"/>
-    public static ReferencePredicate AnyType( this ReferencePredicateBuilder builder, IEnumerable<Type> types ) => new AnyReferencingTypePredicate( types, builder );
+    public static ReferencePredicate AnyType( this ReferencePredicateBuilder builder, IEnumerable<Type> types )
+        => new AnyReferencingTypePredicate( types, builder );
 
     /// <summary>
     /// Accepts code references contained in a given type specified as a string, optionally containing wildcards <c>*</c> or <c>**</c>.

@@ -10,37 +10,38 @@ namespace Metalama.Extensions.Architecture.AspectTests.InternalsCannotBeUsedFrom
     {
         public override void AmendNamespace( INamespaceAmender amender )
         {
-            amender.Verify().InternalsCannotBeUsedFrom( r => r.Namespace( "Metalama.Extensions.Architecture.AspectTests.InternalsCannotBeUsedFrom_Fabric.ForbiddenNamespace" ) );
+            amender.Verify()
+                .InternalsCannotBeUsedFrom(
+                    r => r.Namespace( "Metalama.Extensions.Architecture.AspectTests.InternalsCannotBeUsedFrom_Fabric.ForbiddenNamespace" ) );
         }
     }
 
-        public class ConstrainedClass
+    public class ConstrainedClass
+    {
+        public static void PublicMethod() { }
+
+        protected static void ProtectedMethod() { }
+
+        internal static void InternalMethod() { }
+
+        protected internal static void InternalProtectedMethod() { }
+
+        private protected static void PrivateProtectedMethod() { }
+    }
+
+    internal class AllowedClass
+    {
+        public static void Method()
         {
-            public static void PublicMethod() { }
-
-            protected static void ProtectedMethod() { }
-
-            internal static void InternalMethod() { }
-
-            protected internal static void InternalProtectedMethod() { }
-
-            private protected static void PrivateProtectedMethod() { }
+            // All usages are allowed.
+            ConstrainedClass.PublicMethod();
+            ConstrainedClass.InternalProtectedMethod();
+            ConstrainedClass.InternalMethod();
         }
-
-        internal class AllowedClass
-        {
-            public static void Method()
-            {
-                // All usages are allowed.
-                ConstrainedClass.PublicMethod();
-                ConstrainedClass.InternalProtectedMethod();
-                ConstrainedClass.InternalMethod();
-            }
-        }
+    }
 
     namespace ForbiddenNamespace
     {
-
         internal class ForbiddenClassWithAllowedCalls
         {
             public static void AllowedCalls()

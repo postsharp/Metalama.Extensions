@@ -10,14 +10,14 @@ namespace Metalama.Extensions.Architecture.Validators;
 [CompileTime]
 public class ReferencePredicateValidator : ReferenceValidator
 {
-    private readonly ReferencePredicate _predicate;
+    private readonly ReferencePredicate _allowedScope;
     private readonly string? _description;
 
     public override ReferenceKinds ValidatedReferenceKinds { get; }
 
-    public ReferencePredicateValidator( ReferencePredicate predicate, string? description, ReferenceKinds validatedReferenceKinds )
+    public ReferencePredicateValidator( ReferencePredicate allowedScope, string? description, ReferenceKinds validatedReferenceKinds )
     {
-        this._predicate = predicate;
+        this._allowedScope = allowedScope;
         this._description = description;
         this.ValidatedReferenceKinds = validatedReferenceKinds;
     }
@@ -35,7 +35,7 @@ public class ReferencePredicateValidator : ReferenceValidator
             return;
         }
 
-        if ( !this._predicate.IsMatch( context ) )
+        if ( !this._allowedScope.IsMatch( context ) )
         {
             var optionalSpace = string.IsNullOrEmpty( this._description ) ? "" : " ";
 

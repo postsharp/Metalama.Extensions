@@ -5,6 +5,8 @@ using Metalama.Extensions.Architecture.Fabrics;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 using Metalama.Framework.Fabrics;
+using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Metalama.Extensions.Architecture.Predicates;
 
@@ -23,6 +25,7 @@ public sealed class ReferencePredicateBuilder
     public ReferencePredicateBuilder( IVerifier<IDeclaration> verifier )
     {
         this.Namespace = verifier.Namespace;
+        this.AssemblyName = verifier.AssemblyName;
     }
 
     /// <summary>
@@ -43,5 +46,21 @@ public sealed class ReferencePredicateBuilder
     /// </summary>
     public string? Namespace { get; }
 
+    /// <summary>
+    /// Gets assembly name the project that instantiated the current <see cref="IVerifier{T}"/>.
+    /// </summary>
     public string? AssemblyName { get; }
+
+    [return: NotNullIfNotNull( nameof(func) )]
+    internal static ReferencePredicate? Build( Func<ReferencePredicateBuilder, ReferencePredicate>? func, IVerifier<IDeclaration> verifier )
+    {
+        if ( func == null )
+        {
+            return null;
+        }
+        else
+        {
+            return func( new ReferencePredicateBuilder( verifier ) );
+        }
+    }
 }

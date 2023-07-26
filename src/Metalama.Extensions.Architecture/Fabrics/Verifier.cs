@@ -13,11 +13,14 @@ internal class Verifier<T> : IVerifier<T>
 {
     public IAspectReceiver<T> Receiver { get; }
 
+    public string AssemblyName { get; }
+
     public string? Namespace { get; }
 
-    public Verifier( IAspectReceiver<T> receiver, string? ns )
+    public Verifier( IAspectReceiver<T> receiver, string assemblyName, string? ns )
     {
         this.Receiver = receiver;
         this.Namespace = ns;
+        this.AssemblyName = assemblyName;
     }
 }

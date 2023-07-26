@@ -4,9 +4,6 @@ using JetBrains.Annotations;
 using Metalama.Extensions.Architecture.Predicates;
 using Metalama.Extensions.Architecture.Validators;
 using Metalama.Framework.Aspects;
-using Metalama.Framework.Code;
-using Metalama.Framework.Eligibility;
-using System.Linq;
 
 namespace Metalama.Extensions.Architecture.Aspects;
 
@@ -16,13 +13,12 @@ namespace Metalama.Extensions.Architecture.Aspects;
 /// <see cref="BaseUsageValidationAttribute.NamespaceOfTypes"/> or <see cref="BaseUsageValidationAttribute.CurrentNamespace"/> properties.
 /// </summary>
 [PublicAPI]
+[RunTimeOrCompileTime]
 public class InternalsCannotBeUsedFromAttribute : InternalsUsageValidationAttribute
 {
-    protected override ReferencePredicateValidator CreateValidator( ReferencePredicate predicate )
-    {
-        return new ReferencePredicateValidator(
-            new OrPredicate( new HasFamilyAccessPredicate(), predicate.Not() ),
+    protected override ReferencePredicateValidator CreateValidator( ReferencePredicate predicate, ReferencePredicate? exclusionPredicate )
+        => new(
+            new HasFamilyAccessPredicate().Or( predicate.Not() ).Or( exclusionPredicate ),
             this.Description,
             this.ReferenceKinds );
-    }
 }

@@ -5,8 +5,6 @@ using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 using System;
 
-#pragma warning disable SA1402 // File may only contain a single type
-
 namespace Metalama.Extensions.Architecture.Fabrics
 {
     /// <summary>
@@ -21,8 +19,10 @@ namespace Metalama.Extensions.Architecture.Fabrics
         public TypeSetVerifier(
             IAspectReceiver<T> receiver,
             Func<IAspectReceiver<T>, IAspectReceiver<INamedType>> getTypeReceiver,
-            string? ns = null ) : base(
+            string assemblyName,
+            string? ns ) : base(
             receiver,
+            assemblyName,
             ns )
         {
             this._getTypeReceiver = getTypeReceiver;
@@ -32,6 +32,6 @@ namespace Metalama.Extensions.Architecture.Fabrics
         public IAspectReceiver<INamedType> TypeReceiver => this._getTypeReceiver( this.Receiver );
 
         public ITypeSetVerifier<INamedType> SelectTypesDerivedFrom( Type type, DerivedTypesOptions options = DerivedTypesOptions.Default )
-            => new TypeSetVerifier<INamedType>( this.TypeReceiver.Where( t => t.DerivesFrom( type, options ) ), x => x, this.Namespace );
+            => new TypeSetVerifier<INamedType>( this.TypeReceiver.Where( t => t.DerivesFrom( type, options ) ), x => x, this.AssemblyName, this.Namespace );
     }
 }

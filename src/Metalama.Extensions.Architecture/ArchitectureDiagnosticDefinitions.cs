@@ -1,5 +1,7 @@
 ﻿// Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
+using Metalama.Extensions.Architecture.Aspects;
+using Metalama.Extensions.Architecture.Predicates;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 using Metalama.Framework.Diagnostics;
@@ -66,4 +68,16 @@ internal static class ArchitectureDiagnosticDefinitions
             "The {1} '{0}' does not respect the naming convention set by a fabric. The {1} name should match the \"{2}\" pattern.",
             "The declaration does not respect the naming convention set by the fabric.",
             _category );
+
+    public static readonly DiagnosticDefinition ExclusionTypePropertyMustBeOfTypeReferencePredicate =
+        new(
+            "LAMA0907",
+            Severity.Warning,
+            $"The type assigned to the {nameof(DerivedTypesMustRespectRegexNamingConventionAttribute.ExclusionPredicateType)} property must be derived from {nameof(ReferencePredicate)}." );
+
+    public static readonly DiagnosticDefinition ExclusionTypePropertyMustHaveDefaultConstructor =
+        new(
+            "LAMA0907",
+            Severity.Warning,
+            $"The type assigned to the {nameof(DerivedTypesMustRespectRegexNamingConventionAttribute.ExclusionPredicateType)} property must have a default constructor." );
 }
