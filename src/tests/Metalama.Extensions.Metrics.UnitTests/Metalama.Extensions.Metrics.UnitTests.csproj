@@ -18,8 +18,8 @@
     </ItemGroup>
     
     <ItemGroup>
-      <ProjectReference Include="..\..\Metalama.Extensions.Metrics.Impl\Metalama.Extensions.Metrics.Impl.csproj" />
-       <PackageReference Include="Metalama.Testing.UnitTesting" Version="$(MetalamaVersion)" />
+        <ProjectReference Include="..\..\Metalama.Extensions.Metrics\Metalama.Extensions.Metrics.csproj" />
+        <PackageReference Include="Metalama.Testing.UnitTesting" Version="$(MetalamaVersion)" />
     </ItemGroup>
-
+    
 </Project>
