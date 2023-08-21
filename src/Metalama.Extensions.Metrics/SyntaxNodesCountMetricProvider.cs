@@ -1,6 +1,6 @@
 // Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
-using Metalama.Compiler;
+using Metalama.Framework.Engine;
 using Metalama.Framework.Engine.Metrics;
 
 namespace Metalama.Extensions.Metrics
@@ -9,10 +9,10 @@ namespace Metalama.Extensions.Metrics
     /// A prototype implementation of <see cref="StatementsCount"/>.
     /// </summary>
     [MetalamaPlugIn]
-    public partial class StatementsCountMetricProvider : SyntaxMetricProvider<StatementsCount>
+    public partial class SyntaxNodesCountMetricProvider : SyntaxMetricProvider<SyntaxNodesCount>
     {
-        public StatementsCountMetricProvider() : base( new Visitor() ) { }
+        public SyntaxNodesCountMetricProvider() : base( new Visitor() ) { }
 
-        protected override void Aggregate( ref StatementsCount aggregate, in StatementsCount newValue ) => aggregate.Add( newValue );
+        protected override void Aggregate( ref SyntaxNodesCount aggregate, in SyntaxNodesCount newValue ) => aggregate.Add( newValue );
     }
 }

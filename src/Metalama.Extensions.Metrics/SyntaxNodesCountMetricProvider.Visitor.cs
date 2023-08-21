@@ -1,5 +1,6 @@
 // Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
+using Metalama.Framework.Aspects;
 using Microsoft.CodeAnalysis;
 
 namespace Metalama.Extensions.Metrics
@@ -9,6 +10,7 @@ namespace Metalama.Extensions.Metrics
         /// <summary>
         /// A visitor that counts the syntax nodes.
         /// </summary>
+        [CompileTime]
         private class Visitor : BaseVisitor
         {
             public override SyntaxNodesCount DefaultVisit( SyntaxNode node )
