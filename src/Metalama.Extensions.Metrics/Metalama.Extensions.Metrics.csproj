@@ -1,23 +1,19 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
         <Nullable>enable</Nullable>
-        <PackageId>Metalama.Extensions.Metrics.Redist</PackageId>
-        <PackageDescription>Redistributable components for package 'Metalama.Extensions.Metrics'. This package should only be installed as a dependency. (This is not the package you are looking for if you want to use Metalama.Extensions.Metrics). </PackageDescription>
+        <PackageDescription>A Metalama extension that exposes code metrics to the code model.</PackageDescription>
+        <MetalamaRemoveCompileTimeOnlyCode>False</MetalamaRemoveCompileTimeOnlyCode>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Metalama.Framework.Redist" Version="$(MetalamaVersion)" />
-    </ItemGroup>
-    
-    <ItemGroup>
-        <InternalsVisibleTo Include="Metalama.Extensions.Metrics.Impl" />
+        <PackageReference Include="Metalama.Framework" Version="$(MetalamaVersion)" PrivateAssets="all" />
+        <PackageReference Include="Metalama.Framework.Sdk" Version="$(MetalamaVersion)" PrivateAssets="all" />
     </ItemGroup>
 
     <ItemGroup>
         <None Include="README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
-
 
 </Project>

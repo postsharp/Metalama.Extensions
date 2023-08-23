@@ -15,17 +15,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metalama.Extensions.Multica
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metalama.Extensions.Multicast.AspectTests", "src\tests\Metalama.Extensions.Multicast.AspectTests\Metalama.Extensions.Multicast.AspectTests.csproj", "{BE81D9A0-308D-44CD-9513-9E56FED265CB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metalama.Extensions.Metrics", "src\Metalama.Extensions.Metrics\Metalama.Extensions.Metrics.csproj", "{F5165D4D-DFEE-4F06-8C64-738A3ECE87BB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metalama.Extensions.Metrics", "src\Metalama.Extensions.Metrics\Metalama.Extensions.Metrics.csproj", "{F5165D4D-DFEE-4F06-8C64-738A3ECE87BB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metalama.Extensions.Metrics.Impl", "src\Metalama.Extensions.Metrics.Impl\Metalama.Extensions.Metrics.Impl.csproj", "{A89306C1-1AC0-43F0-9BDC-B87CCE5A8E75}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metalama.Extensions.Metrics.UnitTests", "src\tests\Metalama.Extensions.Metrics.UnitTests\Metalama.Extensions.Metrics.UnitTests.csproj", "{87A3C104-59EE-460A-ABFF-6F2FDCCB0E1B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metalama.Extensions.Metrics.UnitTests", "src\tests\Metalama.Extensions.Metrics.UnitTests\Metalama.Extensions.Metrics.UnitTests.csproj", "{87A3C104-59EE-460A-ABFF-6F2FDCCB0E1B}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metalama.Extensions.Architecture", "src\Metalama.Extensions.Architecture\Metalama.Extensions.Architecture.csproj", "{9EFE7FF2-B3B7-422A-AD88-25991FE18C2D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metalama.Extensions.Architecture", "src\Metalama.Extensions.Architecture\Metalama.Extensions.Architecture.csproj", "{9EFE7FF2-B3B7-422A-AD88-25991FE18C2D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{B1E873D8-4B14-417A-A727-BE8240E1D3E2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metalama.Extensions.Architecture.AspectTests", "src\tests\Metalama.Extensions.Architecture.AspectTests\Metalama.Extensions.Architecture.AspectTests.csproj", "{97A422BE-11EC-45DA-9118-B63B4A9A0A96}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metalama.Extensions.Architecture.AspectTests", "src\tests\Metalama.Extensions.Architecture.AspectTests\Metalama.Extensions.Architecture.AspectTests.csproj", "{97A422BE-11EC-45DA-9118-B63B4A9A0A96}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -76,12 +74,6 @@ Global
 		{F5165D4D-DFEE-4F06-8C64-738A3ECE87BB}.LamaDebug|Any CPU.Build.0 = Debug|Any CPU
 		{F5165D4D-DFEE-4F06-8C64-738A3ECE87BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F5165D4D-DFEE-4F06-8C64-738A3ECE87BB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A89306C1-1AC0-43F0-9BDC-B87CCE5A8E75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A89306C1-1AC0-43F0-9BDC-B87CCE5A8E75}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A89306C1-1AC0-43F0-9BDC-B87CCE5A8E75}.LamaDebug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A89306C1-1AC0-43F0-9BDC-B87CCE5A8E75}.LamaDebug|Any CPU.Build.0 = Debug|Any CPU
-		{A89306C1-1AC0-43F0-9BDC-B87CCE5A8E75}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A89306C1-1AC0-43F0-9BDC-B87CCE5A8E75}.Release|Any CPU.Build.0 = Release|Any CPU
 		{87A3C104-59EE-460A-ABFF-6F2FDCCB0E1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{87A3C104-59EE-460A-ABFF-6F2FDCCB0E1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{87A3C104-59EE-460A-ABFF-6F2FDCCB0E1B}.LamaDebug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -104,14 +96,14 @@ Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {40D2FBCB-DC9E-4CF3-AA05-9A42E9210D2C}
-	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{45EC025C-8C55-4FB4-B63C-5EF3EA1BD1D2} = {B1E873D8-4B14-417A-A727-BE8240E1D3E2}
 		{BE2C078A-5AB6-4927-83EC-70D099471688} = {B1E873D8-4B14-417A-A727-BE8240E1D3E2}
-		{87A3C104-59EE-460A-ABFF-6F2FDCCB0E1B} = {B1E873D8-4B14-417A-A727-BE8240E1D3E2}
 		{BE81D9A0-308D-44CD-9513-9E56FED265CB} = {B1E873D8-4B14-417A-A727-BE8240E1D3E2}
+		{87A3C104-59EE-460A-ABFF-6F2FDCCB0E1B} = {B1E873D8-4B14-417A-A727-BE8240E1D3E2}
 		{97A422BE-11EC-45DA-9118-B63B4A9A0A96} = {B1E873D8-4B14-417A-A727-BE8240E1D3E2}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {40D2FBCB-DC9E-4CF3-AA05-9A42E9210D2C}
 	EndGlobalSection
 EndGlobal
