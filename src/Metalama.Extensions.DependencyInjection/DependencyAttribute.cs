@@ -14,15 +14,10 @@ namespace Metalama.Extensions.DependencyInjection;
 /// <remarks>
 ///  The implementation of this custom attribute depends on the selected dependency injection framework.
 /// </remarks>
-public class DependencyAttribute : FieldOrPropertyAspect, IDependencyAttribute
+public class DependencyAttribute : FieldOrPropertyAspect
 {
     private bool? _isLazy;
     private bool? _isRequired;
-
-    /// <summary>
-    /// Gets the value of the <see cref="IsLazy"/> if it has been assigned, or <c>null</c> if it has not been assigned.
-    /// </summary>
-    bool? IDependencyAttribute.GetIsLazy() => this._isLazy;
 
     /// <summary>
     /// Gets or sets a value indicating whether the dependency should be pulled from the container lazily, i.e. upon first use.
@@ -42,26 +37,29 @@ public class DependencyAttribute : FieldOrPropertyAspect, IDependencyAttribute
         set => this._isRequired = value;
     }
 
-    /// <summary>
-    /// Gets the value of the <see cref="IsRequired"/> if it has been assigned, or <c>null</c> if it has not been assigned.
-    /// </summary>
-    bool? IDependencyAttribute.GetIsRequired() => this._isRequired;
+    protected virtual DependencyProperties ToProperties( IFieldOrProperty target )
+    {
+        return new DependencyProperties(
+            target.DeclaringType,
+            target.Type,
+            target.Name,
+            target.IsStatic,
+            target.DeclarationKind ) { IsLazy = this._isLazy, IsRequired = this._isRequired };
+    }
 
     public override void BuildAspect( IAspectBuilder<IFieldOrProperty> builder )
     {
-        var context = new ImplementDependencyContext(
-            builder.Project,
-            builder.Target,
-            this,
-            builder.Diagnostics );
+        var target = builder.Target;
 
-        if ( !builder.Project.DependencyInjectionOptions().TryGetFramework( context, out var framework ) )
+        var dependencyProperties = this.ToProperties( target );
+
+        if ( !builder.Project.DependencyInjectionOptions().TryGetFramework( dependencyProperties, builder.Diagnostics, out var framework ) )
         {
             builder.SkipAspect();
 
             return;
         }
 
-        framework.ImplementDependency( context, builder );
+        framework.TryImplementDependency( dependencyProperties, builder );
     }
 }

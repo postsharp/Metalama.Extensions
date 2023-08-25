@@ -97,7 +97,7 @@ public abstract class BaseUsageValidationAttribute : Attribute, IConditionallyIn
         switch ( predicates.Count )
         {
             case 0:
-                builder.Diagnostics.Report( ArchitectureDiagnosticDefinitions.AtLeastOnePropertyMustBeSet.WithArguments( this.GetType().Namespace ) );
+                builder.Diagnostics.Report( ArchitectureDiagnosticDefinitions.AtLeastOnePropertyMustBeSet.WithArguments( this.GetType().Name ) );
 
                 builder.SkipAspect();
 

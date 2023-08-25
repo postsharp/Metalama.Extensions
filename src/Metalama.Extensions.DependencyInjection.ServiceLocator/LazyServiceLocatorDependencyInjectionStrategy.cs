@@ -5,6 +5,7 @@ using Metalama.Framework.Advising;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Metalama.Extensions.DependencyInjection.ServiceLocator;
 
@@ -13,42 +14,47 @@ namespace Metalama.Extensions.DependencyInjection.ServiceLocator;
 
 internal class LazyServiceLocatorDependencyInjectionStrategy : DefaultDependencyInjectionStrategy, ITemplateProvider
 {
-    public LazyServiceLocatorDependencyInjectionStrategy( DependencyContext context ) : base( context ) { }
+    public LazyServiceLocatorDependencyInjectionStrategy( DependencyProperties properties ) : base( properties ) { }
 
-    public override void IntroduceDependency( IAspectBuilder<INamedType> builder )
+    public override bool TryIntroduceDependency( IAspectBuilder<INamedType> builder, [NotNullWhen( true )] out IFieldOrProperty? fieldOrProperty )
     {
         var propertyArgs = new PropertyArgs();
-
-        var aspectFieldOrProperty = this.Context.FieldOrProperty;
 
         // Introduce the visible property, something like `IMyService MyService => this._myServiceCache ??= (T) this._serviceProvider.GetService((typeof(T))`.
         var introducePropertyResult = builder.Advice.WithTemplateProvider( this )
             .IntroduceProperty(
                 builder.Target,
-                aspectFieldOrProperty.Name,
+                this.Properties.Name,
                 nameof(GetDependencyTemplate),
                 null,
                 IntroductionScope.Instance,
                 OverrideStrategy.Ignore,
                 propertyBuilder =>
                 {
-                    propertyBuilder.Type = aspectFieldOrProperty.Type;
-                    propertyBuilder.Name = aspectFieldOrProperty.Name;
+                    propertyBuilder.Type = this.Properties.DependencyType;
+                    propertyBuilder.Name = this.Properties.Name;
                 },
-                args: new { args = propertyArgs, T = aspectFieldOrProperty.Type } );
+                args: new { args = propertyArgs, T = this.Properties.DependencyType } );
+
+        fieldOrProperty = introducePropertyResult.Declaration;
 
         if ( introducePropertyResult.Outcome != AdviceOutcome.Default )
         {
             // The introduction has been ignored.
-            return;
+            return true;
         }
 
-        AddFields( builder, introducePropertyResult.Declaration, propertyArgs );
+        if ( !TryAddFields( builder, introducePropertyResult.Declaration, propertyArgs ) )
+        {
+            return false;
+        }
 
         this.InitializeServiceProvider( builder, propertyArgs.ServiceProviderField );
+
+        return true;
     }
 
-    public override void ImplementDependency( IAspectBuilder<IFieldOrProperty> builder )
+    public override bool TryImplementDependency( IAspectBuilder<IFieldOrProperty> builder )
     {
         var propertyArgs = new PropertyArgs();
 
@@ -62,16 +68,22 @@ internal class LazyServiceLocatorDependencyInjectionStrategy : DefaultDependency
 
         if ( overrideResult.Outcome == AdviceOutcome.Error )
         {
-            return;
+            return false;
         }
 
         var typeBuilder = builder.WithTarget( builder.Target.DeclaringType );
-        AddFields( typeBuilder, overrideResult.Declaration, propertyArgs );
+
+        if ( !TryAddFields( typeBuilder, overrideResult.Declaration, propertyArgs ) )
+        {
+            return false;
+        }
 
         this.InitializeServiceProvider( typeBuilder, propertyArgs.ServiceProviderField );
+
+        return true;
     }
 
-    private static void AddFields( IAspectBuilder<INamedType> builder, IProperty property, PropertyArgs propertyArgs )
+    private static bool TryAddFields( IAspectBuilder<INamedType> builder, IProperty property, PropertyArgs propertyArgs )
     {
         // Introduce a field that stores the IServiceProvider.
 
@@ -82,7 +94,7 @@ internal class LazyServiceLocatorDependencyInjectionStrategy : DefaultDependency
 
         if ( introduceServiceProviderFieldResult.Outcome == AdviceOutcome.Error )
         {
-            return;
+            return false;
         }
 
         propertyArgs.ServiceProviderField = introduceServiceProviderFieldResult.Declaration;
@@ -95,10 +107,12 @@ internal class LazyServiceLocatorDependencyInjectionStrategy : DefaultDependency
 
         if ( introduceCacheFieldResult.Outcome == AdviceOutcome.Error )
         {
-            return;
+            return false;
         }
 
         propertyArgs.CacheField = introduceCacheFieldResult.Declaration;
+
+        return true;
     }
 
     private void InitializeServiceProvider( IAspectBuilder<INamedType> builder, IField serviceProviderField )
@@ -130,7 +144,7 @@ internal class LazyServiceLocatorDependencyInjectionStrategy : DefaultDependency
     [Template]
     private void SetDependencyTemplate<[CompileTime] T>( PropertyArgs args )
     {
-        throw new NotSupportedException( $"Cannot set '{this.Context.FieldOrProperty.Name}' because of the dependency aspect." );
+        throw new NotSupportedException( $"Cannot set '{this.Properties.Name}' because of the dependency aspect." );
     }
 
     [Template]

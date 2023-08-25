@@ -9,22 +9,28 @@ namespace Metalama.Extensions.DependencyInjection.ServiceLocator;
 
 internal class EarlyServiceLocatorDependencyInjectionStrategy : DefaultDependencyInjectionStrategy, ITemplateProvider
 {
-    public EarlyServiceLocatorDependencyInjectionStrategy( DependencyContext context ) : base( context ) { }
+    public EarlyServiceLocatorDependencyInjectionStrategy( DependencyProperties properties ) : base( properties ) { }
 
-    protected override void PullDependency( IAspectBuilder<INamedType> aspectBuilder, IPullStrategy pullStrategy, IConstructor constructor )
+    protected override bool TryPullDependency(
+        IAspectBuilder<INamedType> aspectBuilder,
+        IFieldOrProperty dependencyFieldOrProperty,
+        IPullStrategy pullStrategy,
+        IConstructor constructor )
     {
         aspectBuilder.Advice.WithTemplateProvider( this )
             .AddInitializer(
                 constructor,
                 nameof(this.InitializerTemplate),
-                args: new { T = this.Context.FieldOrProperty.Type, fieldOrProperty = this.Context.FieldOrProperty } );
+                args: new { T = this.Properties.DependencyType, fieldOrProperty = dependencyFieldOrProperty } );
+
+        return true;
     }
 
     [Template]
     public void InitializerTemplate<[CompileTime] T>( IFieldOrProperty fieldOrProperty )
     {
-        var isRequired = this.Context.DependencyAttribute.GetIsRequired()
-            .GetValueOrDefault( this.Context.Project.DependencyInjectionOptions().IsRequiredByDefault );
+        var isRequired = this.Properties.IsRequired
+            .GetValueOrDefault( this.Properties.Project.DependencyInjectionOptions().IsRequiredByDefault );
 
         if ( isRequired )
         {
