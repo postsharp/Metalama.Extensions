@@ -13,7 +13,7 @@ internal static class DiagnosticDescriptors
 
     // Diagnostics need to be declared in an aspect or fabric at the moment.
 
-    internal static readonly DiagnosticDefinition<(IFieldOrProperty Dependency, INamedType TargetType)>
+    internal static readonly DiagnosticDefinition<(IType DependencyType, INamedType TargetType)>
         NoDependencyInjectionFrameworkRegistered = new(
             "LAMA0701",
             Severity.Error,
@@ -21,7 +21,7 @@ internal static class DiagnosticDescriptors
             "No dependency injection framework has been registered.",
             _category );
 
-    internal static readonly DiagnosticDefinition<(IFieldOrProperty Dependency, INamedType TargetType)>
+    internal static readonly DiagnosticDefinition<(IType DependencyType, INamedType TargetType)>
         NoSuitableDependencyInjectionFramework = new(
             "LAMA0702",
             Severity.Error,
@@ -29,7 +29,7 @@ internal static class DiagnosticDescriptors
             "None of the registered dependency injection frameworks can handle a dependency.",
             _category );
 
-    internal static readonly DiagnosticDefinition<(IFieldOrProperty Dependency, INamedType TargetType)>
+    internal static readonly DiagnosticDefinition<(IType DependencyType, INamedType TargetType)>
         MoreThanOneSuitableDependencyInjectionFramework = new(
             "LAMA0703",
             Severity.Error,

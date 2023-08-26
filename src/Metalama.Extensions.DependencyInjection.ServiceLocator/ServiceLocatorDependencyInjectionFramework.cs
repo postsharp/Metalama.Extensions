@@ -13,8 +13,8 @@ namespace Metalama.Extensions.DependencyInjection.ServiceLocator;
 [CompileTime]
 public class ServiceLocatorDependencyInjectionFramework : DefaultDependencyInjectionFramework
 {
-    protected override DefaultDependencyInjectionStrategy GetStrategy( DependencyContext context )
-        => context.DependencyAttribute.GetIsLazy().GetValueOrDefault( context.Project.DependencyInjectionOptions().IsLazyByDefault )
-            ? new LazyServiceLocatorDependencyInjectionStrategy( context )
-            : new EarlyServiceLocatorDependencyInjectionStrategy( context );
+    protected override DefaultDependencyInjectionStrategy GetStrategy( DependencyProperties properties )
+        => properties.IsLazy.GetValueOrDefault( properties.Project.DependencyInjectionOptions().IsLazyByDefault )
+            ? new LazyServiceLocatorDependencyInjectionStrategy( properties )
+            : new EarlyServiceLocatorDependencyInjectionStrategy( properties );
 }

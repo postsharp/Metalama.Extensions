@@ -2,6 +2,7 @@
 
 using JetBrains.Annotations;
 using Metalama.Extensions.DependencyInjection.Implementation;
+using Metalama.Framework.Diagnostics;
 using Metalama.Framework.Project;
 using System;
 using System.Collections.Immutable;
@@ -16,7 +17,7 @@ namespace Metalama.Extensions.DependencyInjection;
 [PublicAPI]
 public sealed class DependencyInjectionOptions : ProjectExtension
 {
-    private Func<DependencyContext, ImmutableArray<IDependencyInjectionFramework>, IDependencyInjectionFramework?> _selector = ( _, frameworks )
+    private Func<DependencyProperties, ImmutableArray<IDependencyInjectionFramework>, IDependencyInjectionFramework?> _selector = ( _, frameworks )
         => frameworks[0];
 
     private ImmutableArray<IDependencyInjectionFramework> _registeredFrameworks =
@@ -79,7 +80,7 @@ public sealed class DependencyInjectionOptions : ProjectExtension
     /// for the current project and many vote to handle a given dependency. The default implementation is to return
     /// the first framework in the array.
     /// </summary>
-    public Func<DependencyContext, ImmutableArray<IDependencyInjectionFramework>, IDependencyInjectionFramework?> Selector
+    public Func<DependencyProperties, ImmutableArray<IDependencyInjectionFramework>, IDependencyInjectionFramework?> Selector
     {
         get => this._selector;
         set
@@ -93,9 +94,13 @@ public sealed class DependencyInjectionOptions : ProjectExtension
         }
     }
 
-    internal bool TryGetFramework( DependencyContext context, [NotNullWhen( true )] out IDependencyInjectionFramework? framework )
+    internal bool TryGetFramework(
+        DependencyProperties properties,
+        in ScopedDiagnosticSink diagnostics,
+        [NotNullWhen( true )] out IDependencyInjectionFramework? framework )
     {
-        var eligibleFrameworks = this.RegisteredFrameworks.Where( f => f.CanHandleDependency( context ) ).ToImmutableArray();
+        var d = diagnostics;
+        var eligibleFrameworks = this.RegisteredFrameworks.Where( f => f.CanHandleDependency( properties, d ) ).ToImmutableArray();
 
         if ( eligibleFrameworks.IsEmpty )
         {
@@ -103,7 +108,7 @@ public sealed class DependencyInjectionOptions : ProjectExtension
                 ? DiagnosticDescriptors.NoDependencyInjectionFrameworkRegistered
                 : DiagnosticDescriptors.NoSuitableDependencyInjectionFramework;
 
-            context.Diagnostics.Report( diagnostic.WithArguments( (context.FieldOrProperty, context.TargetType) ) );
+            diagnostics.Report( diagnostic.WithArguments( (properties.DependencyType, properties.TargetType) ) );
 
             framework = null;
 
@@ -116,12 +121,12 @@ public sealed class DependencyInjectionOptions : ProjectExtension
         }
         else
         {
-            framework = this.Selector.Invoke( context, eligibleFrameworks );
+            framework = this.Selector.Invoke( properties, eligibleFrameworks );
 
             if ( framework == null )
             {
-                context.Diagnostics.Report(
-                    DiagnosticDescriptors.MoreThanOneSuitableDependencyInjectionFramework.WithArguments( (context.FieldOrProperty, context.TargetType) ) );
+                diagnostics.Report(
+                    DiagnosticDescriptors.MoreThanOneSuitableDependencyInjectionFramework.WithArguments( (properties.DependencyType, properties.TargetType) ) );
 
                 return false;
             }
