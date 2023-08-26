@@ -23,7 +23,7 @@ namespace Metalama.Extensions.Metrics
                     metric.Value++;
                 }
 
-                foreach (var child in node.ChildNodes() )
+                foreach ( var child in node.ChildNodes() )
                 {
                     metric.Add( this.Visit( child ) );
                 }
@@ -60,7 +60,7 @@ namespace Metalama.Extensions.Metrics
 
             public override StatementsCount VisitTryStatement( TryStatementSyntax node )
             {
-                var metric = default( StatementsCount );
+                var metric = default(StatementsCount);
 
                 foreach ( var child in node.DescendantNodes() )
                 {

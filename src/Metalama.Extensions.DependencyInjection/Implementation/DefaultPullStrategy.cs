@@ -17,18 +17,18 @@ public class DefaultPullStrategy : IPullStrategy
     /// <summary>
     /// Initializes a new instance of the <see cref="DefaultPullStrategy"/> class.
     /// </summary>
-    /// <param name="context">The context information for the introduced dependency.</param>
+    /// <param name="properties">The context information for the introduced dependency.</param>
     /// <param name="introducedFieldOrProperty">The dependency field or property in the target type.</param>
-    public DefaultPullStrategy( DependencyContext context, IFieldOrProperty introducedFieldOrProperty )
+    public DefaultPullStrategy( DependencyProperties properties, IFieldOrProperty introducedFieldOrProperty )
     {
-        this.Context = context;
+        this.Properties = properties;
         this.IntroducedFieldOrProperty = introducedFieldOrProperty;
     }
 
     /// <summary>
-    /// Gets the <see cref="IntroduceDependencyContext"/>.
+    /// Gets the <see cref="DependencyProperties"/>.
     /// </summary>
-    private DependencyContext Context { get; }
+    private DependencyProperties Properties { get; }
 
     /// <summary>
     /// Gets the dependency field or property in the target type. 
@@ -125,7 +125,7 @@ public class DefaultPullStrategy : IPullStrategy
         // Initialize the field or property to the parameter.
         string assignmentCode;
 
-        if ( this.Context.DependencyAttribute.GetIsRequired().GetValueOrDefault( this.Context.Project.DependencyInjectionOptions().IsRequiredByDefault ) )
+        if ( this.Properties.IsRequired.GetValueOrDefault( this.Properties.Project.DependencyInjectionOptions().IsRequiredByDefault ) )
         {
             assignmentCode =
                 $"this.{assignedFieldOrProperty.Name} = {existingParameter.Name} ?? throw new System.ArgumentNullException(nameof({existingParameter.Name}));";

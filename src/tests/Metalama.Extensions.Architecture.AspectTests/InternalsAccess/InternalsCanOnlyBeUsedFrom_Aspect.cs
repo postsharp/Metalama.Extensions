@@ -56,7 +56,7 @@ namespace Metalama.Extensions.Architecture.AspectTests.InternalsCanOnlyBeUsedFro
 
         private class AllowedNestedClass
         {
-            public static void ForbiddenCalls()
+            public static void ForbiddenCalls2()
             {
                 // These calls should be forbidden.
                 ConstrainedClass.InternalMethod();

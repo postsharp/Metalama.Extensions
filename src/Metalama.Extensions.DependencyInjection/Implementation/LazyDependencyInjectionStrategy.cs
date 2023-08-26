@@ -4,6 +4,7 @@ using Metalama.Framework.Advising;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Metalama.Extensions.DependencyInjection.Implementation;
 
@@ -13,40 +14,44 @@ namespace Metalama.Extensions.DependencyInjection.Implementation;
 /// </summary>
 public partial class LazyDependencyInjectionStrategy : DefaultDependencyInjectionStrategy, ITemplateProvider
 {
-    public LazyDependencyInjectionStrategy( DependencyContext context ) : base( context ) { }
+    public LazyDependencyInjectionStrategy( DependencyProperties properties ) : base( properties ) { }
 
-    public override void IntroduceDependency( IAspectBuilder<INamedType> builder )
+    public override bool TryIntroduceDependency( IAspectBuilder<INamedType> builder, [NotNullWhen( true )] out IFieldOrProperty? fieldOrProperty )
     {
         var propertyArgs = new TemplateArgs();
-
-        var aspectFieldOrProperty = this.Context.FieldOrProperty;
 
         // Introduce the visible property, something like `IMyService MyService => this._myServiceCache ??= this._myServiceFunc`.
         var introducePropertyResult = builder.Advice.WithTemplateProvider( this )
             .IntroduceProperty(
                 builder.Target,
-                aspectFieldOrProperty.Name,
+                this.Properties.Name,
                 nameof(GetDependencyTemplate),
                 null,
                 IntroductionScope.Instance,
                 OverrideStrategy.Ignore,
                 propertyBuilder =>
                 {
-                    propertyBuilder.Type = aspectFieldOrProperty.Type;
-                    propertyBuilder.Name = aspectFieldOrProperty.Name;
+                    propertyBuilder.Type = this.Properties.DependencyType;
+                    propertyBuilder.Name = this.Properties.Name;
                 },
                 args: new { args = propertyArgs } );
 
         if ( introducePropertyResult.Outcome != AdviceOutcome.Default )
         {
             // The introduction has been ignored.
-            return;
+            fieldOrProperty = introducePropertyResult.Declaration;
+
+            return true;
         }
 
-        this.AddFields( builder, introducePropertyResult.Declaration, propertyArgs );
+        this.TryAddFields( builder, introducePropertyResult.Declaration, propertyArgs );
+
+        fieldOrProperty = introducePropertyResult.Declaration;
+
+        return true;
     }
 
-    private void AddFields( IAspectBuilder<INamedType> builder, IProperty property, TemplateArgs propertyArgs )
+    private bool TryAddFields( IAspectBuilder<INamedType> builder, IProperty property, TemplateArgs propertyArgs )
     {
         // Introduce a field that stores the Func<>
         var dependencyFieldType = ((INamedType) TypeFactory.GetType( typeof(Func<>) )).WithTypeArguments( property.Type );
@@ -58,7 +63,7 @@ public partial class LazyDependencyInjectionStrategy : DefaultDependencyInjectio
 
         if ( introduceFuncFieldResult.Outcome == AdviceOutcome.Error )
         {
-            return;
+            return false;
         }
 
         propertyArgs.DependencyField = introduceFuncFieldResult.Declaration;
@@ -71,17 +76,17 @@ public partial class LazyDependencyInjectionStrategy : DefaultDependencyInjectio
 
         if ( introduceCacheFieldResult.Outcome == AdviceOutcome.Error )
         {
-            return;
+            return false;
         }
 
         propertyArgs.CacheField = introduceCacheFieldResult.Declaration;
 
-        var pullStrategy = new PullStrategy( this.Context, property, introduceFuncFieldResult.Declaration );
+        var pullStrategy = new PullStrategy( this.Properties, property, introduceFuncFieldResult.Declaration );
 
-        this.PullDependency( builder, pullStrategy );
+        return this.TryPullDependency( builder, propertyArgs.DependencyField, pullStrategy );
     }
 
-    public override void ImplementDependency( IAspectBuilder<IFieldOrProperty> builder )
+    public override bool TryImplementDependency( IAspectBuilder<IFieldOrProperty> builder )
     {
         var templateArgs = new TemplateArgs();
 
@@ -95,10 +100,10 @@ public partial class LazyDependencyInjectionStrategy : DefaultDependencyInjectio
 
         if ( overrideResult.Outcome == AdviceOutcome.Error )
         {
-            return;
+            return false;
         }
 
-        this.AddFields( builder.WithTarget( builder.Target.DeclaringType ), overrideResult.Declaration, templateArgs );
+        return this.TryAddFields( builder.WithTarget( builder.Target.DeclaringType ), overrideResult.Declaration, templateArgs );
     }
 
     public class TemplateArgs
@@ -114,5 +119,5 @@ public partial class LazyDependencyInjectionStrategy : DefaultDependencyInjectio
     // ReSharper disable once UnusedParameter.Local
     [Template]
     private void SetDependencyTemplate( TemplateArgs args )
-        => throw new NotSupportedException( $"Cannot set '{this.Context.FieldOrProperty.Name}' because of the dependency aspect." );
+        => throw new NotSupportedException( $"Cannot set '{this.Properties.Name}' because of the dependency aspect." );
 }
