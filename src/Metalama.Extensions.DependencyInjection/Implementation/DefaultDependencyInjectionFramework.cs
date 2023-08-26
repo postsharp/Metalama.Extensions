@@ -2,6 +2,7 @@
 
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
+using Metalama.Framework.Diagnostics;
 using System;
 
 namespace Metalama.Extensions.DependencyInjection.Implementation;
@@ -13,25 +14,28 @@ namespace Metalama.Extensions.DependencyInjection.Implementation;
 public class DefaultDependencyInjectionFramework : IDependencyInjectionFramework
 {
     /// <inheritdoc />
-    public virtual bool CanHandleDependency( DependencyContext context ) => !context.FieldOrProperty.IsStatic;
+    public virtual bool CanHandleDependency( DependencyProperties properties, in ScopedDiagnosticSink diagnostics ) => !properties.IsStatic;
 
     /// <inheritdoc />
-    public void IntroduceDependency( IntroduceDependencyContext context, IAspectBuilder<INamedType> aspectBuilder )
+    public bool TryIntroduceDependency(
+        DependencyProperties properties,
+        IAspectBuilder<INamedType> aspectBuilder,
+        out IFieldOrProperty? dependencyFieldOrProperty )
     {
-        this.GetStrategy( context ).IntroduceDependency( aspectBuilder );
+        return this.GetStrategy( properties ).TryIntroduceDependency( aspectBuilder, out dependencyFieldOrProperty );
     }
 
     /// <inheritdoc />
-    public void ImplementDependency( ImplementDependencyContext context, IAspectBuilder<IFieldOrProperty> aspectBuilder )
+    public bool TryImplementDependency( DependencyProperties properties, IAspectBuilder<IFieldOrProperty> aspectBuilder )
     {
-        this.GetStrategy( context ).ImplementDependency( aspectBuilder );
+        return this.GetStrategy( properties ).TryImplementDependency( aspectBuilder );
     }
 
     /// <summary>
     /// Gets an instance of the <see cref="DefaultDependencyInjectionStrategy"/> class for a given context.
     /// </summary>
-    protected virtual DefaultDependencyInjectionStrategy GetStrategy( DependencyContext context )
-        => !context.DependencyAttribute.GetIsLazy().GetValueOrDefault( context.Project.DependencyInjectionOptions().IsLazyByDefault )
-            ? new DefaultDependencyInjectionStrategy( context )
-            : new LazyDependencyInjectionStrategy( context );
+    protected virtual DefaultDependencyInjectionStrategy GetStrategy( DependencyProperties properties )
+        => !properties.IsLazy.GetValueOrDefault( properties.Project.DependencyInjectionOptions().IsLazyByDefault )
+            ? new DefaultDependencyInjectionStrategy( properties )
+            : new LazyDependencyInjectionStrategy( properties );
 }
