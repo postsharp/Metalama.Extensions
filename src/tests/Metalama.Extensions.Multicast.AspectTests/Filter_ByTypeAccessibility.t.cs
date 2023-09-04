@@ -1,7 +1,6 @@
 [assembly: AddTag("PublicType", AttributeTargetElements = MulticastTargets.Class, AttributeTargetTypeAttributes = MulticastAttributes.Public)]
 [assembly: AddTag("MethodOfPublicType", AttributeTargetElements = MulticastTargets.Method, AttributeTargetTypeAttributes = MulticastAttributes.Public)]
 [Tag("PublicType")]
-// <target>
 public class PublicClass
 {
   [Tag("MethodOfPublicType")]
