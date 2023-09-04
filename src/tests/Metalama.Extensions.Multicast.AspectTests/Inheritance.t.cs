@@ -8,7 +8,6 @@ public class C
   }
 }
 [Tag("Tagged")]
-// <target>
 public class D : C
 {
   [Tag("Tagged")]
