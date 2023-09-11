@@ -4,18 +4,16 @@ using Metalama.Framework.Aspects;
 using Metalama.Extensions.DependencyInjection;
 using Metalama.Extensions.DependencyInjection.Tests.Advice.Programmatic;
 using Metalama.Framework.Code;
-using Metalama.Extensions.DependencyInjection.Implementation;
 
 [assembly: AspectOrder( typeof(DependencyAttribute), typeof(MyAspect) )]
 
 namespace Metalama.Extensions.DependencyInjection.Tests.Advice.Programmatic;
 
 public class MyAspect : TypeAspect
-
 {
     public override void BuildAspect( IAspectBuilder<INamedType> builder )
     {
-        builder.TryIntroduceDependency( new DependencyProperties( builder.Target, typeof( IFormatProvider ), "_formatProvider", false ), out _ );
+        builder.TryIntroduceDependency( new DependencyProperties( builder.Target, typeof(IFormatProvider), "_formatProvider" ), out _ );
     }
 }
 

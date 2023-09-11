@@ -1,5 +1,6 @@
 ﻿// Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
+using JetBrains.Annotations;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 
@@ -13,6 +14,7 @@ namespace Metalama.Extensions.DependencyInjection;
 /// <remarks>
 ///  The implementation of this custom attribute depends on the selected dependency injection framework.
 /// </remarks>
+[PublicAPI]
 public class IntroduceDependencyAttribute : DeclarativeAdviceAttribute
 {
     private bool? _isLazy;
