@@ -28,12 +28,4 @@ internal static class DiagnosticDescriptors
             "None of the registered dependency injection frameworks can handle the dependency '{0}' in type '{1}'.",
             "None of the registered dependency injection frameworks can handle a dependency.",
             _category );
-
-    internal static readonly DiagnosticDefinition<(IType DependencyType, INamedType TargetType)>
-        MoreThanOneSuitableDependencyInjectionFramework = new(
-            "LAMA0703",
-            Severity.Error,
-            "More than one dependency injection framework can handle the dependency '{0}' in type '{1}' and no Selector has been specified.",
-            "More than one dependency injection framework can handle a dependency and no Selector has been specified.",
-            _category );
 }

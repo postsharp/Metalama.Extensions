@@ -35,7 +35,7 @@ public class DefaultDependencyInjectionFramework : IDependencyInjectionFramework
     /// Gets an instance of the <see cref="DefaultDependencyInjectionStrategy"/> class for a given context.
     /// </summary>
     protected virtual DefaultDependencyInjectionStrategy GetStrategy( DependencyProperties properties )
-        => !properties.IsLazy.GetValueOrDefault( properties.Project.DependencyInjectionOptions().IsLazyByDefault )
-            ? new DefaultDependencyInjectionStrategy( properties )
-            : new LazyDependencyInjectionStrategy( properties );
+        => properties.IsLazy
+            ? new LazyDependencyInjectionStrategy( properties )
+            : new DefaultDependencyInjectionStrategy( properties );
 }

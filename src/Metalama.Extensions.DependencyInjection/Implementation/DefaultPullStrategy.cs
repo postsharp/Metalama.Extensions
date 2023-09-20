@@ -125,7 +125,7 @@ public class DefaultPullStrategy : IPullStrategy
         // Initialize the field or property to the parameter.
         string assignmentCode;
 
-        if ( this.Properties.IsRequired.GetValueOrDefault( this.Properties.Project.DependencyInjectionOptions().IsRequiredByDefault ) )
+        if ( this.Properties.IsRequired )
         {
             assignmentCode =
                 $"this.{assignedFieldOrProperty.Name} = {existingParameter.Name} ?? throw new System.ArgumentNullException(nameof({existingParameter.Name}));";
