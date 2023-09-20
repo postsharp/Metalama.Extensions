@@ -32,7 +32,7 @@ internal class AnyReferencingTypePredicate : ReferencePredicate
                     $"The type '{iType}' cannot be used as a referencing type predicate parameter. Bound generic types are not allowed." );
             }
 
-            typeRefs.Add( namedType.GetOriginalDefinition().ToRef() );
+            typeRefs.Add( namedType.Definition.ToRef() );
         }
 
         this._typeRefs = typeRefs.ToArray();

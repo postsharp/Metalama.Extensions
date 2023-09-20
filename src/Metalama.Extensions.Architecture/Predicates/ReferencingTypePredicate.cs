@@ -27,7 +27,7 @@ internal class ReferencingTypePredicate : ReferencePredicate
                 $"The type '{type}' cannot be used as a referencing type predicate parameter. Bound generic types are not allowed." );
         }
 
-        this._typeRef = namedType.GetOriginalDefinition().ToRef();
+        this._typeRef = namedType.Definition.ToRef();
     }
 
     public override bool IsMatch( in ReferenceValidationContext context ) => context.ReferencingType.Equals( this._typeRef.GetTarget( options: default ) );
