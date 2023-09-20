@@ -17,7 +17,7 @@ public sealed class DependencyInjectionFrameworkRegistration : IHierarchicalOpti
 
     object IHierarchicalOptionItem.GetKey() => this.Type;
 
-    object IOverridable.OverrideWith( object options, in HierarchicalOptionsOverrideContext context )
+    object IOverridable.OverrideWith( object options, in OverrideContext context )
         => new DependencyInjectionFrameworkRegistration( this.Type, ((DependencyInjectionFrameworkRegistration) options).Priority ?? this.Priority );
 
     public Type Type { get; }

@@ -33,8 +33,6 @@ public sealed record DependencyInjectionOptions : IHierarchicalOptions<ICompilat
     /// </summary>
     public HierarchicalOptionItemCollection<DependencyInjectionFrameworkRegistration>? FrameworkRegistrations { get; init; }
 
-    public bool ClearFrameworkRegistrations { get; init; }
-
     /// <summary>
     /// Gets or sets a value indicating whether the default value for the <see cref="DependencyAttribute.IsRequired"/> property of <see cref="DependencyAttribute"/> and <see cref="IntroduceDependencyAttribute"/>.
     /// </summary>
@@ -121,7 +119,7 @@ public sealed record DependencyInjectionOptions : IHierarchicalOptions<ICompilat
                 new DependencyInjectionFrameworkRegistration( typeof(DefaultDependencyInjectionFramework), 101 ) )
         };
 
-    object IOverridable.OverrideWith( object options, in HierarchicalOptionsOverrideContext context )
+    object IOverridable.OverrideWith( object options, in OverrideContext context )
     {
         var other = (DependencyInjectionOptions) options;
 
