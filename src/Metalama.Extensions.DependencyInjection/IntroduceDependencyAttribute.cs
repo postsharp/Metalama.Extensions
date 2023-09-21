@@ -27,7 +27,9 @@ public class IntroduceDependencyAttribute : DeclarativeAdviceAttribute
             templateFieldOrProperty.Type,
             templateFieldOrProperty.Name,
             templateFieldOrProperty.IsStatic,
-            templateFieldOrProperty.DeclarationKind ) { IsLazy = this._isLazy, IsRequired = this._isRequired };
+            this._isRequired,
+            this._isLazy,
+            templateFieldOrProperty.DeclarationKind );
     }
 
     public sealed override void BuildAdvice( IMemberOrNamedType templateMember, string templateMemberId, IAspectBuilder<IDeclaration> builder )

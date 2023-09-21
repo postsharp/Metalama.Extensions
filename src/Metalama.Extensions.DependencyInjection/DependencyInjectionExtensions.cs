@@ -14,11 +14,6 @@ namespace Metalama.Extensions.DependencyInjection;
 public static class DependencyInjectionExtensions
 {
     /// <summary>
-    /// Exposes the options that influence the handling of <see cref="IntroduceDependencyAttribute"/>.
-    /// </summary>
-    public static DependencyInjectionOptions DependencyInjectionOptions( this IProject project ) => project.Extension<DependencyInjectionOptions>();
-
-    /// <summary>
     /// Tries to introduce a dependency into a specified type. 
     /// </summary>
     /// <param name="aspectBuilder">An <see cref="IAspectBuilder"/>.</param>
@@ -30,7 +25,7 @@ public static class DependencyInjectionExtensions
         DependencyProperties properties,
         [NotNullWhen( true )] out IFieldOrProperty? dependencyFieldOrProperty )
     {
-        if ( !aspectBuilder.Project.DependencyInjectionOptions().TryGetFramework( properties, aspectBuilder.Diagnostics, out var framework ) )
+        if ( !properties.Options.TryGetFramework( properties, aspectBuilder.Diagnostics, out var framework ) )
         {
             aspectBuilder.SkipAspect();
 

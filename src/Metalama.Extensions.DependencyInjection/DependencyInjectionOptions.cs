@@ -2,8 +2,11 @@
 
 using JetBrains.Annotations;
 using Metalama.Extensions.DependencyInjection.Implementation;
+using Metalama.Framework.Code;
 using Metalama.Framework.Diagnostics;
+using Metalama.Framework.Options;
 using Metalama.Framework.Project;
+using Metalama.Framework.Serialization;
 using System;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
@@ -11,100 +14,71 @@ using System.Linq;
 
 namespace Metalama.Extensions.DependencyInjection;
 
+#pragma warning disable SA1623
+
 /// <summary>
 /// Options that influence the processing of <see cref="IntroduceDependencyAttribute"/>.
 /// </summary>
 [PublicAPI]
-public sealed class DependencyInjectionOptions : ProjectExtension
+public sealed record DependencyInjectionOptions : IHierarchicalOptions<ICompilation>, IHierarchicalOptions<INamespace>, IHierarchicalOptions<INamedType>
 {
-    private Func<DependencyProperties, ImmutableArray<IDependencyInjectionFramework>, IDependencyInjectionFramework?> _selector = ( _, frameworks )
-        => frameworks[0];
-
-    private ImmutableArray<IDependencyInjectionFramework> _registeredFrameworks =
-        ImmutableArray.Create<IDependencyInjectionFramework>( new LoggerDependencyInjectionFramework(), new DefaultDependencyInjectionFramework() );
+#pragma warning disable CS0169 // False positive.
+    [NonCompileTimeSerialized]
+    private ImmutableArray<IDependencyInjectionFramework> _enabledFrameworks;
+#pragma warning restore CS0169
 
     /// <summary>
     /// Gets or sets the list of frameworks that can be used to implement the <see cref="IntroduceDependencyAttribute"/> advice and <see cref="DependencyAttribute"/>
     /// aspect.
     /// </summary>
-    public ImmutableArray<IDependencyInjectionFramework> RegisteredFrameworks
-    {
-        get => this._registeredFrameworks;
-        set
-        {
-            if ( this.IsReadOnly )
-            {
-                throw new InvalidOperationException();
-            }
-
-            this._registeredFrameworks = value.IsDefault ? ImmutableArray<IDependencyInjectionFramework>.Empty : value;
-        }
-    }
+    public HierarchicalOptionItemCollection<DependencyInjectionFrameworkRegistration>? FrameworkRegistrations { get; init; }
 
     /// <summary>
     /// Gets or sets a value indicating whether the default value for the <see cref="DependencyAttribute.IsRequired"/> property of <see cref="DependencyAttribute"/> and <see cref="IntroduceDependencyAttribute"/>.
     /// </summary>
-    public bool IsRequiredByDefault { get; set; } = true;
+    public bool? IsRequired { get; init; }
 
     /// <summary>
     /// Gets or sets a value indicating whether the default value for the <see cref="DependencyAttribute.IsLazy"/> property of <see cref="DependencyAttribute"/> and <see cref="IntroduceDependencyAttribute"/>.
     /// </summary>
-    public bool IsLazyByDefault { get; set; }
-
-    /// <summary>
-    /// Registers an implementation of the <see cref="IDependencyInjectionFramework"/> interface with highest priority.
-    /// The registration is ignored if another framework of the same was already registered. This method is typically called from the transitive project fabric
-    /// of libraries that implement a specific dependency injection framework so that they are registered first by default. In a user project, you should
-    /// rather set the <see cref="RegisteredFrameworks"/> property.
-    /// </summary>
-    /// <returns><c>true</c> if <paramref name="framework"/> was registered, or <c>false</c> if a framework of the same type was already registered.</returns>
-    public bool RegisterFramework( IDependencyInjectionFramework framework )
-    {
-        if ( this.IsReadOnly )
-        {
-            throw new InvalidOperationException();
-        }
-
-        if ( this.RegisteredFrameworks.Any( f => f.GetType() == framework.GetType() ) )
-        {
-            return false;
-        }
-
-        this.RegisteredFrameworks = this.RegisteredFrameworks.Insert( 0, framework );
-
-        return true;
-    }
+    public bool? IsLazy { get; init; }
 
     /// <summary>
     /// Gets or sets a delegate that is called when several dependency injection frameworks have been registered
     /// for the current project and many vote to handle a given dependency. The default implementation is to return
     /// the first framework in the array.
     /// </summary>
-    public Func<DependencyProperties, ImmutableArray<IDependencyInjectionFramework>, IDependencyInjectionFramework?> Selector
-    {
-        get => this._selector;
-        set
-        {
-            if ( this.IsReadOnly )
-            {
-                throw new InvalidOperationException();
-            }
-
-            this._selector = value;
-        }
-    }
+    public IDependencyInjectionFrameworkSelector? Selector { get; init; }
 
     internal bool TryGetFramework(
         DependencyProperties properties,
         in ScopedDiagnosticSink diagnostics,
         [NotNullWhen( true )] out IDependencyInjectionFramework? framework )
     {
+        // Lazily instantiates the frameworks.
+        if ( this._enabledFrameworks.IsDefault )
+        {
+            if ( this.FrameworkRegistrations == null )
+            {
+                this._enabledFrameworks = ImmutableArray<IDependencyInjectionFramework>.Empty;
+            }
+            else
+            {
+                this._enabledFrameworks = this.FrameworkRegistrations
+                    .OrderBy( x => x.Priority ?? 0 )
+                    .ThenBy( x => x.Type.FullName )
+                    .Select( x => DependencyInjectionFrameworkFactory.GetInstance( x.Type ) )
+                    .ToImmutableArray();
+            }
+        }
+
+        // Get eligible frameworks.
         var d = diagnostics;
-        var eligibleFrameworks = this.RegisteredFrameworks.Where( f => f.CanHandleDependency( properties, d ) ).ToImmutableArray();
+        var eligibleFrameworks = this._enabledFrameworks.Where( f => f.CanHandleDependency( properties, d ) ).ToImmutableArray();
 
         if ( eligibleFrameworks.IsEmpty )
         {
-            var diagnostic = this.RegisteredFrameworks.IsDefaultOrEmpty
+            var diagnostic = this._enabledFrameworks.IsEmpty
                 ? DiagnosticDescriptors.NoDependencyInjectionFrameworkRegistered
                 : DiagnosticDescriptors.NoSuitableDependencyInjectionFramework;
 
@@ -115,23 +89,46 @@ public sealed class DependencyInjectionOptions : ProjectExtension
             return false;
         }
 
-        if ( eligibleFrameworks.Length == 1 )
+        // Select the preferred framework.
+        if ( eligibleFrameworks.Length == 1 || this.Selector == null )
         {
             framework = eligibleFrameworks[0];
+
+            return true;
         }
         else
         {
-            framework = this.Selector.Invoke( properties, eligibleFrameworks );
+            framework = this.Selector.SelectFramework( properties, eligibleFrameworks );
 
-            if ( framework == null )
+            if ( framework == null! )
             {
-                diagnostics.Report(
-                    DiagnosticDescriptors.MoreThanOneSuitableDependencyInjectionFramework.WithArguments( (properties.DependencyType, properties.TargetType) ) );
-
-                return false;
+                throw new ArgumentNullException( $"{this.Selector.GetType().Name}.{nameof(this.Selector.SelectFramework)} returned null." );
             }
-        }
 
-        return true;
+            return true;
+        }
+    }
+
+    IHierarchicalOptions IHierarchicalOptions.GetDefaultOptions( IProject project )
+        => new DependencyInjectionOptions
+        {
+            IsRequired = true,
+            IsLazy = false,
+            FrameworkRegistrations = new HierarchicalOptionItemCollection<DependencyInjectionFrameworkRegistration>(
+                new DependencyInjectionFrameworkRegistration( typeof(LoggerDependencyInjectionFramework), 100 ),
+                new DependencyInjectionFrameworkRegistration( typeof(DefaultDependencyInjectionFramework), 101 ) )
+        };
+
+    object IOverridable.OverrideWith( object options, in OverrideContext context )
+    {
+        var other = (DependencyInjectionOptions) options;
+
+        return new DependencyInjectionOptions
+        {
+            IsRequired = other.IsRequired ?? this.IsRequired,
+            IsLazy = other.IsLazy ?? this.IsLazy,
+            Selector = other.Selector ?? this.Selector,
+            FrameworkRegistrations = this.FrameworkRegistrations.OverrideWithSafe( other.FrameworkRegistrations, context )
+        };
     }
 }

@@ -45,7 +45,9 @@ public class DependencyAttribute : FieldOrPropertyAspect
             target.Type,
             target.Name,
             target.IsStatic,
-            target.DeclarationKind ) { IsLazy = this._isLazy, IsRequired = this._isRequired };
+            this._isRequired,
+            this._isLazy,
+            target.DeclarationKind );
     }
 
     public override void BuildAspect( IAspectBuilder<IFieldOrProperty> builder )
@@ -54,7 +56,7 @@ public class DependencyAttribute : FieldOrPropertyAspect
 
         var dependencyProperties = this.ToProperties( target );
 
-        if ( !builder.Project.DependencyInjectionOptions().TryGetFramework( dependencyProperties, builder.Diagnostics, out var framework ) )
+        if ( !dependencyProperties.Options.TryGetFramework( dependencyProperties, builder.Diagnostics, out var framework ) )
         {
             builder.SkipAspect();
 
