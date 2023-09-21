@@ -9,7 +9,7 @@ internal class Fabric : TransitiveProjectFabric
 {
     public override void AmendProject( IProjectAmender amender )
     {
-        amender.Outbound.Configure(
+        amender.Outbound.SetOptions(
             _ => new DependencyInjectionOptions()
             {
                 FrameworkRegistrations = new HierarchicalOptionItemCollection<DependencyInjectionFrameworkRegistration>(
