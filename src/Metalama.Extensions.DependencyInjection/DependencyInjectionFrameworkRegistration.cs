@@ -11,7 +11,7 @@ namespace Metalama.Extensions.DependencyInjection;
 /// Represents a registration of a <see cref="IDependencyInjectionFramework"/>.
 /// </summary>
 [CompileTime]
-public sealed class DependencyInjectionFrameworkRegistration : IHierarchicalOptionItem
+public sealed class DependencyInjectionFrameworkRegistration : IIncrementalKeyedCollectionItem<Type>
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="DependencyInjectionFrameworkRegistration"/> class.
@@ -26,9 +26,9 @@ public sealed class DependencyInjectionFrameworkRegistration : IHierarchicalOpti
         this.Priority = priority;
     }
 
-    object IHierarchicalOptionItem.GetKey() => this.Type;
+    Type IIncrementalKeyedCollectionItem<Type>.Key => this.Type;
 
-    object IOverridable.OverrideWith( object options, in OverrideContext context )
+    object IIncrementalObject.ApplyChanges( object options, in ApplyChangesContext context )
         => new DependencyInjectionFrameworkRegistration( this.Type, ((DependencyInjectionFrameworkRegistration) options).Priority ?? this.Priority );
 
     /// <summary>
