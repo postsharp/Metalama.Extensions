@@ -2,6 +2,7 @@
 
 using Metalama.Framework.Fabrics;
 using Metalama.Framework.Options;
+using System;
 
 namespace Metalama.Extensions.DependencyInjection.ServiceLocator;
 
@@ -12,7 +13,7 @@ internal class Fabric : TransitiveProjectFabric
         amender.Outbound.SetOptions(
             _ => new DependencyInjectionOptions()
             {
-                FrameworkRegistrations = new HierarchicalOptionItemCollection<DependencyInjectionFrameworkRegistration>(
+                FrameworkRegistrations = IncrementalKeyedCollection.AddOrApplyChanges<Type, DependencyInjectionFrameworkRegistration>(
                     new DependencyInjectionFrameworkRegistration( typeof(ServiceLocatorDependencyInjectionFramework) ) )
             } );
     }

@@ -45,7 +45,7 @@ public record DependencyProperties
 
         this.Options = this.TargetType.Enhancements()
             .GetOptions<DependencyInjectionOptions>()
-            .OverrideWithSafe( new DependencyInjectionOptions { IsLazy = isLazy, IsRequired = isRequired }, default )!;
+            .ApplyChangesSafe( new DependencyInjectionOptions { IsLazy = isLazy, IsRequired = isRequired }, default )!;
     }
 
     /// <summary>

@@ -31,7 +31,7 @@ public sealed record DependencyInjectionOptions : IHierarchicalOptions<ICompilat
     /// Gets or sets the list of frameworks that can be used to implement the <see cref="IntroduceDependencyAttribute"/> advice and <see cref="DependencyAttribute"/>
     /// aspect.
     /// </summary>
-    public HierarchicalOptionItemCollection<DependencyInjectionFrameworkRegistration>? FrameworkRegistrations { get; init; }
+    public IncrementalKeyedCollection<Type, DependencyInjectionFrameworkRegistration>? FrameworkRegistrations { get; init; }
 
     /// <summary>
     /// Gets or sets a value indicating whether the default value for the <see cref="DependencyAttribute.IsRequired"/> property of <see cref="DependencyAttribute"/> and <see cref="IntroduceDependencyAttribute"/>.
@@ -114,12 +114,12 @@ public sealed record DependencyInjectionOptions : IHierarchicalOptions<ICompilat
         {
             IsRequired = true,
             IsLazy = false,
-            FrameworkRegistrations = new HierarchicalOptionItemCollection<DependencyInjectionFrameworkRegistration>(
+            FrameworkRegistrations = IncrementalKeyedCollection.AddOrApplyChanges<Type, DependencyInjectionFrameworkRegistration>(
                 new DependencyInjectionFrameworkRegistration( typeof(LoggerDependencyInjectionFramework), 100 ),
                 new DependencyInjectionFrameworkRegistration( typeof(DefaultDependencyInjectionFramework), 101 ) )
         };
 
-    object IOverridable.OverrideWith( object options, in OverrideContext context )
+    object IIncrementalObject.ApplyChanges( object options, in ApplyChangesContext context )
     {
         var other = (DependencyInjectionOptions) options;
 
@@ -128,7 +128,7 @@ public sealed record DependencyInjectionOptions : IHierarchicalOptions<ICompilat
             IsRequired = other.IsRequired ?? this.IsRequired,
             IsLazy = other.IsLazy ?? this.IsLazy,
             Selector = other.Selector ?? this.Selector,
-            FrameworkRegistrations = this.FrameworkRegistrations.OverrideWithSafe( other.FrameworkRegistrations, context )
+            FrameworkRegistrations = this.FrameworkRegistrations.ApplyChangesSafe( other.FrameworkRegistrations, context )
         };
     }
 }
