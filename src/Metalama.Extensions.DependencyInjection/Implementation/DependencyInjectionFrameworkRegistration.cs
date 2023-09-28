@@ -1,11 +1,10 @@
 // Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
-using Metalama.Extensions.DependencyInjection.Implementation;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Options;
 using System;
 
-namespace Metalama.Extensions.DependencyInjection;
+namespace Metalama.Extensions.DependencyInjection.Implementation;
 
 /// <summary>
 /// Represents a registration of a <see cref="IDependencyInjectionFramework"/>.

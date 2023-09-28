@@ -1,7 +1,6 @@
 ﻿// Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
 using JetBrains.Annotations;
-using Metalama.Extensions.DependencyInjection.Implementation;
 using Metalama.Framework.Code;
 using Metalama.Framework.Diagnostics;
 using Metalama.Framework.Options;
@@ -12,12 +11,12 @@ using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
-namespace Metalama.Extensions.DependencyInjection;
+namespace Metalama.Extensions.DependencyInjection.Implementation;
 
 #pragma warning disable SA1623
 
 /// <summary>
-/// Options that influence the processing of <see cref="IntroduceDependencyAttribute"/>.
+/// Options that influence the processing of <see cref="IntroduceDependencyAttribute"/>. To set these options, use <see cref="DependencyInjectionExtensions.ConfigureDependencyInjection(Metalama.Framework.Aspects.IAspectReceiver{Metalama.Framework.Code.ICompilation},System.Action{Metalama.Extensions.DependencyInjection.DependencyInjectionsOptionsBuilder})"/>.
 /// </summary>
 [PublicAPI]
 public sealed record DependencyInjectionOptions : IHierarchicalOptions<ICompilation>, IHierarchicalOptions<INamespace>, IHierarchicalOptions<INamedType>
@@ -31,7 +30,8 @@ public sealed record DependencyInjectionOptions : IHierarchicalOptions<ICompilat
     /// Gets or sets the list of frameworks that can be used to implement the <see cref="IntroduceDependencyAttribute"/> advice and <see cref="DependencyAttribute"/>
     /// aspect.
     /// </summary>
-    public IncrementalKeyedCollection<Type, DependencyInjectionFrameworkRegistration>? FrameworkRegistrations { get; init; }
+    public IncrementalKeyedCollection<Type, DependencyInjectionFrameworkRegistration> FrameworkRegistrations { get; init; } =
+        IncrementalKeyedCollection<Type, DependencyInjectionFrameworkRegistration>.Empty;
 
     /// <summary>
     /// Gets or sets a value indicating whether the default value for the <see cref="DependencyAttribute.IsRequired"/> property of <see cref="DependencyAttribute"/> and <see cref="IntroduceDependencyAttribute"/>.
@@ -58,18 +58,11 @@ public sealed record DependencyInjectionOptions : IHierarchicalOptions<ICompilat
         // Lazily instantiates the frameworks.
         if ( this._enabledFrameworks.IsDefault )
         {
-            if ( this.FrameworkRegistrations == null )
-            {
-                this._enabledFrameworks = ImmutableArray<IDependencyInjectionFramework>.Empty;
-            }
-            else
-            {
-                this._enabledFrameworks = this.FrameworkRegistrations
-                    .OrderBy( x => x.Priority ?? 0 )
-                    .ThenBy( x => x.Type.FullName )
-                    .Select( x => DependencyInjectionFrameworkFactory.GetInstance( x.Type ) )
-                    .ToImmutableArray();
-            }
+            this._enabledFrameworks = this.FrameworkRegistrations
+                .OrderBy( x => x.Priority ?? 0 )
+                .ThenBy( x => x.Type.FullName )
+                .Select( x => DependencyInjectionFrameworkFactory.GetInstance( x.Type ) )
+                .ToImmutableArray();
         }
 
         // Get eligible frameworks.
@@ -128,7 +121,7 @@ public sealed record DependencyInjectionOptions : IHierarchicalOptions<ICompilat
             IsRequired = other.IsRequired ?? this.IsRequired,
             IsLazy = other.IsLazy ?? this.IsLazy,
             Selector = other.Selector ?? this.Selector,
-            FrameworkRegistrations = this.FrameworkRegistrations.ApplyChangesSafe( other.FrameworkRegistrations, context )
+            FrameworkRegistrations = this.FrameworkRegistrations.ApplyChanges( other.FrameworkRegistrations, context )
         };
     }
 }

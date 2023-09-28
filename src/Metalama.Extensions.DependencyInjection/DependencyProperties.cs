@@ -1,5 +1,6 @@
 ﻿// Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
+using Metalama.Extensions.DependencyInjection.Implementation;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 using Metalama.Framework.Options;
@@ -36,7 +37,7 @@ public record DependencyProperties
         {
             throw new ArgumentOutOfRangeException( nameof(kind) );
         }
-        
+
         this.TargetType = targetType;
         this.DependencyType = dependencyType;
         this.Name = name;

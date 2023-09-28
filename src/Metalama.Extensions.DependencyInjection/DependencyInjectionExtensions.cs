@@ -1,8 +1,10 @@
 ﻿// Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
+using JetBrains.Annotations;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 using Metalama.Framework.Project;
+using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Metalama.Extensions.DependencyInjection;
@@ -11,8 +13,60 @@ namespace Metalama.Extensions.DependencyInjection;
 /// Extends the <see cref="IProject"/> and <see cref="IAspectBuilder"/> interfaces.
 /// </summary>
 [CompileTime]
+[PublicAPI]
 public static class DependencyInjectionExtensions
 {
+    /// <summary>
+    /// Configures <c>Metalama.Extensions.DependencyInjection</c> for the current project.
+    /// </summary>
+    /// <param name="receiver">The <see cref="IAspectReceiver{TDeclaration}"/> for current compilation.</param>
+    /// <param name="configure">A delegate that configures the framework.</param>
+    public static void ConfigureDependencyInjection(
+        this IAspectReceiver<ICompilation> receiver,
+        Action<DependencyInjectionsOptionsBuilder> configure )
+    {
+        var builder = new DependencyInjectionsOptionsBuilder();
+        configure( builder );
+
+        var options = builder.Build();
+
+        receiver.SetOptions( options );
+    }
+
+    /// <summary>
+    /// Configures <c>Metalama.Extensions.DependencyInjection</c> for a given type.
+    /// </summary>
+    /// <param name="receiver">The <see cref="IAspectReceiver{TDeclaration}"/> for the type.</param>
+    /// <param name="configure">A delegate that configures the framework.</param>
+    public static void ConfigureDependencyInjection(
+        this IAspectReceiver<INamedType> receiver,
+        Action<DependencyInjectionsOptionsBuilder> configure )
+    {
+        var builder = new DependencyInjectionsOptionsBuilder();
+        configure( builder );
+
+        var options = builder.Build();
+
+        receiver.SetOptions( options );
+    }
+
+    /// <summary>
+    /// Configures <c>Metalama.Extensions.DependencyInjection</c> for a given type.
+    /// </summary>
+    /// <param name="receiver">The <see cref="IAspectReceiver{TDeclaration}"/> for the type.</param>
+    /// <param name="configure">A delegate that configures the framework.</param>
+    public static void ConfigureDependencyInjection(
+        this IAspectReceiver<INamespace> receiver,
+        Action<DependencyInjectionsOptionsBuilder> configure )
+    {
+        var builder = new DependencyInjectionsOptionsBuilder();
+        configure( builder );
+
+        var options = builder.Build();
+
+        receiver.SetOptions( options );
+    }
+
     /// <summary>
     /// Tries to introduce a dependency into a specified type. 
     /// </summary>
