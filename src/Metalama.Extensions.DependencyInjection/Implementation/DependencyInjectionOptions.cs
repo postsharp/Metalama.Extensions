@@ -4,7 +4,6 @@ using JetBrains.Annotations;
 using Metalama.Framework.Code;
 using Metalama.Framework.Diagnostics;
 using Metalama.Framework.Options;
-using Metalama.Framework.Project;
 using Metalama.Framework.Serialization;
 using System;
 using System.Collections.Immutable;
@@ -102,7 +101,7 @@ public sealed record DependencyInjectionOptions : IHierarchicalOptions<ICompilat
         }
     }
 
-    IHierarchicalOptions IHierarchicalOptions.GetDefaultOptions( IProject project )
+    IHierarchicalOptions IHierarchicalOptions.GetDefaultOptions( OptionsInitializationContext context )
         => new DependencyInjectionOptions
         {
             IsRequired = true,
