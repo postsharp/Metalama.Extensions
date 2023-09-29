@@ -23,9 +23,9 @@ public static class DependencyInjectionExtensions
     /// <param name="configure">A delegate that configures the framework.</param>
     public static void ConfigureDependencyInjection(
         this IAspectReceiver<ICompilation> receiver,
-        Action<DependencyInjectionsOptionsBuilder> configure )
+        Action<DependencyInjectionOptionsBuilder> configure )
     {
-        var builder = new DependencyInjectionsOptionsBuilder();
+        var builder = new DependencyInjectionOptionsBuilder();
         configure( builder );
 
         var options = builder.Build();
@@ -40,9 +40,9 @@ public static class DependencyInjectionExtensions
     /// <param name="configure">A delegate that configures the framework.</param>
     public static void ConfigureDependencyInjection(
         this IAspectReceiver<INamedType> receiver,
-        Action<DependencyInjectionsOptionsBuilder> configure )
+        Action<DependencyInjectionOptionsBuilder> configure )
     {
-        var builder = new DependencyInjectionsOptionsBuilder();
+        var builder = new DependencyInjectionOptionsBuilder();
         configure( builder );
 
         var options = builder.Build();
@@ -57,9 +57,9 @@ public static class DependencyInjectionExtensions
     /// <param name="configure">A delegate that configures the framework.</param>
     public static void ConfigureDependencyInjection(
         this IAspectReceiver<INamespace> receiver,
-        Action<DependencyInjectionsOptionsBuilder> configure )
+        Action<DependencyInjectionOptionsBuilder> configure )
     {
-        var builder = new DependencyInjectionsOptionsBuilder();
+        var builder = new DependencyInjectionOptionsBuilder();
         configure( builder );
 
         var options = builder.Build();

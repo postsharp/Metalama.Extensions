@@ -8,7 +8,7 @@ namespace Metalama.Extensions.DependencyInjection;
 
 [CompileTime]
 [PublicAPI]
-public class DependencyInjectionsOptionsBuilder
+public class DependencyInjectionOptionsBuilder
 {
     private DependencyInjectionOptions _options = new();
 
