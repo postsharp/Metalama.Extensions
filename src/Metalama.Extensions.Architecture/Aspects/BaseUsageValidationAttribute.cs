@@ -141,7 +141,7 @@ public abstract class BaseUsageValidationAttribute : Attribute, IConditionallyIn
         return true;
     }
 
-    bool IConditionallyInheritableAspect.IsInheritable => this.ValidateDerivedTypes;
+    bool IConditionallyInheritableAspect.IsInheritable( IDeclaration targetDeclaration, IAspectInstance aspectInstance ) => this.ValidateDerivedTypes;
 
     /// <summary>
     /// Adds the predicates defined by the properties of the current custom attribute. 
