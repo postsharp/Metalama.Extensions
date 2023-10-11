@@ -7,7 +7,7 @@ using Metalama.Framework.Code;
 namespace Metalama.Extensions.DependencyInjection;
 
 /// <summary>
-/// Custom attribute that, when be applied to a field or automatic property in user code, means that this field or property is a service dependency
+/// Custom attribute that, when applied to a field or automatic property in user code, means that this field or property is a service dependency
 /// that must be pulled from the dependency injection framework. Contrarily to <see cref="IntroduceDependencyAttribute"/> that must be used
 /// in aspect code, this attribute must be used in user code. 
 /// </summary>
