@@ -40,12 +40,19 @@ public class DependencyAttribute : FieldOrPropertyAspect
 
     protected virtual DependencyProperties ToProperties( IFieldOrProperty target )
     {
+        var isRequired = this._isRequired ?? target.Type.IsNullable switch
+        {
+            null => null,
+            true => false,
+            false => true
+        };
+        
         return new DependencyProperties(
             target.DeclaringType,
             target.Type,
             target.Name,
             target.IsStatic,
-            this._isRequired,
+            isRequired,
             this._isLazy,
             target.DeclarationKind );
     }
