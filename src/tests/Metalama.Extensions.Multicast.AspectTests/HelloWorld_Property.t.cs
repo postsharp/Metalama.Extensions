@@ -1,32 +1,32 @@
-[assembly: MyAspect( "Hello, world." )]
+[assembly: MyAspect("Hello, world.")]
 public class C
 {
-    private readonly string _f1 = default!;
-    private string _f
+  private readonly string _f1 = default !;
+  private string _f
+  {
+    get
     {
-        get
-        {
-            Console.WriteLine( "Overridden get: Hello, world." );
-            return _f1;
-        }
-        init
-        {
-            Console.WriteLine( "Overridden set: Hello, world." );
-            this._f1 = value;
-        }
+      Console.WriteLine("Overridden get: Hello, world.");
+      return _f1;
     }
-    private int _p;
-    public int P
+    init
     {
-        get
-        {
-            Console.WriteLine( "Overridden get: Hello, world." );
-            return _p;
-        }
-        set
-        {
-            Console.WriteLine( "Overridden set: Hello, world." );
-            this._p = value;
-        }
+      Console.WriteLine("Overridden set: Hello, world.");
+      this._f1 = value;
     }
+  }
+  private int _p;
+  public int P
+  {
+    get
+    {
+      Console.WriteLine("Overridden get: Hello, world.");
+      return _p;
+    }
+    set
+    {
+      Console.WriteLine("Overridden set: Hello, world.");
+      this._p = value;
+    }
+  }
 }
