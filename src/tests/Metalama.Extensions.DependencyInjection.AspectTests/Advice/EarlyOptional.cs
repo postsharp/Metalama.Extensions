@@ -2,11 +2,11 @@
 
 using Metalama.Framework.Aspects;
 using Metalama.Extensions.DependencyInjection;
-using Metalama.Extensions.DependencyInjection.Tests.Advice.EarlyOptional;
+using Metalama.Extensions.DependencyInjection.AspectTests.Advice.EarlyOptional;
 
 [assembly: AspectOrder( typeof(DependencyAttribute), typeof(MyAspect) )]
 
-namespace Metalama.Extensions.DependencyInjection.Tests.Advice.EarlyOptional;
+namespace Metalama.Extensions.DependencyInjection.AspectTests.Advice.EarlyOptional;
 
 public class MyAspect : TypeAspect
 
