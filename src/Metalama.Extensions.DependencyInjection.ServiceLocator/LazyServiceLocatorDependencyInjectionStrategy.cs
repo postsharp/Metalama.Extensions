@@ -5,6 +5,7 @@ using Metalama.Framework.Advising;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Metalama.Extensions.DependencyInjection.ServiceLocator;
@@ -44,12 +45,10 @@ internal class LazyServiceLocatorDependencyInjectionStrategy : DefaultDependency
             return true;
         }
 
-        if ( !TryAddFields( builder, introducePropertyResult.Declaration, propertyArgs ) )
+        if ( !this.TryAddFields( builder, introducePropertyResult.Declaration, propertyArgs ) )
         {
             return false;
         }
-
-        this.InitializeServiceProvider( builder, propertyArgs.ServiceProviderField );
 
         return true;
     }
@@ -73,24 +72,23 @@ internal class LazyServiceLocatorDependencyInjectionStrategy : DefaultDependency
 
         var typeBuilder = builder.WithTarget( builder.Target.DeclaringType );
 
-        if ( !TryAddFields( typeBuilder, overrideResult.Declaration, propertyArgs ) )
+        if ( !this.TryAddFields( typeBuilder, overrideResult.Declaration, propertyArgs ) )
         {
             return false;
         }
 
-        this.InitializeServiceProvider( typeBuilder, propertyArgs.ServiceProviderField );
-
         return true;
     }
 
-    private static bool TryAddFields( IAspectBuilder<INamedType> builder, IProperty property, PropertyArgs propertyArgs )
+    private bool TryAddFields( IAspectBuilder<INamedType> builder, IProperty property, PropertyArgs propertyArgs )
     {
         // Introduce a field that stores the IServiceProvider.
 
         var introduceServiceProviderFieldResult = builder.Advice.IntroduceField(
             builder.Target,
             "_serviceProvider",
-            typeof(IServiceProvider) );
+            typeof(IServiceProvider),
+            whenExists: OverrideStrategy.Ignore );
 
         if ( introduceServiceProviderFieldResult.Outcome == AdviceOutcome.Error )
         {
@@ -99,7 +97,12 @@ internal class LazyServiceLocatorDependencyInjectionStrategy : DefaultDependency
 
         propertyArgs.ServiceProviderField = introduceServiceProviderFieldResult.Declaration;
 
-        // Introduce a field that caches
+        if ( introduceServiceProviderFieldResult.Outcome != AdviceOutcome.Ignore )
+        {
+            this.InitializeServiceProvider( builder, propertyArgs.ServiceProviderField );
+        }
+
+        // Introduce a field that caches the service.
         var introduceCacheFieldResult = builder.Advice.IntroduceField(
             builder.Target,
             property.Name + "Cache",
