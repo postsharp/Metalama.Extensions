@@ -5,6 +5,7 @@
         <Nullable>enable</Nullable>
         <PackageDescription>A Metalama extension that exposes code metrics to the code model.</PackageDescription>
         <MetalamaRemoveCompileTimeOnlyCode>False</MetalamaRemoveCompileTimeOnlyCode>
+        <DebugType>Portable</DebugType>
     </PropertyGroup>
 
     <ItemGroup>
