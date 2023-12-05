@@ -1,6 +1,6 @@
 ﻿// Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
-namespace Metalama.Extensions.DependencyInjection.Tests.Aspect.LazyRequired;
+namespace Metalama.Extensions.DependencyInjection.AspectTests.Aspect.LazyRequired;
 
 // <target>
 public class TargetClass
