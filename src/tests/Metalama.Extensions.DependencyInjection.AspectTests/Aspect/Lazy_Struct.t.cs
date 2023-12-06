@@ -12,6 +12,6 @@ public struct TargetStruct( Func<ILogger>? logger = default )
             throw new NotSupportedException( "Cannot set '_logger' because of the dependency aspect." );
         }
     }
-    private ILogger? _loggerCache = default;
+    private ILogger? _loggerCache;
     private Func<ILogger> _loggerFunc = logger ?? throw new System.ArgumentNullException( nameof( logger ) );
 }
