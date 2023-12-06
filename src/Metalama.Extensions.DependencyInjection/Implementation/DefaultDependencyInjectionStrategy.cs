@@ -100,12 +100,11 @@ public class DefaultDependencyInjectionStrategy
     }
 
     /// <summary>
-    /// Gets the constructors that are modified by <see cref="TryPullDependency(Metalama.Framework.Aspects.IAspectBuilder{Metalama.Framework.Code.INamedType},Metalama.Framework.Code.IFieldOrProperty,Metalama.Extensions.DependencyInjection.Implementation.IPullStrategy)"/>.
+    /// Gets the constructors that are modified by <see cref="TryPullDependency(IAspectBuilder{INamedType},IFieldOrProperty,IPullStrategy)"/>.
     /// </summary>
     /// <param name="type">The type in which the dependency is being injected.</param>
-    /// <returns></returns>
     private static IEnumerable<IConstructor> GetConstructors( INamedType type )
-        => type.Constructors.Where( c => c.InitializerKind != ConstructorInitializerKind.This );
+        => type.Constructors.Where( c => c.InitializerKind != ConstructorInitializerKind.This &&!c.IsRecordCopyConstructor() );
 
     /// <summary>
     /// Pulls the dependency from all constructors, i.e. introduce a parameter to these constructors (according to an <see cref="IPullStrategy"/>), and
@@ -120,12 +119,9 @@ public class DefaultDependencyInjectionStrategy
 
         foreach ( var constructor in GetConstructors( aspectBuilder.Target ) )
         {
-            if ( constructor.InitializerKind != ConstructorInitializerKind.This )
+            if ( !this.TryPullDependency( aspectBuilder, dependencyFieldOrProperty, pullStrategy, constructor ) )
             {
-                if ( !this.TryPullDependency( aspectBuilder, dependencyFieldOrProperty, pullStrategy, constructor ) )
-                {
-                    success = false;
-                }
+                success = false;
             }
         }
 
