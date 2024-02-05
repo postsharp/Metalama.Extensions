@@ -10,7 +10,7 @@ public class C
   private IFormatProvider _formatProvider;
   public C(IFormatProvider? formatProvider = default, ILoggerFactory? loggerFactory = default)
   {
-    this._formatProvider = formatProvider ?? throw new System.ArgumentNullException(nameof(formatProvider));
     this._loggerFactory = loggerFactory;
+    this._formatProvider = formatProvider ?? throw new System.ArgumentNullException(nameof(formatProvider));
   }
 }
