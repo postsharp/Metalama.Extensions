@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Metalama.Extensions.DependencyInjection.Implementation;
 
-internal sealed class LoggerDependencyInjectionFramework : DefaultDependencyInjectionFramework
+public sealed class LoggerDependencyInjectionFramework : DefaultDependencyInjectionFramework
 {
     public override bool CanHandleDependency( DependencyProperties properties, in ScopedDiagnosticSink diagnostics )
         => properties.DependencyType is INamedType { Name: "ILogger", FullName: "Microsoft.Extensions.Logging.ILogger" };
