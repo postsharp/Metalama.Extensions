@@ -2,9 +2,9 @@
 <Project>
 
     <PropertyGroup>
-        <MetalamaBackstageVersion>2024.1.2-preview</MetalamaBackstageVersion>
-        <MetalamaCompilerVersion>2024.1.1-preview</MetalamaCompilerVersion>
-        <MetalamaVersion>2024.1.2-preview</MetalamaVersion>
+        <MetalamaBackstageVersion>2024.1.3-preview</MetalamaBackstageVersion>
+        <MetalamaCompilerVersion>2024.1.2-preview</MetalamaCompilerVersion>
+        <MetalamaVersion>2024.1.3-preview</MetalamaVersion>
         <MetalamaFrameworkRunTimeVersion>2024.1.1-preview</MetalamaFrameworkRunTimeVersion>
     </PropertyGroup>
 
