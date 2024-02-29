@@ -37,9 +37,7 @@ namespace Metalama.Extensions.Multicast.AspectTests.AddToAllFromCompilation
             public event Action PublicEvent;
         }
     }
-
-    // TODO: currently adding an attribute to an enum or delegate does nothing.
-
+    
     public enum AnEnum { }
 
     public delegate void ADelegate();
