@@ -1,7 +1,12 @@
-public class TargetClass( IFormatProvider formatProvider, ILogger? logger = default )
+public class TargetClass
 {
-    [Dependency]
-    private readonly ILogger _logger = logger ?? throw new System.ArgumentNullException( nameof( logger ) );
-    [Dependency]
-    private IFormatProvider formatProvider = formatProvider ?? throw new System.ArgumentNullException( nameof( formatProvider ) );
+  [Dependency]
+  private readonly ILogger _logger;
+  [Dependency]
+  private IFormatProvider formatProvider;
+  public TargetClass(IFormatProvider formatProvider, ILogger? logger = default)
+  {
+    this._logger = logger ?? throw new System.ArgumentNullException(nameof(logger));
+    this.formatProvider = formatProvider ?? throw new System.ArgumentNullException(nameof(formatProvider));
+  }
 }

@@ -1,4 +1,4 @@
-public class TargetClass( Func<ILogger>? logger = default )
+public class TargetClass
 {
     [Dependency( IsLazy = true )]
     private ILogger _logger
@@ -13,5 +13,9 @@ public class TargetClass( Func<ILogger>? logger = default )
         }
     }
     private ILogger? _loggerCache;
-    private Func<ILogger> _loggerFunc = logger ?? throw new System.ArgumentNullException( nameof( logger ) );
+    private Func<ILogger> _loggerFunc;
+    public TargetClass( Func<ILogger>? logger = default )
+    {
+        this._loggerFunc = logger ?? throw new System.ArgumentNullException( nameof( logger ) );
+    }
 }
