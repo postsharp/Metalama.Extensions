@@ -1,17 +1,27 @@
-public record TargetRecord( Func<ILogger>? logger = default )
+public record TargetRecord
 {
-    [Dependency( IsLazy = true )]
-    private ILogger _logger
+  [Dependency(IsLazy = true)]
+  private ILogger _logger
+  {
+    get
     {
-        get
-        {
-            return _loggerCache ??= _loggerFunc!.Invoke();
-        }
-        init
-        {
-            throw new NotSupportedException( "Cannot set '_logger' because of the dependency aspect." );
-        }
+      return _loggerCache ??= _loggerFunc!.Invoke();
     }
-    private ILogger? _loggerCache;
-    private Func<ILogger> _loggerFunc = logger ?? throw new System.ArgumentNullException( nameof( logger ) );
+    init
+    {
+      throw new NotSupportedException("Cannot set '_logger' because of the dependency aspect.");
+    }
+  }
+  private ILogger? _loggerCache;
+  private Func<ILogger> _loggerFunc;
+  public Func<ILogger>? logger { get; init; }
+  public void Deconstruct(out Func<ILogger>? logger)
+  {
+    logger = this.logger;
+  }
+  public TargetRecord(Func<ILogger>? logger = default)
+  {
+    this.logger = logger;
+    this._loggerFunc = logger ?? throw new System.ArgumentNullException(nameof(logger));
+  }
 }

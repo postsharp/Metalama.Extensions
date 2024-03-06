@@ -1,17 +1,21 @@
-public struct TargetStruct( Func<ILogger>? logger = default )
+public struct TargetStruct
 {
-    [Dependency( IsLazy = true )]
-    private ILogger _logger
+  [Dependency(IsLazy = true)]
+  private ILogger _logger
+  {
+    get
     {
-        get
-        {
-            return _loggerCache ??= _loggerFunc!.Invoke();
-        }
-        init
-        {
-            throw new NotSupportedException( "Cannot set '_logger' because of the dependency aspect." );
-        }
+      return _loggerCache ??= _loggerFunc!.Invoke();
     }
-    private ILogger? _loggerCache;
-    private Func<ILogger> _loggerFunc = logger ?? throw new System.ArgumentNullException( nameof( logger ) );
+    init
+    {
+      throw new NotSupportedException("Cannot set '_logger' because of the dependency aspect.");
+    }
+  }
+  private ILogger? _loggerCache;
+  private Func<ILogger> _loggerFunc;
+  public TargetStruct(Func<ILogger>? logger = default)
+  {
+    this._loggerFunc = logger ?? throw new System.ArgumentNullException(nameof(logger));
+  }
 }
