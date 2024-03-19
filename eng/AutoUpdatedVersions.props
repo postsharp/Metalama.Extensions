@@ -3,8 +3,8 @@
 
     <PropertyGroup>
         <MetalamaBackstageVersion>2024.0.8</MetalamaBackstageVersion>
-        <MetalamaCompilerVersion>2024.0.8</MetalamaCompilerVersion>
-        <MetalamaVersion>2024.0.9</MetalamaVersion>
+        <MetalamaCompilerVersion>2024.0.9</MetalamaCompilerVersion>
+        <MetalamaVersion>2024.0.10</MetalamaVersion>
     <MetalamaFrameworkRunTimeVersion>2024.0.6</MetalamaFrameworkRunTimeVersion></PropertyGroup>
 
 </Project>
