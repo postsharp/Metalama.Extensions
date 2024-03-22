@@ -9,7 +9,14 @@ using MetalamaDependencies = PostSharp.Engineering.BuildTools.Dependencies.Defin
 
 var product = new Product( MetalamaDependencies.MetalamaExtensions )
 {
-    Solutions = new Solution[] { new DotNetSolution( "Metalama.Extensions.sln" ) { CanFormatCode = true } },
+    Solutions = new Solution[] 
+    { 
+        new DotNetSolution( "Metalama.Extensions.sln" ) 
+        { 
+            CanFormatCode = true,
+            FormatExclusions = new[] { "src\\tests\\*AspectTests\\**\\*" },
+        } 
+    },
     PublicArtifacts = Pattern.Create(
         "Metalama.Extensions.DependencyInjection.$(PackageVersion).nupkg",
         "Metalama.Extensions.DependencyInjection.ServiceLocator.$(PackageVersion).nupkg",

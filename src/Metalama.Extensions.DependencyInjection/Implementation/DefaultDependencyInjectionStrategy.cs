@@ -104,7 +104,7 @@ public class DefaultDependencyInjectionStrategy
     /// </summary>
     /// <param name="type">The type in which the dependency is being injected.</param>
     private static IEnumerable<IConstructor> GetConstructors( INamedType type )
-        => type.Constructors.Where( c => c.InitializerKind != ConstructorInitializerKind.This &&!c.IsRecordCopyConstructor() );
+        => type.Constructors.Where( c => c.InitializerKind != ConstructorInitializerKind.This && !c.IsRecordCopyConstructor() );
 
     /// <summary>
     /// Pulls the dependency from all constructors, i.e. introduce a parameter to these constructors (according to an <see cref="IPullStrategy"/>), and

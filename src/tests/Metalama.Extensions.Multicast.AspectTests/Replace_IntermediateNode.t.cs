@@ -5,6 +5,5 @@ public class C
   public void M()
   {
     Console.WriteLine("Overridden: 2");
-    return;
   }
 }
