@@ -1,38 +1,38 @@
 public class TargetClass
 {
-    [Dependency( IsLazy = true )]
-    private IFormatProvider _formatProvider
+  [Dependency(IsLazy = true)]
+  private IFormatProvider _formatProvider
+  {
+    get
     {
-        get
-        {
-            return _formatProviderCache ??= (IFormatProvider) _serviceProvider!.GetService( typeof( IFormatProvider ) );
-        }
-        init
-        {
-            throw new NotSupportedException( "Cannot set '_formatProvider' because of the dependency aspect." );
-        }
+      return _formatProviderCache ??= (IFormatProvider)_serviceProvider!.GetService(typeof(IFormatProvider));
     }
-    [Dependency( IsLazy = true )]
-    private ILogger _logger
+    init
     {
-        get
-        {
-            return _loggerCache ??= (ILogger) _serviceProvider!.GetService( typeof( ILogger ) );
-        }
-        init
-        {
-            throw new NotSupportedException( "Cannot set '_logger' because of the dependency aspect." );
-        }
+      throw new NotSupportedException("Cannot set '_formatProvider' because of the dependency aspect.");
     }
-    public TargetClass()
+  }
+  [Dependency(IsLazy = true)]
+  private ILogger _logger
+  {
+    get
     {
-        this._serviceProvider = ServiceProviderProvider.ServiceProvider();
+      return _loggerCache ??= (ILogger)_serviceProvider!.GetService(typeof(ILogger));
     }
-    public TargetClass( int x, IFormatProvider existingParameter )
+    init
     {
-        this._serviceProvider = ServiceProviderProvider.ServiceProvider();
+      throw new NotSupportedException("Cannot set '_logger' because of the dependency aspect.");
     }
-    private IFormatProvider? _formatProviderCache;
-    private ILogger? _loggerCache;
-    private IServiceProvider _serviceProvider;
+  }
+  public TargetClass()
+  {
+    this._serviceProvider = ServiceProviderProvider.ServiceProvider();
+  }
+  public TargetClass(int x, IFormatProvider existingParameter)
+  {
+    this._serviceProvider = ServiceProviderProvider.ServiceProvider();
+  }
+  private IFormatProvider? _formatProviderCache;
+  private ILogger? _loggerCache;
+  private IServiceProvider _serviceProvider;
 }
