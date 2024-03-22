@@ -4,6 +4,5 @@ public class C
   public void M()
   {
     Console.WriteLine("Overridden: Hello, world.");
-    return;
   }
 }
