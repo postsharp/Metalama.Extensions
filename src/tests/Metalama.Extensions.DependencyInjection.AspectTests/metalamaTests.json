@@ -1,4 +1,3 @@
 {
-  "FormatOutput": true,
-  "IgnoredDiagnostics": [ "CS8618" ]
+  "FormatOutput": true
 }

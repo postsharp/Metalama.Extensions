@@ -72,7 +72,6 @@ public class DefaultDependencyInjectionStrategy
     /// The entry point of the <see cref="DefaultDependencyInjectionStrategy"/>. Orchestrates all steps: first calls <see cref="TryIntroduceFieldOrProperty"/>,
     /// then <see cref="GetPullStrategy"/>, then <see cref="TryPullDependency(Metalama.Framework.Aspects.IAspectBuilder{Metalama.Framework.Code.INamedType},Metalama.Framework.Code.IFieldOrProperty,Metalama.Extensions.DependencyInjection.Implementation.IPullStrategy)"/>.
     /// </summary>
-    /// <param name="builder"></param>
     public virtual bool TryIntroduceDependency( IAspectBuilder<INamedType> builder, [NotNullWhen( true )] out IFieldOrProperty? fieldOrProperty )
     {
         if ( !this.TryIntroduceFieldOrProperty( builder, out fieldOrProperty, out var didExist ) )
@@ -85,9 +84,20 @@ public class DefaultDependencyInjectionStrategy
             return true;
         }
 
+        SuppressUnusedWarnings( builder, fieldOrProperty );
+
         var pullStrategy = this.GetPullStrategy( fieldOrProperty );
 
         return this.TryPullDependency( builder, fieldOrProperty, pullStrategy );
+    }
+
+    /// <summary>
+    /// Suppress the warning CS0169 ("The private field is never used.") on a member that is being introduced.
+    /// This is primarily useful for design-time.
+    /// </summary>
+    protected static void SuppressUnusedWarnings( IAspectBuilder builder, IFieldOrProperty introducedMember )
+    {
+        builder.Diagnostics.Suppress( DiagnosticDescriptors.FieldIsNeverUsed, introducedMember );
     }
 
     public virtual bool TryImplementDependency( IAspectBuilder<IFieldOrProperty> builder )
@@ -107,6 +117,23 @@ public class DefaultDependencyInjectionStrategy
         => type.Constructors.Where( c => c.InitializerKind != ConstructorInitializerKind.This && !c.IsRecordCopyConstructor() );
 
     /// <summary>
+    /// Suppresses the warning CS8618 ("Non-nullable variable must contain a non-null value when exiting constructor.") for a member that is being introduced,
+    /// if necessary. This is useful for design-time diagnostics.
+    /// </summary>
+    protected static void SuppressNonNullableFieldMustContainValue( IAspectBuilder builder, IFieldOrProperty introducedMember )
+    {
+        foreach ( var constructor in GetConstructors( introducedMember.DeclaringType ) )
+        {
+            if ( introducedMember.Type.IsNullable != true )
+            {
+                builder.Diagnostics.Suppress(
+                    DiagnosticDescriptors.NonNullableFieldMustContainValue.WithFilter( diag => diag.Arguments.Any( arg => arg is string s && s == introducedMember.Name ) ),
+                    constructor );
+            }
+        }
+    }
+
+    /// <summary>
     /// Pulls the dependency from all constructors, i.e. introduce a parameter to these constructors (according to an <see cref="IPullStrategy"/>), and
     /// assigns its value to the dependency property.
     /// </summary>
@@ -115,6 +142,8 @@ public class DefaultDependencyInjectionStrategy
     /// <param name="pullStrategy">A pull strategy (typically the one returned by <see cref="GetPullStrategy"/>).</param>
     protected bool TryPullDependency( IAspectBuilder<INamedType> aspectBuilder, IFieldOrProperty dependencyFieldOrProperty, IPullStrategy pullStrategy )
     {
+        SuppressNonNullableFieldMustContainValue( aspectBuilder, dependencyFieldOrProperty );
+
         var success = true;
 
         foreach ( var constructor in GetConstructors( aspectBuilder.Target ) )

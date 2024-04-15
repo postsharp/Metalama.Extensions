@@ -4,7 +4,7 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <RootNamespace>Metalama.Extensions.DependencyInjection.AspectTests</RootNamespace>
-        <NoWarn>IDE0051,CS8618,CS0169,CS1591,CS8618,CA1822, CS0649</NoWarn>
+        <NoWarn>IDE0051,CS8618,CS0169,CS1591,CA1822,CS0649</NoWarn>
         <Configurations>Debug;Release;LamaDebug</Configurations>
     </PropertyGroup>
 
@@ -27,7 +27,5 @@
     <ItemGroup>
       <ProjectReference Include="..\..\Metalama.Extensions.DependencyInjection\Metalama.Extensions.DependencyInjection.csproj" />
     </ItemGroup>
-
-    <ProjectExtensions><VisualStudio><UserProperties metalamatests_1json__JsonSchema="https://bitbucket.org/atlassianlabs/atlascode/raw/main/resources/schemas/pipelines-schema.json" /></VisualStudio></ProjectExtensions>
 
 </Project>

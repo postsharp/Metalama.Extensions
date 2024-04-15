@@ -66,6 +66,8 @@ public partial class LazyDependencyInjectionStrategy : DefaultDependencyInjectio
             return false;
         }
 
+        SuppressUnusedWarnings( builder, introduceFuncFieldResult.Declaration );
+
         propertyArgs.DependencyField = introduceFuncFieldResult.Declaration;
 
         // Introduce a field that caches
@@ -78,6 +80,8 @@ public partial class LazyDependencyInjectionStrategy : DefaultDependencyInjectio
         {
             return false;
         }
+
+        SuppressUnusedWarnings( builder, introduceCacheFieldResult.Declaration );
 
         propertyArgs.CacheField = introduceCacheFieldResult.Declaration;
 
@@ -102,6 +106,8 @@ public partial class LazyDependencyInjectionStrategy : DefaultDependencyInjectio
         {
             return false;
         }
+
+        SuppressNonNullableFieldMustContainValue( builder, builder.Target );
 
         return this.TryAddFields( builder.WithTarget( builder.Target.DeclaringType ), overrideResult.Declaration, templateArgs );
     }
