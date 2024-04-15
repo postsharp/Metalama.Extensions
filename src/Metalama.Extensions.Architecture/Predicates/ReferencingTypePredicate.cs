@@ -30,5 +30,17 @@ internal class ReferencingTypePredicate : ReferencePredicate
         this._typeRef = namedType.Definition.ToRef();
     }
 
+    public ReferencingTypePredicate( INamedType type, ReferencePredicateBuilder? builder = null )
+        : base( builder )
+    {
+        if ( type is { IsGeneric: true, IsCanonicalGenericInstance: false } )
+        {
+            throw new InvalidOperationException(
+                $"The type '{type}' cannot be used as a referencing type predicate parameter. Bound generic types are not allowed." );
+        }
+
+        this._typeRef = type.Definition.ToRef();
+    }
+
     public override bool IsMatch( in ReferenceValidationContext context ) => context.ReferencingType.Equals( this._typeRef.GetTarget( options: default ) );
 }

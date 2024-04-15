@@ -2,6 +2,7 @@
 
 using JetBrains.Annotations;
 using Metalama.Framework.Aspects;
+using Metalama.Framework.Code;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -79,6 +80,9 @@ public static class ReferencePredicateExtensions
     /// is allowed but redundant). </param>
     public static ReferencePredicate Namespace( this ReferencePredicateBuilder builder, string ns ) => new ReferencingNamespacePredicate( ns, builder );
 
+    public static ReferencePredicate Namespace( this ReferencePredicateBuilder builder, INamespace ns )
+        => new ReferencingNamespacePredicate( ns.FullName, builder );
+
     /// <summary>
     /// Accepts code references contained in a given assembly.
     /// </summary>
@@ -128,6 +132,8 @@ public static class ReferencePredicateExtensions
     /// </summary>
     /// <seealso cref="AnyType(Metalama.Extensions.Architecture.Predicates.ReferencePredicateBuilder,System.Type[])"/>
     public static ReferencePredicate Type( this ReferencePredicateBuilder builder, Type type ) => new ReferencingTypePredicate( type, builder );
+
+    public static ReferencePredicate Type( this ReferencePredicateBuilder builder, INamedType type ) => new ReferencingTypePredicate( type, builder );
 
     /// <summary>
     /// Accepts code references contained in any type in a given list.

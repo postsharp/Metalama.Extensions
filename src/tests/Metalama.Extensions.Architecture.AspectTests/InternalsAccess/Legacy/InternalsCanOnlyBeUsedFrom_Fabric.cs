@@ -1,11 +1,13 @@
 ﻿// Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
-using Metalama.Extensions.Architecture.AspectTests.InternalsCanOnlyBeUsedFrom_Fabric.ConstrainedNs;
+using Metalama.Extensions.Architecture.AspectTests.Legacy.InternalsCanOnlyBeUsedFrom_Fabric.ConstrainedNs;
 using Metalama.Extensions.Architecture.Fabrics;
 using Metalama.Extensions.Architecture.Predicates;
 using Metalama.Framework.Fabrics;
 
-namespace Metalama.Extensions.Architecture.AspectTests.InternalsCanOnlyBeUsedFrom_Fabric
+#pragma warning disable CS0612, CS0618 // Type or member is obsolete
+
+namespace Metalama.Extensions.Architecture.AspectTests.Legacy.InternalsCanOnlyBeUsedFrom_Fabric
 {
     namespace ConstrainedNs
     {
@@ -13,7 +15,7 @@ namespace Metalama.Extensions.Architecture.AspectTests.InternalsCanOnlyBeUsedFro
         {
             public override void AmendNamespace( INamespaceAmender amender )
             {
-                amender.InternalsCanOnlyBeUsedFrom( r => r.CurrentNamespace() );
+                amender.Verify().InternalsCanOnlyBeUsedFrom( r => r.CurrentNamespace() );
             }
         }
 

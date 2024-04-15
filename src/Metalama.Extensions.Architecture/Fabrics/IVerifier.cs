@@ -4,6 +4,7 @@ using JetBrains.Annotations;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 using Metalama.Framework.Fabrics;
+using System;
 
 namespace Metalama.Extensions.Architecture.Fabrics;
 
@@ -13,6 +14,7 @@ namespace Metalama.Extensions.Architecture.Fabrics;
 /// </summary>
 [CompileTime]
 [PublicAPI]
+[Obsolete("Use IAspectReceiver<T>.")]
 public interface IVerifier<out T>
     where T : class, IDeclaration
 {

@@ -4,7 +4,9 @@ using Metalama.Extensions.Architecture.Fabrics;
 using Metalama.Framework.Fabrics;
 using System.IO;
 
-namespace Metalama.Extensions.Architecture.AspectTests.NamingConvention.Fabric_DerivedType;
+namespace Metalama.Extensions.Architecture.AspectTests.NamingConvention.Legacy.Fabric_DerivedType;
+
+#pragma warning disable CS0612, CS0618 // Type or member is obsolete
 
 public class BadlyNamed : TextReader { }
 
@@ -12,6 +14,6 @@ internal class Fabric : ProjectFabric
 {
     public override void AmendProject( IProjectAmender amender )
     {
-        amender.SelectTypesDerivedFrom( typeof(TextReader) ).MustRespectNamingConvention( "*TextReader" );
+        amender.Verify().SelectTypesDerivedFrom( typeof(TextReader) ).MustRespectNamingConvention( "*TextReader" );
     }
 }

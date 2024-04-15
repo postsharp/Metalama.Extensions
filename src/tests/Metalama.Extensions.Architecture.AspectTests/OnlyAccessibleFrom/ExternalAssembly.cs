@@ -3,6 +3,7 @@
 using Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.ExternalAssembly.ForbiddenNamespace;
 using Metalama.Extensions.Architecture.Fabrics;
 using Metalama.Extensions.Architecture.Predicates;
+using Metalama.Framework.Aspects;
 using Metalama.Framework.Fabrics;
 using System.Text.RegularExpressions;
 
@@ -14,7 +15,7 @@ namespace Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.Extern
     {
         public override void AmendProject( IProjectAmender amender )
         {
-            amender.Verify().WithReferencedAssembly( "System.Text.RegularExpressions" ).CannotBeUsedFrom( r => r.NamespaceOf( typeof(ForbiddenClass) ) );
+            amender.SelectReferencedAssembly( "System.Text.RegularExpressions" ).CannotBeUsedFrom( r => r.NamespaceOf( typeof(ForbiddenClass) ) );
         }
     }
 

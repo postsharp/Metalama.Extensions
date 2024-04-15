@@ -22,10 +22,17 @@ public sealed class ReferencePredicateBuilder
     /// Initializes a new instance of the <see cref="ReferencePredicateBuilder"/> class by specifying an <see cref="TypeSetVerifier{T}"/>.
     /// </summary>
     /// <param name="verifier">The parent <see cref="TypeSetVerifier{T}"/>.</param>
+    [Obsolete]
     public ReferencePredicateBuilder( IVerifier<IDeclaration> verifier )
     {
         this.Namespace = verifier.Namespace;
         this.AssemblyName = verifier.AssemblyName;
+    }
+
+    public ReferencePredicateBuilder( IAspectReceiver<IDeclaration> verifier )
+    {
+        this.Namespace = verifier.OriginatingNamespace;
+        this.AssemblyName = verifier.Project.AssemblyName;
     }
 
     /// <summary>
@@ -52,7 +59,7 @@ public sealed class ReferencePredicateBuilder
     public string? AssemblyName { get; }
 
     [return: NotNullIfNotNull( nameof(func) )]
-    internal static ReferencePredicate? Build( Func<ReferencePredicateBuilder, ReferencePredicate>? func, IVerifier<IDeclaration> verifier )
+    internal static ReferencePredicate? Build( Func<ReferencePredicateBuilder, ReferencePredicate>? func, IAspectReceiver<IDeclaration> verifier )
     {
         if ( func == null )
         {

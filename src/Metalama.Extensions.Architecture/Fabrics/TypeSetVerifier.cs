@@ -11,6 +11,7 @@ namespace Metalama.Extensions.Architecture.Fabrics
     /// Implementation of <see cref="ITypeSetVerifier{T}"/>.
     /// </summary>
     [PublicAPI]
+    [Obsolete]
     internal class TypeSetVerifier<T> : Verifier<T>, ITypeSetVerifier<T>
         where T : class, IDeclaration
     {
