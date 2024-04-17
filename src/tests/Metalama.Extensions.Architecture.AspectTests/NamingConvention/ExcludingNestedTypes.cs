@@ -4,6 +4,7 @@ using Metalama.Extensions.Architecture.Aspects;
 using Metalama.Extensions.Architecture.Predicates;
 using Metalama.Framework.Code;
 using Metalama.Framework.Validation;
+using System.Diagnostics;
 
 namespace Metalama.Extensions.Architecture.AspectTests.NamingConvention.ExcludingNestedTypes
 {
@@ -19,7 +20,7 @@ namespace Metalama.Extensions.Architecture.AspectTests.NamingConvention.Excludin
 
     internal class ExcludeNestedTypesPredicate : ReferencePredicate
     {
-        public override bool IsMatch( ReferenceValidationContext context ) => context.Referenced.Type.DeclaringType != null;
+        public override bool IsMatch( ReferenceValidationContext context ) => context.Referencing.Type.DeclaringType != null;
 
         public override ReferenceGranularity Granularity => ReferenceGranularity.Type;
     }
