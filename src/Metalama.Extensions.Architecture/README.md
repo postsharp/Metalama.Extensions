@@ -1,3 +1,5 @@
+![Metalama Logo](https://raw.githubusercontent.com/postsharp/Metalama/master/images/metalama-by-postsharp-light.svg)
+
 The `Metalama.Extensions.Architecture` package is an official and open-source Metalama extension that allows you to validate the code against the architecture.
 
 There are two ways to use this package:
