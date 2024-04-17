@@ -35,15 +35,13 @@ namespace Metalama.Extensions.Architecture.Aspects
         private void ValidateReference( ReferenceValidationContext context )
         {
             // Declarations contained in an experimental declaration can reference it.
-            var referencingMember = context.Referencing.Member;
-
-            if ( referencingMember.IsContainedIn( context.Referenced.Declaration ) )
+            if ( context.Referencing.Type.IsContainedIn( context.Referenced.Declaration ) )
             {
                 return;
             }
 
             // An experimental declaration an reference another experimental declaration.
-            if ( referencingMember.ContainingAncestorsAndSelf()
+            if ( context.Referencing.Declaration.ContainingAncestorsAndSelf()
                 .Any( d => d.DeclarationKind != DeclarationKind.Compilation && d.Enhancements().HasAspect<ExperimentalAttribute>() ) )
             {
                 return;
