@@ -6,6 +6,7 @@ using System;
 
 namespace Metalama.Extensions.Architecture.Fabrics;
 
+[Obsolete]
 internal class CompilationSetVerifier : Verifier<ICompilation>, ITypeSetVerifier<ICompilation>
 {
     public CompilationSetVerifier( IAspectReceiver<ICompilation> receiver, string assemblyName ) : base( receiver, assemblyName, null ) { }

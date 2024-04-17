@@ -4,7 +4,9 @@ using Metalama.Extensions.Architecture.Fabrics;
 using Metalama.Framework.Fabrics;
 using Metalama.Extensions.Architecture.Predicates;
 
-namespace Metalama.Extensions.Architecture.AspectTests.InternalsAccess.PropertyAccessors_Fabric
+#pragma warning disable CS0612, CS0618 // Type or member is obsolete
+
+namespace Metalama.Extensions.Architecture.AspectTests.InternalsAccess.Legacy.PropertyAccessors_Fabric
 {
     public class C
     {
@@ -14,7 +16,7 @@ namespace Metalama.Extensions.Architecture.AspectTests.InternalsAccess.PropertyA
         {
             public override void AmendType( ITypeAmender amender )
             {
-                amender.InternalsCannotBeUsedFrom( x => x.Type( typeof(ForbiddenClass) ) );
+                amender.Verify().InternalsCannotBeUsedFrom( x => x.Type( typeof(ForbiddenClass) ) );
             }
         }
     }

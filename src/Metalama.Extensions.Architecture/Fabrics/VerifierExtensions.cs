@@ -21,6 +21,7 @@ namespace Metalama.Extensions.Architecture.Fabrics
     /// </summary>
     [CompileTime]
     [PublicAPI]
+    [Obsolete]
     public static class VerifierExtensions
     {
         /// <summary>
@@ -125,7 +126,9 @@ namespace Metalama.Extensions.Architecture.Fabrics
             Func<ReferencePredicateBuilder, ReferencePredicate>? exclusions = null )
         {
             setVerifier.Receiver.ValidateReferences(
-                DerivedTypeNamingConventionValidator.CreateStarPatternValidator( pattern, ReferencePredicateBuilder.Build( exclusions, setVerifier ) ) );
+                DerivedTypeNamingConventionValidator.CreateStarPatternValidator(
+                    pattern,
+                    ReferencePredicateBuilder.Build( exclusions, setVerifier.Receiver ) ) );
         }
 
         /// <summary>
@@ -138,7 +141,7 @@ namespace Metalama.Extensions.Architecture.Fabrics
             Func<ReferencePredicateBuilder, ReferencePredicate>? exclusions = null )
         {
             setVerifier.Receiver.ValidateReferences(
-                DerivedTypeNamingConventionValidator.CreateRegexValidator( pattern, ReferencePredicateBuilder.Build( exclusions, setVerifier ) ) );
+                DerivedTypeNamingConventionValidator.CreateRegexValidator( pattern, ReferencePredicateBuilder.Build( exclusions, setVerifier.Receiver ) ) );
         }
 
         /// <summary>

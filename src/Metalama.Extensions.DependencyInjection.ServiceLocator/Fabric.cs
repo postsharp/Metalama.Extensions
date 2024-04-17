@@ -8,6 +8,6 @@ internal class Fabric : TransitiveProjectFabric
 {
     public override void AmendProject( IProjectAmender amender )
     {
-        amender.Outbound.ConfigureDependencyInjection( builder => builder.RegisterFramework<ServiceLocatorDependencyInjectionFramework>() );
+        amender.ConfigureDependencyInjection( builder => builder.RegisterFramework<ServiceLocatorDependencyInjectionFramework>() );
     }
 }

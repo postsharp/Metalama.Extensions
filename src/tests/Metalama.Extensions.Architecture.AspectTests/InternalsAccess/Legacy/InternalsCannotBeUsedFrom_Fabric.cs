@@ -3,16 +3,18 @@
 using Metalama.Extensions.Architecture.Fabrics;
 using Metalama.Extensions.Architecture.Predicates;
 using Metalama.Framework.Fabrics;
-using Metalama.Extensions.Architecture.AspectTests.InternalsCannotBeUsedFrom_Fabric.ForbiddenNamespace;
 
-namespace Metalama.Extensions.Architecture.AspectTests.InternalsCannotBeUsedFrom_Fabric
+#pragma warning disable CS0612, CS0618 // Type or member is obsolete
+
+namespace Metalama.Extensions.Architecture.AspectTests.Legacy.InternalsCannotBeUsedFrom_Fabric
 {
     public class Fabric : NamespaceFabric
     {
         public override void AmendNamespace( INamespaceAmender amender )
         {
-            amender
-                .InternalsCannotBeUsedFrom( r => r.NamespaceOf( typeof(ForbiddenClassWithAllowedCalls) ) );
+            amender.Verify()
+                .InternalsCannotBeUsedFrom(
+                    r => r.Namespace( "Metalama.Extensions.Architecture.AspectTests.Legacy.InternalsCannotBeUsedFrom_Fabric.ForbiddenNamespace" ) );
         }
     }
 

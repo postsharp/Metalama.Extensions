@@ -3,6 +3,7 @@
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 using Metalama.Framework.Fabrics;
+using System;
 using System.Linq;
 
 namespace Metalama.Extensions.Architecture.Fabrics
@@ -12,17 +13,20 @@ namespace Metalama.Extensions.Architecture.Fabrics
     /// of the package when used in fabrics.
     /// </summary>
     [CompileTime]
+    [Obsolete]
     public static class AmenderExtensions
     {
         /// <summary>
         /// Gets the architecture validation fluent API for a <see cref="ProjectFabric"/>.
         /// </summary>
+        [Obsolete( "Calling this method is now redundant. Use directly the amender object." )]
         public static ITypeSetVerifier<ICompilation> Verify( this IProjectAmender amender )
             => new CompilationSetVerifier( amender.Outbound, amender.Project.AssemblyName );
 
         /// <summary>
         /// Gets the architecture validation fluent API for a <see cref="NamespaceFabric"/>.
         /// </summary>
+        [Obsolete( "Calling this method is now redundant. Use directly the amender object." )]
         public static ITypeSetVerifier<INamespace> Verify( this INamespaceAmender amender, bool includeChildNamespaces = true )
         {
             if ( includeChildNamespaces )
@@ -46,6 +50,7 @@ namespace Metalama.Extensions.Architecture.Fabrics
         /// <summary>
         /// Gets the architecture validation fluent API for a <see cref="TypeFabric"/>.
         /// </summary>
+        [Obsolete( "Calling this method is now redundant. Use directly the amender object." )]
         public static ITypeSetVerifier<INamedType> Verify( this ITypeAmender amender )
             => new TypeSetVerifier<INamedType>( amender.Outbound, x => x, amender.Project.AssemblyName, amender.Type.Namespace.FullName );
     }

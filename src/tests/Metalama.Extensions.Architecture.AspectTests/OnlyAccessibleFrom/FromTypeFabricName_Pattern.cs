@@ -12,7 +12,7 @@ namespace Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.FromTy
         {
             public override void AmendType( ITypeAmender amender )
             {
-                amender.Verify().CanOnlyBeUsedFrom( r => r.Type( "**.Allowed.*" ) );
+                amender.CanOnlyBeUsedFrom( r => r.Type( "**.Allowed.*" ) );
             }
         }
     }

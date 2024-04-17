@@ -1,0 +1,1 @@
+// Warning LAMA0905 on `ConstrainedClass`: `The 'Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.Legacy.FromNamespaceFabric.ChildNs' namespace cannot be referenced by the 'Forbidden' type.`

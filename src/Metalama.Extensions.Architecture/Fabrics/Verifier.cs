@@ -2,12 +2,14 @@
 
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
+using System;
 
 namespace Metalama.Extensions.Architecture.Fabrics;
 
 /// <summary>
 /// Implementation of <see cref="IVerifier{T}"/>.
 /// </summary>
+[Obsolete]
 internal class Verifier<T> : IVerifier<T>
     where T : class, IDeclaration
 {
