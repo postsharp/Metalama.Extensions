@@ -84,20 +84,11 @@ public class DefaultDependencyInjectionStrategy
             return true;
         }
 
-        SuppressUnusedWarnings( builder, fieldOrProperty );
+        SuppressionHelper.SuppressUnusedWarnings( builder, fieldOrProperty );
 
         var pullStrategy = this.GetPullStrategy( fieldOrProperty );
 
         return this.TryPullDependency( builder, fieldOrProperty, pullStrategy );
-    }
-
-    /// <summary>
-    /// Suppress the warning CS0169 ("The private field is never used.") on a member that is being introduced.
-    /// This is primarily useful for design-time.
-    /// </summary>
-    protected static void SuppressUnusedWarnings( IAspectBuilder builder, IFieldOrProperty introducedMember )
-    {
-        builder.Diagnostics.Suppress( DiagnosticDescriptors.FieldIsNeverUsed, introducedMember );
     }
 
     public virtual bool TryImplementDependency( IAspectBuilder<IFieldOrProperty> builder )
@@ -122,15 +113,7 @@ public class DefaultDependencyInjectionStrategy
     /// </summary>
     protected static void SuppressNonNullableFieldMustContainValue( IAspectBuilder builder, IFieldOrProperty introducedMember )
     {
-        foreach ( var constructor in GetConstructors( introducedMember.DeclaringType ) )
-        {
-            if ( introducedMember.Type.IsNullable != true )
-            {
-                builder.Diagnostics.Suppress(
-                    DiagnosticDescriptors.NonNullableFieldMustContainValue.WithFilter( diag => diag.Arguments.Any( arg => arg is string s && s == introducedMember.Name ) ),
-                    constructor );
-            }
-        }
+        SuppressionHelper.SuppressNonNullableFieldMustContainValue( builder, introducedMember, GetConstructors( introducedMember.DeclaringType ) );
     }
 
     /// <summary>

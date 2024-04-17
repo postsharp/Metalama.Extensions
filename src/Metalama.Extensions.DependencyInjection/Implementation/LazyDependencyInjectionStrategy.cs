@@ -66,7 +66,7 @@ public partial class LazyDependencyInjectionStrategy : DefaultDependencyInjectio
             return false;
         }
 
-        SuppressUnusedWarnings( builder, introduceFuncFieldResult.Declaration );
+        SuppressionHelper.SuppressUnusedWarnings( builder, introduceFuncFieldResult.Declaration );
 
         propertyArgs.DependencyField = introduceFuncFieldResult.Declaration;
 
@@ -81,7 +81,7 @@ public partial class LazyDependencyInjectionStrategy : DefaultDependencyInjectio
             return false;
         }
 
-        SuppressUnusedWarnings( builder, introduceCacheFieldResult.Declaration );
+        SuppressionHelper.SuppressUnusedWarnings( builder, introduceCacheFieldResult.Declaration );
 
         propertyArgs.CacheField = introduceCacheFieldResult.Declaration;
 

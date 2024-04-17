@@ -102,8 +102,7 @@ internal class LazyServiceLocatorDependencyInjectionStrategy : DefaultDependency
         {
             this.InitializeServiceProvider( builder, propertyArgs.ServiceProviderField );
 
-            SuppressUnusedWarnings( builder, propertyArgs.ServiceProviderField );
-
+            SuppressionHelper.SuppressUnusedWarnings( builder, propertyArgs.ServiceProviderField );
             SuppressNonNullableFieldMustContainValue( builder, propertyArgs.ServiceProviderField );
         }
 
@@ -120,7 +119,7 @@ internal class LazyServiceLocatorDependencyInjectionStrategy : DefaultDependency
 
         propertyArgs.CacheField = introduceCacheFieldResult.Declaration;
 
-        SuppressUnusedWarnings( builder, propertyArgs.CacheField );
+        SuppressionHelper.SuppressUnusedWarnings( builder, propertyArgs.CacheField );
 
         return true;
     }
