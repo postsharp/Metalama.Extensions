@@ -5,6 +5,7 @@ using Metalama.Extensions.Architecture.Fabrics;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 using Metalama.Framework.Fabrics;
+using Metalama.Framework.Validation;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
@@ -18,6 +19,8 @@ namespace Metalama.Extensions.Architecture.Predicates;
 [PublicAPI]
 public sealed class ReferencePredicateBuilder
 {
+    public ReferenceDirection Direction { get; }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="ReferencePredicateBuilder"/> class by specifying an <see cref="TypeSetVerifier{T}"/>.
     /// </summary>
@@ -27,10 +30,12 @@ public sealed class ReferencePredicateBuilder
     {
         this.Namespace = verifier.Namespace;
         this.AssemblyName = verifier.AssemblyName;
+        this.Direction = ReferenceDirection.Outbound;
     }
 
-    public ReferencePredicateBuilder( IAspectReceiver<IDeclaration> verifier )
+    public ReferencePredicateBuilder( IAspectReceiver<IDeclaration> verifier, ReferenceDirection direction )
     {
+        this.Direction = direction;
         this.Namespace = verifier.OriginatingNamespace;
         this.AssemblyName = verifier.Project.AssemblyName;
     }
@@ -59,7 +64,10 @@ public sealed class ReferencePredicateBuilder
     public string? AssemblyName { get; }
 
     [return: NotNullIfNotNull( nameof(func) )]
-    internal static ReferencePredicate? Build( Func<ReferencePredicateBuilder, ReferencePredicate>? func, IAspectReceiver<IDeclaration> verifier )
+    internal static ReferencePredicate? Build(
+        Func<ReferencePredicateBuilder, ReferencePredicate>? func,
+        IAspectReceiver<IDeclaration> verifier,
+        ReferenceDirection direction )
     {
         if ( func == null )
         {
@@ -67,7 +75,7 @@ public sealed class ReferencePredicateBuilder
         }
         else
         {
-            return func( new ReferencePredicateBuilder( verifier ) );
+            return func( new ReferencePredicateBuilder( verifier, direction ) );
         }
     }
 }

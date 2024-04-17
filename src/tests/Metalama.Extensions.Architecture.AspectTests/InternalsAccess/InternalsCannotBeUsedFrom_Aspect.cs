@@ -89,6 +89,8 @@ namespace Metalama.Extensions.Architecture.AspectTests.InternalsCannotBeUsedFrom
 
     internal class ExcludeNestedTypesPredicate : ReferencePredicate
     {
-        public override bool IsMatch( in ReferenceValidationContext context ) => context.ReferencingDeclaration.GetClosestNamedType()?.DeclaringType != null;
+        public override bool IsMatch( ReferenceValidationContext context ) => context.Referenced.Type.DeclaringType != null;
+
+        public override ReferenceGranularity Granularity => ReferenceGranularity.Type;
     }
 }

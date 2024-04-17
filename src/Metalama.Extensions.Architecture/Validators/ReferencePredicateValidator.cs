@@ -8,7 +8,7 @@ using Metalama.Framework.Validation;
 namespace Metalama.Extensions.Architecture.Validators;
 
 [CompileTime]
-public class ReferencePredicateValidator : ReferenceValidator
+public class ReferencePredicateValidator : OutboundReferenceValidator
 {
     private readonly ReferencePredicate _allowedScope;
     private readonly string? _description;
@@ -25,40 +25,48 @@ public class ReferencePredicateValidator : ReferenceValidator
     /// <summary>
     /// Validates a reference and reports a warning if necessary.
     /// </summary>
-    public override void Validate( in ReferenceValidationContext context )
+    public override void ValidateReferences( ReferenceValidationContext context )
     {
-        // Do not validate inside the same type.
-        var closestNamedType = context.ReferencedDeclaration.GetClosestNamedType();
-
-        if ( closestNamedType != null && context.ReferencingDeclaration.IsContainedIn( closestNamedType ) )
-        {
-            return;
-        }
-
         if ( !this._allowedScope.IsMatch( context ) )
         {
+            var referencedDeclaration = context.Referenced.Declaration;
+            var referencedNamedType = referencedDeclaration.GetClosestNamedType();
+            var referencingDeclaration = context.Referencing.Declaration;
+
             var optionalSpace = string.IsNullOrEmpty( this._description ) ? "" : " ";
-
-            string usageKind;
-
-            if ( (context.ReferenceKinds & ReferenceKinds.Assignment) == ReferenceKinds.Assignment )
-            {
-                usageKind = "assigned";
-            }
-            else
-            {
-                usageKind = "referenced";
-            }
 
             // Report the error message.
             context.Diagnostics.Report(
-                ArchitectureDiagnosticDefinitions.OnlyAccessibleFrom.WithArguments(
-                    (context.ReferencedDeclaration,
-                     context.ReferencedDeclaration.DeclarationKind,
-                     usageKind,
-                     context.ReferencingType,
-                     optionalSpace,
-                     this._description) ) );
+                r =>
+                {
+                    // Do not validate inside the same type.
+                    if ( referencedNamedType != null && r.ReferencingDeclaration.IsContainedIn( referencedNamedType ) )
+                    {
+                        return null;
+                    }
+                    
+                    // Allow the predicate to skip a reference instance.
+                    if ( !this._allowedScope.IsMatch( r ) )
+                    {
+                        return null;
+                    }
+                    
+                    // Return the error message.
+                    var usageKind = (r.ReferenceKinds & ReferenceKinds.Assignment) == ReferenceKinds.Assignment ? "assigned" : "referenced";
+
+                    
+
+                    return ArchitectureDiagnosticDefinitions.OnlyAccessibleFrom.WithArguments(
+                        (referencedDeclaration,
+                         referencedDeclaration.DeclarationKind,
+                         usageKind,
+                         referencingDeclaration,
+                         referencingDeclaration.DeclarationKind,
+                         optionalSpace,
+                         this._description) );
+                } );
         }
     }
+
+    public override ReferenceGranularity Granularity => this._allowedScope.Granularity;
 }

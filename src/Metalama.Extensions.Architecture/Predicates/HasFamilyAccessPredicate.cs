@@ -9,10 +9,12 @@ internal class HasFamilyAccessPredicate : ReferencePredicate
 {
     public HasFamilyAccessPredicate( ReferencePredicateBuilder? builder = null ) : base( builder ) { }
 
-    public override bool IsMatch( in ReferenceValidationContext context )
+    public override bool IsMatch( ReferenceValidationContext context )
     {
         // TODO: take nested types into account.
-        return context.ReferencedDeclaration is IMember { Accessibility: Accessibility.Protected or Accessibility.ProtectedInternal }
-               && context.ReferencingType.Is( context.ReferencedDeclaration.GetClosestNamedType()! );
+        return context.Referenced.Declaration is IMember { Accessibility: Accessibility.Protected or Accessibility.ProtectedInternal }
+               && context.Referencing.Type.Is( context.Referenced.Declaration.GetClosestNamedType()! );
     }
+
+    public override ReferenceGranularity Granularity => ReferenceGranularity.Type;
 }

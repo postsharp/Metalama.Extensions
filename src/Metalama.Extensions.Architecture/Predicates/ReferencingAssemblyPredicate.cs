@@ -8,8 +8,10 @@ internal class ReferencingAssemblyPredicate : BaseNamePredicate
 {
     public ReferencingAssemblyPredicate( string name, ReferencePredicateBuilder? builder = null ) : base( name, builder ) { }
 
-    public override bool IsMatch( in ReferenceValidationContext context )
+    public override bool IsMatch( ReferenceValidationContext context )
     {
-        return this.IsMatch( context.ReferencingType.DeclaringAssembly.Identity.Name );
+        return this.IsMatch( context.Referencing.Assembly.Identity.Name );
     }
+
+    public override ReferenceGranularity Granularity => ReferenceGranularity.Compilation;
 }

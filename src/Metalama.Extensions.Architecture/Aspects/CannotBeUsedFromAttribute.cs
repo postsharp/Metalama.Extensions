@@ -24,7 +24,7 @@ public class CannotBeUsedFromAttribute : BaseUsageValidationAttribute, IAspect<I
             return;
         }
 
-        builder.Outbound.ValidateReferences(
+        builder.Outbound.ValidateOutboundReferences(
             new ReferencePredicateValidator(
                 predicate.Not().Or( exclusionPredicate ),
                 this.Description,

@@ -8,5 +8,7 @@ internal class ReferencingTypeNamePredicate : BaseNamePredicate
 {
     public ReferencingTypeNamePredicate( string name, ReferencePredicateBuilder? builder = null ) : base( name, builder ) { }
 
-    public override bool IsMatch( in ReferenceValidationContext context ) => this.IsMatch( context.ReferencingType.FullName );
+    public override bool IsMatch( ReferenceValidationContext context ) => this.IsMatch( context.Referencing.Type.FullName );
+
+    public override ReferenceGranularity Granularity => ReferenceGranularity.Type;
 }

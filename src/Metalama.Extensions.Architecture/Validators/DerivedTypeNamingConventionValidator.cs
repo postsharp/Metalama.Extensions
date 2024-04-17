@@ -2,7 +2,6 @@
 
 using Metalama.Extensions.Architecture.Predicates;
 using Metalama.Framework.Aspects;
-using Metalama.Framework.Code;
 using Metalama.Framework.Serialization;
 using Metalama.Framework.Validation;
 using System.Text.RegularExpressions;
@@ -10,7 +9,7 @@ using System.Text.RegularExpressions;
 namespace Metalama.Extensions.Architecture.Validators;
 
 [CompileTime]
-internal class DerivedTypeNamingConventionValidator : ReferenceValidator
+internal class DerivedTypeNamingConventionValidator : OutboundReferenceValidator
 {
     private readonly string _regexPattern;
     private readonly string _displayPattern;
@@ -44,18 +43,9 @@ internal class DerivedTypeNamingConventionValidator : ReferenceValidator
     /// </summary>
     private bool IsMatch( in ReferenceValidationContext context )
     {
-        if ( context.ReferenceKinds != ReferenceKinds.BaseType )
-        {
-            // We may have a call of Validate for a type construction, e.g. IEnumerable<Foo>,
-            // and we don't want to match these indirect references.
-            return false;
-        }
-
         var regex = this.GetRegex();
 
-        var referencingType = (INamedType) context.ReferencingDeclaration;
-
-        if ( regex.IsMatch( referencingType.Name ) )
+        if ( regex.IsMatch( context.Referencing.Type.Name ) )
         {
             return false;
         }
@@ -68,20 +58,19 @@ internal class DerivedTypeNamingConventionValidator : ReferenceValidator
         return true;
     }
 
-    public override void Validate( in ReferenceValidationContext context )
+    public override void ValidateReferences( ReferenceValidationContext context )
     {
         if ( this.IsMatch( context ) )
         {
-            var referencingType = (INamedType) context.ReferencingDeclaration;
-
             context.Diagnostics.Report(
                 ArchitectureDiagnosticDefinitions.NamingConventionViolationInDerivedType.WithArguments(
-                    (referencingType, (INamedType) context.ReferencedDeclaration, this._displayPattern) ),
-                context.ReferencingDeclaration );
+                    (context.Referencing.Type, context.Referenced.Type, this._displayPattern) ) );
         }
     }
 
     public override bool IncludeDerivedTypes => true;
+
+    public override ReferenceGranularity Granularity => ReferenceGranularity.Type;
 
     public override ReferenceKinds ValidatedReferenceKinds => ReferenceKinds.BaseType;
 }

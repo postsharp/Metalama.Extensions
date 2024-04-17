@@ -41,7 +41,7 @@ namespace Metalama.Extensions.Architecture.Fabrics
             string? description = null,
             ReferenceKinds referenceKinds = ReferenceKinds.All )
         {
-            verifier.Receiver.ValidateReferences(
+            verifier.Receiver.ValidateOutboundReferences(
                 new ReferencePredicateValidator( scope( new ReferencePredicateBuilder( verifier ) ), description, referenceKinds ) );
         }
 
@@ -55,7 +55,8 @@ namespace Metalama.Extensions.Architecture.Fabrics
             ReferenceKinds referenceKinds = ReferenceKinds.All )
         {
             verifier.Receiver
-                .ValidateReferences( new ReferencePredicateValidator( scope( new ReferencePredicateBuilder( verifier ) ).Not(), description, referenceKinds ) );
+                .ValidateOutboundReferences(
+                    new ReferencePredicateValidator( scope( new ReferencePredicateBuilder( verifier ) ).Not(), description, referenceKinds ) );
         }
 
         private static void VerifyInternalsAccess(
@@ -74,7 +75,7 @@ namespace Metalama.Extensions.Architecture.Fabrics
 
             setVerifier.TypeReceiver
                 .Where( t => t.Accessibility == Accessibility.Internal )
-                .ValidateReferences( typeValidator );
+                .ValidateOutboundReferences( typeValidator );
 
             var memberValidator = new ReferencePredicateValidator( memberPredicate, description, referenceKinds );
 
@@ -83,7 +84,7 @@ namespace Metalama.Extensions.Architecture.Fabrics
                 .SelectMany(
                     t => t.Members()
                         .Where( m => m.Accessibility is Accessibility.Internal or Accessibility.PrivateProtected or Accessibility.ProtectedInternal ) )
-                .ValidateReferences( memberValidator );
+                .ValidateOutboundReferences( memberValidator );
 
             setVerifier.TypeReceiver
                 .Where( t => t.Accessibility != Accessibility.Internal )
@@ -91,7 +92,7 @@ namespace Metalama.Extensions.Architecture.Fabrics
                     t => t.Properties.Where( p => p.Accessibility is Accessibility.Public or Accessibility.Protected )
                         .SelectMany( p => p.Accessors )
                         .Where( m => m.Accessibility is Accessibility.Internal or Accessibility.PrivateProtected or Accessibility.ProtectedInternal ) )
-                .ValidateReferences( memberValidator );
+                .ValidateOutboundReferences( memberValidator );
         }
 
         /// <summary>
@@ -125,10 +126,10 @@ namespace Metalama.Extensions.Architecture.Fabrics
             string pattern,
             Func<ReferencePredicateBuilder, ReferencePredicate>? exclusions = null )
         {
-            setVerifier.Receiver.ValidateReferences(
+            setVerifier.Receiver.ValidateOutboundReferences(
                 DerivedTypeNamingConventionValidator.CreateStarPatternValidator(
                     pattern,
-                    ReferencePredicateBuilder.Build( exclusions, setVerifier.Receiver ) ) );
+                    ReferencePredicateBuilder.Build( exclusions, setVerifier.Receiver, ReferenceDirection.Outbound ) ) );
         }
 
         /// <summary>
@@ -140,8 +141,10 @@ namespace Metalama.Extensions.Architecture.Fabrics
             string pattern,
             Func<ReferencePredicateBuilder, ReferencePredicate>? exclusions = null )
         {
-            setVerifier.Receiver.ValidateReferences(
-                DerivedTypeNamingConventionValidator.CreateRegexValidator( pattern, ReferencePredicateBuilder.Build( exclusions, setVerifier.Receiver ) ) );
+            setVerifier.Receiver.ValidateOutboundReferences(
+                DerivedTypeNamingConventionValidator.CreateRegexValidator(
+                    pattern,
+                    ReferencePredicateBuilder.Build( exclusions, setVerifier.Receiver, ReferenceDirection.Outbound ) ) );
         }
 
         /// <summary>

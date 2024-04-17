@@ -1,1 +1,1 @@
-// Warning LAMA0905 on `ConstrainedClass`: `The 'ConstrainedClass' type cannot be referenced by the 'ForbiddenClass' type.`
+// Warning LAMA0905 on `ConstrainedClass`: `The 'ConstrainedClass' type cannot be referenced by the 'Metalama.Extensions.Architecture.AspectTests.NotAccessibleFrom.NamespacePattern.Forbidden' namespace.`

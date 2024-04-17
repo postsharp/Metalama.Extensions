@@ -38,10 +38,12 @@ internal class AnyReferencingTypePredicate : ReferencePredicate
         this._typeRefs = typeRefs.ToArray();
     }
 
-    public override bool IsMatch( in ReferenceValidationContext context )
+    public override bool IsMatch( ReferenceValidationContext context )
     {
         var contextCopy = context;
 
-        return this._typeRefs.Any( t => contextCopy.ReferencingType.Equals( t.GetTarget( options: default ) ) );
+        return this._typeRefs.Any( t => contextCopy.Referencing.Type.Equals( t.GetTarget( options: default ) ) );
     }
+
+    public override ReferenceGranularity Granularity => ReferenceGranularity.Type;
 }

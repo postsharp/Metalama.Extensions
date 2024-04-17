@@ -42,5 +42,7 @@ internal class ReferencingTypePredicate : ReferencePredicate
         this._typeRef = type.Definition.ToRef();
     }
 
-    public override bool IsMatch( in ReferenceValidationContext context ) => context.ReferencingType.Equals( this._typeRef.GetTarget( options: default ) );
+    public override bool IsMatch( ReferenceValidationContext context ) => context.Referencing.Type.Equals( this._typeRef.GetTarget( options: default ) );
+
+    public override ReferenceGranularity Granularity => ReferenceGranularity.Type;
 }

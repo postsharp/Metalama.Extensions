@@ -26,7 +26,7 @@ public class CanOnlyBeUsedFromAttribute : BaseUsageValidationAttribute, IAspect<
             return;
         }
 
-        builder.Outbound.ValidateReferences(
+        builder.Outbound.ValidateOutboundReferences(
             new ReferencePredicateValidator( new HasFamilyAccessPredicate().Or( predicate ).Or( exclusionPredicate ), this.Description, this.ReferenceKinds ) );
     }
 }

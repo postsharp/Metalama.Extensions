@@ -8,9 +8,9 @@ internal class ReferencingNamespacePredicate : BaseNamePredicate
 {
     public ReferencingNamespacePredicate( string name, ReferencePredicateBuilder? builder = null ) : base( name, builder ) { }
 
-    public override bool IsMatch( in ReferenceValidationContext context )
+    public override bool IsMatch( ReferenceValidationContext context )
     {
-        for ( var ns = context.ReferencingType.Namespace; ns != null; ns = ns.ParentNamespace )
+        for ( var ns = context.Referencing.Namespace; ns != null; ns = ns.ParentNamespace )
         {
             if ( this.IsMatch( ns.FullName ) )
             {
@@ -20,4 +20,6 @@ internal class ReferencingNamespacePredicate : BaseNamePredicate
 
         return false;
     }
+
+    public override ReferenceGranularity Granularity => ReferenceGranularity.Namespace;
 }
