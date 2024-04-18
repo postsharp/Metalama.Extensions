@@ -10,8 +10,6 @@ using Metalama.Framework.Fabrics;
 
 namespace Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.Legacy.FromNamespaceFabric
 {
-   
-
     namespace Constrained
     {
         public class Fabric : NamespaceFabric
@@ -21,16 +19,15 @@ namespace Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.Legacy
                 amender.Verify().CanOnlyBeUsedFrom( r => r.Namespace( typeof(AllowedClass).Namespace! ) );
             }
         }
-        internal class ConstrainedClass { }
 
+        internal class ConstrainedClass { }
     }
 
     namespace Forbidden
     {
         internal class ForbiddenClass : ConstrainedClass { }
     }
-    
-    
+
     namespace Allowed
     {
         internal class AllowedClass : ConstrainedClass { }

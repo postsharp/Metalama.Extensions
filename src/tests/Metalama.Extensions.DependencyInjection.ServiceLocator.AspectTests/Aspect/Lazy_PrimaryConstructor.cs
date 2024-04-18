@@ -6,7 +6,7 @@ namespace Metalama.Extensions.DependencyInjection.DotNet.Tests.Aspect.EarlyOptio
 
 #pragma warning disable IDE0044 // Add readonly modifier
 #pragma warning disable IDE1006 // Naming Styles
-#pragma warning disable CS9113 // Parameter is unread.
+#pragma warning disable CS9113  // Parameter is unread.
 
 // <target>
 public class TargetClass( IFormatProvider formatProvider )

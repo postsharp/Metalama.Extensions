@@ -37,7 +37,7 @@ namespace Metalama.Extensions.Multicast.AspectTests.AddToAllFromCompilation
             public event Action PublicEvent;
         }
     }
-    
+
     public enum AnEnum { }
 
     public delegate void ADelegate();

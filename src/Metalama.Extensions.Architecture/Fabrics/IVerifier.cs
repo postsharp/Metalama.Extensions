@@ -14,7 +14,7 @@ namespace Metalama.Extensions.Architecture.Fabrics;
 /// </summary>
 [CompileTime]
 [PublicAPI]
-[Obsolete("Use IAspectReceiver<T>.")]
+[Obsolete( "Use IAspectReceiver<T>." )]
 public interface IVerifier<out T>
     where T : class, IDeclaration
 {
