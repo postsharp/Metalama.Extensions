@@ -29,14 +29,14 @@ namespace Metalama.Extensions.Architecture.Aspects
 
         private void ValidateReference( ReferenceValidationContext context )
         {
-            if ( context.Referenced.Declaration.DeclaringAssembly.AreInternalsVisibleFrom( context.Referencing.Assembly ) )
+            if ( context.Destination.Declaration.DeclaringAssembly.AreInternalsVisibleFrom( context.Origin.Assembly ) )
             {
                 return;
             }
 
             context.Diagnostics.Report(
                 r =>
-                    ArchitectureDiagnosticDefinitions.InternalImplement.WithArguments( (context.Referenced.Declaration, this._projectName) ) );
+                    ArchitectureDiagnosticDefinitions.InternalImplement.WithArguments( (context.Destination.Declaration, this._projectName) ) );
         }
 
         public override void BuildEligibility( IEligibilityBuilder<INamedType> builder )

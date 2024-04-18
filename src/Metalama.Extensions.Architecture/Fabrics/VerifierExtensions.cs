@@ -129,7 +129,7 @@ namespace Metalama.Extensions.Architecture.Fabrics
             setVerifier.Receiver.ValidateOutboundReferences(
                 DerivedTypeNamingConventionValidator.CreateStarPatternValidator(
                     pattern,
-                    ReferencePredicateBuilder.Build( exclusions, setVerifier.Receiver, ReferenceDirection.Outbound ) ) );
+                    ReferencePredicateBuilder.Build( exclusions, setVerifier.Receiver, ReferenceEndRole.Origin ) ) );
         }
 
         /// <summary>
@@ -144,7 +144,7 @@ namespace Metalama.Extensions.Architecture.Fabrics
             setVerifier.Receiver.ValidateOutboundReferences(
                 DerivedTypeNamingConventionValidator.CreateRegexValidator(
                     pattern,
-                    ReferencePredicateBuilder.Build( exclusions, setVerifier.Receiver, ReferenceDirection.Outbound ) ) );
+                    ReferencePredicateBuilder.Build( exclusions, setVerifier.Receiver, ReferenceEndRole.Origin ) ) );
         }
 
         /// <summary>

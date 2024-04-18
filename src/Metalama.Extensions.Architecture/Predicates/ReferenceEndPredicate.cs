@@ -12,16 +12,16 @@ namespace Metalama.Extensions.Architecture.Predicates;
 public abstract class ReferenceEndPredicate : ReferencePredicate
 {
     /// <summary>
-    /// Gets the direction of the <see cref="ReferenceEnd"/> being validated.
+    /// Gets the role of the <see cref="ReferenceEnd"/> being validated.
     /// </summary>
-    public ReferenceDirection Direction { get; }
+    public ReferenceEndRole ValidatedRole { get; }
 
     protected ReferenceEndPredicate( ReferencePredicateBuilder builder ) : base( builder )
     {
-        this.Direction = builder.Direction;
+        this.ValidatedRole = builder.ValidatedRole;
     }
 
-    public sealed override bool IsMatch( ReferenceValidationContext context ) => this.IsMatch( context.GetReferenceEnd( this.Direction ) );
+    public sealed override bool IsMatch( ReferenceValidationContext context ) => this.IsMatch( context.GetReferenceEnd( this.ValidatedRole ) );
 
     /// <summary>
     /// Gets a value indicating whether the predicate matches the given <see cref="ReferenceEnd"/>.

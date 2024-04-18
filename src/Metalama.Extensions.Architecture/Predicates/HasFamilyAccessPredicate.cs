@@ -7,19 +7,19 @@ namespace Metalama.Extensions.Architecture.Predicates;
 
 internal class HasFamilyAccessPredicate : ReferencePredicate
 {
-    private readonly ReferenceDirection _direction;
+    private readonly ReferenceEndRole _role;
 
     public HasFamilyAccessPredicate( ReferencePredicateBuilder builder ) : base( builder )
     {
-        this._direction = builder.Direction;
+        this._role = builder.ValidatedRole;
     }
 
     public override bool IsMatch( ReferenceValidationContext context )
     {
         // TODO: take nested types into account.
-        
-        ref var b = ref context.GetReferenceEnd( this._direction );
-        ref var a = ref context.GetReferenceEnd( this._direction == ReferenceDirection.Inbound ? ReferenceDirection.Outbound : ReferenceDirection.Inbound );
+
+        ref var b = ref context.GetReferenceEnd( this._role );
+        ref var a = ref context.GetReferenceEnd( this._role == ReferenceEndRole.Destination ? ReferenceEndRole.Origin : ReferenceEndRole.Destination );
 
         return a.Declaration is IMemberOrNamedType { Accessibility: Accessibility.Protected or Accessibility.ProtectedInternal }
                && b.Type.Is( a.Member.GetClosestNamedType()! );

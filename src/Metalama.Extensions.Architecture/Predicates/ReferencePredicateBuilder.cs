@@ -20,37 +20,39 @@ namespace Metalama.Extensions.Architecture.Predicates;
 public sealed class ReferencePredicateBuilder
 {
     /// <summary>
-    /// Gets the direction of the <see cref="ReferenceEnd"/> validated by the built predicates.
+    /// Gets the role of the <see cref="ReferenceEnd"/> validated by the built predicates.
     /// </summary>
-    public ReferenceDirection Direction { get; }
+    public ReferenceEndRole ValidatedRole { get; }
 
     [Obsolete]
     public ReferencePredicateBuilder( IVerifier<IDeclaration> verifier )
     {
         this.Namespace = verifier.Namespace;
         this.AssemblyName = verifier.AssemblyName;
-        this.Direction = ReferenceDirection.Outbound;
+        this.ValidatedRole = ReferenceEndRole.Origin;
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ReferencePredicateBuilder"/> class from an <see cref="IAspectReceiver{TDeclaration}"/>.
     /// </summary>
-    public ReferencePredicateBuilder( ReferenceDirection direction, IAspectReceiver<IDeclaration> receiver ) : this(
-        direction,
+    public ReferencePredicateBuilder( ReferenceEndRole validatedRole, IAspectReceiver<IDeclaration> receiver ) : this(
+        validatedRole,
         receiver.OriginatingNamespace,
-        receiver.Project.AssemblyName ) { }
+        receiver.Project.AssemblyName )
+    { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ReferencePredicateBuilder"/> class from an <see cref="IAspectBuilder{TAspectTarget}"/>.
     /// </summary>
-    public ReferencePredicateBuilder( ReferenceDirection direction, IAspectBuilder<IDeclaration> aspectBuilder ) : this(
-        direction,
+    public ReferencePredicateBuilder( ReferenceEndRole validatedRole, IAspectBuilder<IDeclaration> aspectBuilder ) : this(
+        validatedRole,
         aspectBuilder.Target.GetNamespace()?.FullName,
-        aspectBuilder.Project.AssemblyName ) { }
+        aspectBuilder.Project.AssemblyName )
+    { }
 
-    private ReferencePredicateBuilder( ReferenceDirection direction, string? ns = null, string? assemblyName = null )
+    private ReferencePredicateBuilder( ReferenceEndRole validatedRole, string? ns = null, string? assemblyName = null )
     {
-        this.Direction = direction;
+        this.ValidatedRole = validatedRole;
         this.Namespace = ns;
         this.AssemblyName = assemblyName;
     }
@@ -67,11 +69,11 @@ public sealed class ReferencePredicateBuilder
     /// </summary>
     public string? AssemblyName { get; }
 
-    [return: NotNullIfNotNull( nameof(func) )]
+    [return: NotNullIfNotNull( nameof( func ) )]
     internal static ReferencePredicate? Build(
         Func<ReferencePredicateBuilder, ReferencePredicate>? func,
         IAspectReceiver<IDeclaration> verifier,
-        ReferenceDirection direction )
+        ReferenceEndRole role )
     {
         if ( func == null )
         {
@@ -79,7 +81,7 @@ public sealed class ReferencePredicateBuilder
         }
         else
         {
-            return func( new ReferencePredicateBuilder( direction, verifier ) );
+            return func( new ReferencePredicateBuilder( role, verifier ) );
         }
     }
 }

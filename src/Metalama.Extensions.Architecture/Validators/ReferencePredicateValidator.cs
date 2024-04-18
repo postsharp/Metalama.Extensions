@@ -30,9 +30,9 @@ public class ReferencePredicateValidator : OutboundReferenceValidator
     {
         if ( !this._allowedScope.IsMatch( context ) )
         {
-            var referencedDeclaration = context.Referenced.Declaration;
+            var referencedDeclaration = context.Destination.Declaration;
             var referencedNamedType = referencedDeclaration.GetClosestNamedType();
-            var referencingDeclaration = context.Referencing.Declaration;
+            var referencingDeclaration = context.Origin.Declaration;
 
             var optionalSpace = string.IsNullOrEmpty( this._description ) ? "" : " ";
 

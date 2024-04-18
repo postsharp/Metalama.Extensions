@@ -90,7 +90,7 @@ namespace Metalama.Extensions.Architecture.AspectTests.InternalsCanOnlyBeUsedFro
     {
         public ExcludeNestedTypesPredicate( ReferencePredicateBuilder builder ) : base( builder ) { }
 
-        public override bool IsMatch( ReferenceValidationContext context ) => context.Referencing.Type.DeclaringType != null;
+        public override bool IsMatch( ReferenceValidationContext context ) => context.Origin.Type.DeclaringType != null;
 
         public override ReferenceGranularity Granularity => ReferenceGranularity.Type;
     }

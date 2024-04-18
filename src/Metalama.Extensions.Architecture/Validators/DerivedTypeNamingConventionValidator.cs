@@ -45,7 +45,7 @@ internal class DerivedTypeNamingConventionValidator : OutboundReferenceValidator
     {
         var regex = this.GetRegex();
 
-        if ( regex.IsMatch( context.Referencing.Type.Name ) )
+        if ( regex.IsMatch( context.Origin.Type.Name ) )
         {
             return false;
         }
@@ -64,8 +64,8 @@ internal class DerivedTypeNamingConventionValidator : OutboundReferenceValidator
         {
             context.Diagnostics.Report(
                      ArchitectureDiagnosticDefinitions.NamingConventionViolationInDerivedType.WithArguments(
-                        (context.Referencing.Type, context.Referenced.Type, this._displayPattern) ),
-                context.Referencing.Declaration );
+                        (context.Origin.Type, context.Destination.Type, this._displayPattern) ),
+                context.Origin.Declaration );
         }
     }
 

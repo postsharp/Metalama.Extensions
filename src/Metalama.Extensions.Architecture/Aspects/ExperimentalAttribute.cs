@@ -35,13 +35,13 @@ namespace Metalama.Extensions.Architecture.Aspects
         private void ValidateReference( ReferenceValidationContext context )
         {
             // Declarations contained in an experimental declaration can reference it.
-            if ( context.Referencing.Type.IsContainedIn( context.Referenced.Declaration ) )
+            if ( context.Origin.Type.IsContainedIn( context.Destination.Declaration ) )
             {
                 return;
             }
 
             // An experimental declaration an reference another experimental declaration.
-            if ( context.Referencing.Declaration.ContainingAncestorsAndSelf()
+            if ( context.Origin.Declaration.ContainingAncestorsAndSelf()
                 .Any( d => d.DeclarationKind != DeclarationKind.Compilation && d.Enhancements().HasAspect<ExperimentalAttribute>() ) )
             {
                 return;
@@ -49,7 +49,7 @@ namespace Metalama.Extensions.Architecture.Aspects
 
             context.Diagnostics.Report(
                 ArchitectureDiagnosticDefinitions.ExperimentalApi.WithArguments(
-                    (context.Referenced.Declaration, context.Referenced.Declaration.DeclarationKind, string.IsNullOrEmpty( this.Description ) ? "" : " ",
+                    (context.Destination.Declaration, context.Destination.Declaration.DeclarationKind, string.IsNullOrEmpty( this.Description ) ? "" : " ",
                      this.Description) ) );
         }
 

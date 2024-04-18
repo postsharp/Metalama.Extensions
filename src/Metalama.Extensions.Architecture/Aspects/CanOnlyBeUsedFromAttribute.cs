@@ -22,7 +22,7 @@ public class CanOnlyBeUsedFromAttribute : BaseUsageValidationAttribute, IAspect<
 
     public void BuildAspect( IAspectBuilder<IMemberOrNamedType> builder )
     {
-        var predicateBuilder = new ReferencePredicateBuilder( ReferenceDirection.Outbound, builder );
+        var predicateBuilder = new ReferencePredicateBuilder( ReferenceEndRole.Origin, builder );
 
         if ( !this.TryCreatePredicate( builder, predicateBuilder, out var predicate )
              || !this.TryCreateExclusionPredicate( builder, predicateBuilder, out var exclusionPredicate ) )
@@ -32,7 +32,7 @@ public class CanOnlyBeUsedFromAttribute : BaseUsageValidationAttribute, IAspect<
 
         builder.Outbound.ValidateOutboundReferences(
             new ReferencePredicateValidator(
-                new HasFamilyAccessPredicate( new ReferencePredicateBuilder( ReferenceDirection.Outbound, builder ) )
+                new HasFamilyAccessPredicate( new ReferencePredicateBuilder( ReferenceEndRole.Origin, builder ) )
                     .Or( predicate )
                     .Or( exclusionPredicate ),
                 this.Description,

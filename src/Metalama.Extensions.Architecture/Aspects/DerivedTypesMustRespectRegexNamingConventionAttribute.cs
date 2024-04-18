@@ -40,7 +40,7 @@ public class DerivedTypesMustRespectRegexNamingConventionAttribute : TypeAspect
     public override void BuildAspect( IAspectBuilder<INamedType> builder )
     {
         // Validate the predicate type.
-        var predicateBuilder = new ReferencePredicateBuilder( ReferenceDirection.Outbound, builder );
+        var predicateBuilder = new ReferencePredicateBuilder( ReferenceEndRole.Origin, builder );
 
         if ( !ExclusionPredicateTypeHelper.TryCreateExclusionPredicate(
                 this.ExclusionPredicateType,

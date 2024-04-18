@@ -17,7 +17,7 @@ public abstract class InternalsUsageValidationAttribute : BaseUsageValidationAtt
 {
     public virtual void BuildAspect( IAspectBuilder<INamedType> builder )
     {
-        var predicateBuilder = new ReferencePredicateBuilder( ReferenceDirection.Outbound, builder );
+        var predicateBuilder = new ReferencePredicateBuilder( ReferenceEndRole.Origin, builder );
 
         if ( !this.TryCreatePredicate( builder, predicateBuilder, out var predicate )
              || !this.TryCreateExclusionPredicate( builder, predicateBuilder, out var exclusionPredicate ) )
