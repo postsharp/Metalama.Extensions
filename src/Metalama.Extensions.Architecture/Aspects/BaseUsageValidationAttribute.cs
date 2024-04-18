@@ -9,6 +9,7 @@ using Metalama.Framework.Validation;
 using System;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using ReferencePredicate = Metalama.Extensions.Architecture.Predicates.ReferencePredicate;
 
 namespace Metalama.Extensions.Architecture.Aspects;
@@ -80,15 +81,18 @@ public abstract class BaseUsageValidationAttribute : Attribute, IConditionallyIn
     /// <summary>
     /// Creates a <see cref="ReferencePredicate"/> based on the properties of the custom attributes.
     /// </summary>
-    protected bool TryCreatePredicate( IAspectBuilder<IMemberOrNamedType> builder, [NotNullWhen( true )] out ReferencePredicate? predicate )
+    protected bool TryCreatePredicate(
+        IAspectBuilder<IMemberOrNamedType> aspectBuilder,
+        ReferencePredicateBuilder predicateBuilder,
+        [NotNullWhen( true )] out ReferencePredicate? predicate )
     {
-        var currentNamespace = builder.Target.GetClosestNamedType()!.Namespace;
+        var currentNamespace = aspectBuilder.Target.GetClosestNamedType()!.Namespace;
 
         var predicates = ImmutableArray.CreateBuilder<ReferencePredicate>();
 
-        if ( !this.AddPredicatesFromAttributes( currentNamespace, predicates.Add, builder.Diagnostics ) )
+        if ( !this.AddPredicatesFromAttributes( predicateBuilder, currentNamespace, predicates.Add, aspectBuilder.Diagnostics ) )
         {
-            builder.SkipAspect();
+            aspectBuilder.SkipAspect();
             predicate = null;
 
             return false;
@@ -97,9 +101,9 @@ public abstract class BaseUsageValidationAttribute : Attribute, IConditionallyIn
         switch ( predicates.Count )
         {
             case 0:
-                builder.Diagnostics.Report( ArchitectureDiagnosticDefinitions.AtLeastOnePropertyMustBeSet.WithArguments( this.GetType().Name ) );
+                aspectBuilder.Diagnostics.Report( ArchitectureDiagnosticDefinitions.AtLeastOnePropertyMustBeSet.WithArguments( this.GetType().Name ) );
 
-                builder.SkipAspect();
+                aspectBuilder.SkipAspect();
 
                 predicate = null;
 
@@ -111,7 +115,7 @@ public abstract class BaseUsageValidationAttribute : Attribute, IConditionallyIn
                 return true;
 
             default:
-                predicate = new AnyPredicate( predicates.ToImmutable() );
+                predicate = new AnyPredicate( predicates.ToImmutable(), predicateBuilder );
 
                 break;
         }
@@ -119,19 +123,23 @@ public abstract class BaseUsageValidationAttribute : Attribute, IConditionallyIn
         return true;
     }
 
-    protected bool TryCreateExclusionPredicate( IAspectBuilder<IMemberOrNamedType> builder, out ReferencePredicate? predicate )
+    protected bool TryCreateExclusionPredicate(
+        IAspectBuilder<IMemberOrNamedType> aspectBuilder,
+        ReferencePredicateBuilder predicateBuilder,
+        out ReferencePredicate? predicate )
     {
         if ( this.ExclusionPredicateType != null )
         {
-            if ( !ExclusionPredicateTypeHelper.ValidateExclusionPredicateType( this.ExclusionPredicateType, builder.Diagnostics ) )
+            if ( !ExclusionPredicateTypeHelper.TryCreateExclusionPredicate(
+                    this.ExclusionPredicateType,
+                    aspectBuilder.Diagnostics,
+                    predicateBuilder,
+                    out predicate ) )
             {
-                builder.SkipAspect();
-                predicate = null;
+                aspectBuilder.SkipAspect();
 
                 return false;
             }
-
-            predicate = ExclusionPredicateTypeHelper.GetExclusionPredicate( this.ExclusionPredicateType );
         }
         else
         {
@@ -146,29 +154,31 @@ public abstract class BaseUsageValidationAttribute : Attribute, IConditionallyIn
     /// <summary>
     /// Adds the predicates defined by the properties of the current custom attribute. 
     /// </summary>
+    /// <param name="predicateBuilder"></param>
     /// <param name="currentNamespace">The namespace in which the current attribute is used.</param>
     /// <param name="addPredicate">A delegate to call to add a predicate. If many predicates are added, they will be combined
     ///     with the <see cref="ReferencePredicateExtensions.Or(Metalama.Extensions.Architecture.Predicates.ReferencePredicate,System.Func{Metalama.Extensions.Architecture.Predicates.ReferencePredicateBuilder,Metalama.Extensions.Architecture.Predicates.ReferencePredicate})"/>
     ///     method.</param>
     /// <param name="diagnostics"></param>
     protected virtual bool AddPredicatesFromAttributes(
+        ReferencePredicateBuilder predicateBuilder,
         INamespace currentNamespace,
         Action<ReferencePredicate> addPredicate,
         in ScopedDiagnosticSink diagnostics )
     {
         if ( this.CurrentNamespace )
         {
-            addPredicate( new ReferencingNamespacePredicate( currentNamespace.FullName ) );
+            addPredicate( new NamespacePredicate( currentNamespace.FullName, predicateBuilder ) );
         }
 
         if ( this.CurrentAssembly )
         {
-            addPredicate( new ReferencingAssemblyPredicate( currentNamespace.DeclaringAssembly.Identity.Name ) );
+            addPredicate( new AssemblyNamePredicate( currentNamespace.DeclaringAssembly.Identity.Name, predicateBuilder ) );
         }
 
         foreach ( var ns in this.Namespaces )
         {
-            addPredicate( new ReferencingNamespacePredicate( ns ) );
+            addPredicate( new NamespacePredicate( ns, predicateBuilder ) );
         }
 
         foreach ( var type in this.NamespaceOfTypes )
@@ -178,7 +188,7 @@ public abstract class BaseUsageValidationAttribute : Attribute, IConditionallyIn
                 continue;
             }
 
-            addPredicate( new ReferencingNamespacePredicate( type.Namespace ) );
+            addPredicate( new NamespacePredicate( type.Namespace, predicateBuilder ) );
         }
 
         switch ( this.Types.Length )
@@ -186,20 +196,15 @@ public abstract class BaseUsageValidationAttribute : Attribute, IConditionallyIn
             case 0:
                 break;
 
-            case 1:
-                addPredicate( new ReferencingTypePredicate( this.Types[0] ) );
-
-                break;
-
             default:
-                addPredicate( new AnyReferencingTypePredicate( this.Types ) );
+                addPredicate( new TypeEqualityPredicate( this.Types, predicateBuilder ) );
 
                 break;
         }
 
         foreach ( var typeName in this.TypeNames )
         {
-            addPredicate( new ReferencingTypeNamePredicate( typeName ) );
+            addPredicate( new TypeNamePredicate( typeName, predicateBuilder ) );
         }
 
         return true;

@@ -4,6 +4,7 @@ using Metalama.Extensions.Architecture.Predicates;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 using Metalama.Framework.Validation;
+using System.Diagnostics;
 
 namespace Metalama.Extensions.Architecture.Validators;
 
@@ -46,7 +47,7 @@ public class ReferencePredicateValidator : OutboundReferenceValidator
                     {
                         return null;
                     }
-                    
+
                     // Return the error message.
                     var usageKind = r.ReferenceKind == ReferenceKinds.Assignment ? "assigned" : "referenced";
 

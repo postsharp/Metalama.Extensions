@@ -5,6 +5,7 @@ using Metalama.Extensions.Architecture.Validators;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 using Metalama.Framework.Eligibility;
+using Metalama.Framework.Validation;
 using System.Linq;
 
 namespace Metalama.Extensions.Architecture.Aspects;
@@ -16,7 +17,10 @@ public abstract class InternalsUsageValidationAttribute : BaseUsageValidationAtt
 {
     public virtual void BuildAspect( IAspectBuilder<INamedType> builder )
     {
-        if ( !this.TryCreatePredicate( builder, out var predicate ) || !this.TryCreateExclusionPredicate( builder, out var exclusionPredicate ) )
+        var predicateBuilder = new ReferencePredicateBuilder( ReferenceDirection.Outbound, builder );
+
+        if ( !this.TryCreatePredicate( builder, predicateBuilder, out var predicate )
+             || !this.TryCreateExclusionPredicate( builder, predicateBuilder, out var exclusionPredicate ) )
         {
             return;
         }
@@ -35,7 +39,9 @@ public abstract class InternalsUsageValidationAttribute : BaseUsageValidationAtt
             .ValidateOutboundReferences( validator );
     }
 
-    protected abstract ReferencePredicateValidator CreateValidator( ReferencePredicate predicate, ReferencePredicate? exclusionPredicate );
+    protected abstract ReferencePredicateValidator CreateValidator(
+        ReferencePredicate predicate,
+        ReferencePredicate? exclusionPredicate );
 
     public virtual void BuildEligibility( IEligibilityBuilder<INamedType> builder ) => builder.MustHaveAccessibility( Accessibility.Public );
 }

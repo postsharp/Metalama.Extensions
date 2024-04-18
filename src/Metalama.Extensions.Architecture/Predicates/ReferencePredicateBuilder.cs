@@ -33,20 +33,24 @@ public sealed class ReferencePredicateBuilder
         this.Direction = ReferenceDirection.Outbound;
     }
 
-    public ReferencePredicateBuilder( IAspectReceiver<IDeclaration> verifier, ReferenceDirection direction )
-    {
-        this.Direction = direction;
-        this.Namespace = verifier.OriginatingNamespace;
-        this.AssemblyName = verifier.Project.AssemblyName;
-    }
+    public ReferencePredicateBuilder( ReferenceDirection direction, IAspectReceiver<IDeclaration> receiver ) : this(
+        direction,
+        receiver.OriginatingNamespace,
+        receiver.Project.AssemblyName ) { }
+
+    public ReferencePredicateBuilder( ReferenceDirection direction, IAspectBuilder<IDeclaration> aspectBuilder ) : this(
+        direction,
+        aspectBuilder.Target.GetNamespace()?.FullName,
+        aspectBuilder.Project.AssemblyName ) { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ReferencePredicateBuilder"/> class.
     /// </summary>
     /// <param name="ns">The namespace of the current context, used to resolve methods like <see cref="ReferencePredicateExtensions.CurrentNamespace"/>.</param>
     /// <param name="assemblyName">The name of the current assembly, used to resolve methods like <see cref="ReferencePredicateExtensions.CurrentAssembly"/>.</param>
-    public ReferencePredicateBuilder( string? ns, string? assemblyName )
+    public ReferencePredicateBuilder( ReferenceDirection direction, string? ns = null, string? assemblyName = null )
     {
+        this.Direction = direction;
         this.Namespace = ns;
         this.AssemblyName = assemblyName;
     }
@@ -75,7 +79,7 @@ public sealed class ReferencePredicateBuilder
         }
         else
         {
-            return func( new ReferencePredicateBuilder( verifier, direction ) );
+            return func( new ReferencePredicateBuilder( direction, verifier ) );
         }
     }
 }

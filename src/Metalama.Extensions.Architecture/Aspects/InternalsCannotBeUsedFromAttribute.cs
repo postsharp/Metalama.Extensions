@@ -16,9 +16,11 @@ namespace Metalama.Extensions.Architecture.Aspects;
 [RunTimeOrCompileTime]
 public class InternalsCannotBeUsedFromAttribute : InternalsUsageValidationAttribute
 {
-    protected override ReferencePredicateValidator CreateValidator( ReferencePredicate predicate, ReferencePredicate? exclusionPredicate )
+    protected override ReferencePredicateValidator CreateValidator(
+        ReferencePredicate predicate,
+        ReferencePredicate? exclusionPredicate )
         => new(
-            new HasFamilyAccessPredicate().Or( predicate.Not() ).Or( exclusionPredicate ),
+            new HasFamilyAccessPredicate( predicate.Builder ).Or( predicate.Not() ).Or( exclusionPredicate ),
             this.Description,
             this.ReferenceKinds );
 }

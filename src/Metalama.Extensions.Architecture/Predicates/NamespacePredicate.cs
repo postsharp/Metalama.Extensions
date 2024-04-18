@@ -4,13 +4,13 @@ using Metalama.Framework.Validation;
 
 namespace Metalama.Extensions.Architecture.Predicates;
 
-internal class ReferencingNamespacePredicate : BaseNamePredicate
+internal class NamespacePredicate : BaseNamePredicate
 {
-    public ReferencingNamespacePredicate( string name, ReferencePredicateBuilder? builder = null ) : base( name, builder ) { }
+    public NamespacePredicate( string name, ReferencePredicateBuilder builder ) : base( name, builder ) { }
 
-    public override bool IsMatch( ReferenceValidationContext context )
+    public override bool IsMatch( in ReferenceEnd referenceEnd )
     {
-        for ( var ns = context.Referencing.Namespace; ns != null; ns = ns.ParentNamespace )
+        for ( var ns = referenceEnd.Namespace; ns != null; ns = ns.ParentNamespace )
         {
             if ( this.IsMatch( ns.FullName ) )
             {

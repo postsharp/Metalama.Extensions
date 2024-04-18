@@ -14,7 +14,7 @@ using System.Text.RegularExpressions;
 namespace Metalama.Extensions.Architecture
 {
     /// <summary>
-    /// Extension methods that verify the architecture. These methods extend the <see cref="IAspectReceiver{T}"/> interface, which is returned
+    /// Extension methods that verify the architecture. These methods extend the <see cref="IAspectReceiver{TDeclaration}"/> interface, which is returned
     /// by the <see cref="AmenderExtensions.Verify(Metalama.Framework.Fabrics.IProjectAmender)"/> method of the <see cref="AmenderExtensions"/> class.
     /// </summary>
     [CompileTime]
@@ -70,7 +70,7 @@ namespace Metalama.Extensions.Architecture
             var taggedReceiver = receiver
                 .Tag(
                     ( d, tag ) => new ReferencePredicateValidator(
-                        predicate( new ReferencePredicateBuilder( receiver, ReferenceDirection.Outbound ), d, tag ),
+                        predicate( new ReferencePredicateBuilder( ReferenceDirection.Outbound, receiver ), d, tag ),
                         description,
                         referenceKinds ) );
 
@@ -123,7 +123,7 @@ namespace Metalama.Extensions.Architecture
             ReferenceKinds referenceKinds = ReferenceKinds.All )
             where TDeclaration : class, IDeclaration
             => receiver
-                .Tag( ( d, tag ) => predicate( new ReferencePredicateBuilder( receiver, ReferenceDirection.Outbound ), d, tag ).Not() )
+                .Tag( ( d, tag ) => predicate( new ReferencePredicateBuilder( ReferenceDirection.Outbound, receiver ), d, tag ).Not() )
                 .ValidateOutboundReferences( ( _, validator ) => new ReferencePredicateValidator( validator, description, referenceKinds ) );
 
         private static void VerifyInternalsAccess<TDeclaration, TTag>(
@@ -137,7 +137,7 @@ namespace Metalama.Extensions.Architecture
             var taggedReceiver = receiver.Tag(
                 ( d, tag ) =>
                 {
-                    var predicateBuilder = new ReferencePredicateBuilder( receiver, ReferenceDirection.Outbound );
+                    var predicateBuilder = new ReferencePredicateBuilder( ReferenceDirection.Outbound, receiver );
                     var builtPredicate = predicate( predicateBuilder, d, tag );
                     var typePredicate = builtPredicate;
                     var memberPredicate = predicateBuilder.HasFamilyAccess().Or( transformPredicate( builtPredicate ) );

@@ -25,23 +25,14 @@ public abstract class ReferencePredicate : ICompileTimeSerializable
     /// or <c>null</c> if the object was null without a <see cref="ReferencePredicateBuilder"/>.
     /// </summary>
     [NonCompileTimeSerialized]
-    protected internal ReferencePredicateBuilder? Builder { get; }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ReferencePredicate"/> class.
-    /// </summary>
-    /// <remarks>
-    /// <para>If you are implementing this class and want your implementation to be usable from the predicate fluent API, call the second constructor
-    /// overload and pass the <see cref="ReferencePredicateBuilder"/>.</para>
-    /// </remarks>
-    protected ReferencePredicate() { }
+    protected internal ReferencePredicateBuilder Builder { get; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ReferencePredicate"/> class and provides a <see cref="ReferencePredicateBuilder"/>.
     /// </summary>
     /// <param name="builder">The <see cref="ReferencePredicateBuilder"/> from which the predicate was built, or <c>null</c>.
     /// Setting this parameter allows the new object to use used in fluent expressions like <see cref="ReferencePredicateExtensions.Or(Metalama.Extensions.Architecture.Predicates.ReferencePredicate,System.Func{Metalama.Extensions.Architecture.Predicates.ReferencePredicateBuilder,Metalama.Extensions.Architecture.Predicates.ReferencePredicate})"/>.</param>
-    protected ReferencePredicate( ReferencePredicateBuilder? builder )
+    protected ReferencePredicate( ReferencePredicateBuilder builder )
     {
         this.Builder = builder;
     }
@@ -50,6 +41,6 @@ public abstract class ReferencePredicate : ICompileTimeSerializable
     /// Gets a value indicating whether the predicate matches the given <see cref="ReferenceValidationContext"/>.
     /// </summary>
     public abstract bool IsMatch( ReferenceValidationContext context );
-    
+
     public abstract ReferenceGranularity Granularity { get; }
 }

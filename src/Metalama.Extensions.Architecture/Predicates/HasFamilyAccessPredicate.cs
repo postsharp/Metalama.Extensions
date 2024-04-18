@@ -5,15 +5,15 @@ using Metalama.Framework.Validation;
 
 namespace Metalama.Extensions.Architecture.Predicates;
 
-internal class HasFamilyAccessPredicate : ReferencePredicate
+internal class HasFamilyAccessPredicate : ReferenceEndPredicate
 {
-    public HasFamilyAccessPredicate( ReferencePredicateBuilder? builder = null ) : base( builder ) { }
+    public HasFamilyAccessPredicate( ReferencePredicateBuilder builder ) : base( builder ) { }
 
-    public override bool IsMatch( ReferenceValidationContext context )
+    public override bool IsMatch( in ReferenceEnd referenceEnd )
     {
         // TODO: take nested types into account.
-        return context.Referenced.Declaration is IMember { Accessibility: Accessibility.Protected or Accessibility.ProtectedInternal }
-               && context.Referencing.Type.Is( context.Referenced.Declaration.GetClosestNamedType()! );
+        return referenceEnd.Declaration is IMember { Accessibility: Accessibility.Protected or Accessibility.ProtectedInternal }
+               && referenceEnd.Type.Is( referenceEnd.Declaration.GetClosestNamedType()! );
     }
 
     public override ReferenceGranularity Granularity => ReferenceGranularity.Type;

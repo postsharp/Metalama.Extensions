@@ -78,5 +78,5 @@ internal static class ArchitectureDiagnosticDefinitions
         new(
             "LAMA0907",
             Severity.Warning,
-            $"The type assigned to the {nameof(DerivedTypesMustRespectRegexNamingConventionAttribute.ExclusionPredicateType)} property must have a default constructor." );
+            $"The type assigned to the {nameof(DerivedTypesMustRespectRegexNamingConventionAttribute.ExclusionPredicateType)} property must have a constructor constructor accepting a single parameter of type {nameof(ReferencePredicateBuilder)}." );
 }

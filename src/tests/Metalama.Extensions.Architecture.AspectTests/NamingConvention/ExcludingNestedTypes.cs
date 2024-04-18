@@ -20,6 +20,8 @@ namespace Metalama.Extensions.Architecture.AspectTests.NamingConvention.Excludin
 
     internal class ExcludeNestedTypesPredicate : ReferencePredicate
     {
+        public ExcludeNestedTypesPredicate( ReferencePredicateBuilder builder ) : base( builder ) { }
+
         public override bool IsMatch( ReferenceValidationContext context ) => context.Referencing.Type.DeclaringType != null;
 
         public override ReferenceGranularity Granularity => ReferenceGranularity.Type;

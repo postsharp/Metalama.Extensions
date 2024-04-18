@@ -5,6 +5,7 @@ using Metalama.Extensions.Architecture.Predicates;
 using Metalama.Extensions.Architecture.Validators;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
+using Metalama.Framework.Validation;
 using System;
 using System.Text.RegularExpressions;
 
@@ -39,7 +40,13 @@ public class DerivedTypesMustRespectRegexNamingConventionAttribute : TypeAspect
     public override void BuildAspect( IAspectBuilder<INamedType> builder )
     {
         // Validate the predicate type.
-        if ( !ExclusionPredicateTypeHelper.ValidateExclusionPredicateType( this.ExclusionPredicateType, builder.Diagnostics ) )
+        var predicateBuilder = new ReferencePredicateBuilder( ReferenceDirection.Outbound, builder );
+
+        if ( !ExclusionPredicateTypeHelper.TryCreateExclusionPredicate(
+                this.ExclusionPredicateType,
+                builder.Diagnostics,
+                predicateBuilder,
+                out var exclusionPredicate ) )
         {
             builder.SkipAspect();
 
@@ -63,7 +70,7 @@ public class DerivedTypesMustRespectRegexNamingConventionAttribute : TypeAspect
             DerivedTypeNamingConventionValidator.CreateRegexValidator(
                 this.RegexPattern,
                 this.DisplayPattern,
-                ExclusionPredicateTypeHelper.GetExclusionPredicate( this.ExclusionPredicateType ) ) );
+                exclusionPredicate ) );
     }
 
     public override string ToString() => $"DerivedTypesMustRespectRegexNamingConvention( \"{this.DisplayPattern}\" )";

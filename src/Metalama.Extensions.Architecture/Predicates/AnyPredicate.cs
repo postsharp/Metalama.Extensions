@@ -9,7 +9,7 @@ internal class AnyPredicate : ReferencePredicate
 {
     private ImmutableArray<ReferencePredicate> _predicates;
 
-    public AnyPredicate( ImmutableArray<ReferencePredicate> predicates, ReferencePredicateBuilder? builder = null ) : base( builder )
+    public AnyPredicate( ImmutableArray<ReferencePredicate> predicates, ReferencePredicateBuilder builder ) : base( builder )
     {
         this._predicates = predicates;
     }
