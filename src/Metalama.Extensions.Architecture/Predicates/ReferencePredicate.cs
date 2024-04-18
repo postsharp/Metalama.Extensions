@@ -42,5 +42,8 @@ public abstract class ReferencePredicate : ICompileTimeSerializable
     /// </summary>
     public abstract bool IsMatch( ReferenceValidationContext context );
 
+    /// <summary>
+    /// Gets the granularity of validation required by this predicate. For instance, if the predicate only compares the namespace, it should return <see cref="ReferenceGranularity.Namespace"/>.
+    /// </summary>
     public abstract ReferenceGranularity Granularity { get; }
 }
