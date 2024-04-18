@@ -64,8 +64,7 @@ internal class DerivedTypeNamingConventionValidator : OutboundReferenceValidator
         {
             context.Diagnostics.Report(
                      ArchitectureDiagnosticDefinitions.NamingConventionViolationInDerivedType.WithArguments(
-                        (context.Referencing.Type,
-                         context.Referenced.Type, this._displayPattern) ),
+                        (context.Referencing.Type, context.Referenced.Type, this._displayPattern) ),
                 context.Referencing.Declaration );
         }
     }

@@ -9,7 +9,6 @@ using Metalama.Framework.Validation;
 using System;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
 using ReferencePredicate = Metalama.Extensions.Architecture.Predicates.ReferencePredicate;
 
 namespace Metalama.Extensions.Architecture.Aspects;

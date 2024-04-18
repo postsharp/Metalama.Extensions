@@ -4,7 +4,6 @@ using Metalama.Extensions.Architecture.Predicates;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Diagnostics;
 using System;
-using System.Reflection;
 
 namespace Metalama.Extensions.Architecture.Aspects;
 
