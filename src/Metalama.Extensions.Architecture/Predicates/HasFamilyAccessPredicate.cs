@@ -16,6 +16,8 @@ internal class HasFamilyAccessPredicate : ReferencePredicate
 
     public override bool IsMatch( ReferenceValidationContext context )
     {
+        // TODO: take nested types into account.
+        
         ref var b = ref context.GetReferenceEnd( this._direction );
         ref var a = ref context.GetReferenceEnd( this._direction == ReferenceDirection.Inbound ? ReferenceDirection.Outbound : ReferenceDirection.Inbound );
 
