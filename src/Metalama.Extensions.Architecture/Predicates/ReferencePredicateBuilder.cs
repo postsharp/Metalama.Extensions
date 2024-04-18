@@ -19,12 +19,11 @@ namespace Metalama.Extensions.Architecture.Predicates;
 [PublicAPI]
 public sealed class ReferencePredicateBuilder
 {
+    /// <summary>
+    /// Gets the direction of the <see cref="ReferenceEnd"/> validated by the built predicates.
+    /// </summary>
     public ReferenceDirection Direction { get; }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ReferencePredicateBuilder"/> class by specifying an <see cref="TypeSetVerifier{T}"/>.
-    /// </summary>
-    /// <param name="verifier">The parent <see cref="TypeSetVerifier{T}"/>.</param>
     [Obsolete]
     public ReferencePredicateBuilder( IVerifier<IDeclaration> verifier )
     {
@@ -33,22 +32,23 @@ public sealed class ReferencePredicateBuilder
         this.Direction = ReferenceDirection.Outbound;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ReferencePredicateBuilder"/> class from an <see cref="IAspectReceiver{TDeclaration}"/>.
+    /// </summary>
     public ReferencePredicateBuilder( ReferenceDirection direction, IAspectReceiver<IDeclaration> receiver ) : this(
         direction,
         receiver.OriginatingNamespace,
         receiver.Project.AssemblyName ) { }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ReferencePredicateBuilder"/> class from an <see cref="IAspectBuilder{TAspectTarget}"/>.
+    /// </summary>
     public ReferencePredicateBuilder( ReferenceDirection direction, IAspectBuilder<IDeclaration> aspectBuilder ) : this(
         direction,
         aspectBuilder.Target.GetNamespace()?.FullName,
         aspectBuilder.Project.AssemblyName ) { }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ReferencePredicateBuilder"/> class.
-    /// </summary>
-    /// <param name="ns">The namespace of the current context, used to resolve methods like <see cref="ReferencePredicateExtensions.CurrentNamespace"/>.</param>
-    /// <param name="assemblyName">The name of the current assembly, used to resolve methods like <see cref="ReferencePredicateExtensions.CurrentAssembly"/>.</param>
-    public ReferencePredicateBuilder( ReferenceDirection direction, string? ns = null, string? assemblyName = null )
+    private ReferencePredicateBuilder( ReferenceDirection direction, string? ns = null, string? assemblyName = null )
     {
         this.Direction = direction;
         this.Namespace = ns;

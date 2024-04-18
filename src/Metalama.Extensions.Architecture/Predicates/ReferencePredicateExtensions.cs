@@ -127,28 +127,39 @@ public static class ReferencePredicateExtensions
             builder );
 
     /// <summary>
-    /// Accepts code references contained in a given type.
+    /// Accepts code references contained in a given type, specified as a reflection <see cref="System.Type"/>.
     /// </summary>
     /// <seealso cref="AnyType(Metalama.Extensions.Architecture.Predicates.ReferencePredicateBuilder,System.Type[])"/>
     public static ReferencePredicate Type( this ReferencePredicateBuilder builder, Type type ) => new TypeEqualityPredicate( [type], builder );
 
+    /// <summary>
+    /// Accepts code references contained in a given type, specified as an <see cref="INamedType"/>.
+    /// </summary>
+    /// <seealso cref="AnyType(Metalama.Extensions.Architecture.Predicates.ReferencePredicateBuilder,System.Type[])"/>
     public static ReferencePredicate Type( this ReferencePredicateBuilder builder, INamedType type ) => new TypeEqualityPredicate( [type], builder );
 
     /// <summary>
-    /// Accepts code references contained in any type in a given list.
+    /// Accepts code references contained in any type in a given list. Types are specified as reflection <see cref="System.Type"/> objects.
     /// </summary>
     /// <seealso cref="Type(Metalama.Extensions.Architecture.Predicates.ReferencePredicateBuilder,System.Type)"/>
     public static ReferencePredicate AnyType( this ReferencePredicateBuilder builder, params Type[] types ) => new TypeEqualityPredicate( types, builder );
 
+    /// <summary>
+    /// Accepts code references contained in any type in a given list. Types are specified as <see cref="INamedType"/> objects.
+    /// </summary>
+    /// <seealso cref="Type(Metalama.Extensions.Architecture.Predicates.ReferencePredicateBuilder,System.Type)"/>
     public static ReferencePredicate AnyType( this ReferencePredicateBuilder builder, params INamedType[] types )
         => new TypeEqualityPredicate( types, builder );
 
     /// <summary>
-    /// Accepts code references contained in any type in a given list.
+    /// Accepts code references contained in any type in a given list. Types are specified as reflection <see cref="System.Type"/> objects.
     /// </summary>
     /// <seealso cref="Type(Metalama.Extensions.Architecture.Predicates.ReferencePredicateBuilder,System.Type)"/>
     public static ReferencePredicate AnyType( this ReferencePredicateBuilder builder, IEnumerable<Type> types ) => new TypeEqualityPredicate( types, builder );
 
+    /// <summary>
+    /// Accepts code references contained in any type in a given list. Types are specified as <see cref="INamedType"/> objects.
+    /// </summary>
     public static ReferencePredicate AnyType( this ReferencePredicateBuilder builder, IEnumerable<INamedType> types )
         => new TypeEqualityPredicate( types, builder );
 
@@ -165,6 +176,5 @@ public static class ReferencePredicateExtensions
     /// <summary>
     /// Accepts code references that are legitimate based on family access rules, but rejects code references that are legitimate according to other rules.
     /// </summary>
-    public static ReferencePredicate HasFamilyAccess( this ReferencePredicateBuilder builder )
-        => new ReferencingDeclarationHasFamilyAccessToReferencedTypePredicate( builder );
+    public static ReferencePredicate HasFamilyAccess( this ReferencePredicateBuilder builder ) => new HasFamilyAccessPredicate( builder );
 }
