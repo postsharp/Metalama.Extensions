@@ -63,12 +63,10 @@ internal class DerivedTypeNamingConventionValidator : OutboundReferenceValidator
         if ( this.IsMatch( context ) )
         {
             context.Diagnostics.Report(
-                x => x.ReferenceKinds == ReferenceKinds.BaseType
-                    ? ArchitectureDiagnosticDefinitions.NamingConventionViolationInDerivedType.WithArguments(
+                     ArchitectureDiagnosticDefinitions.NamingConventionViolationInDerivedType.WithArguments(
                         (context.Referencing.Type,
-                         context.Referenced.Type, this._displayPattern) )
-                    : null,
-                x => x.ReferencingDeclaration );
+                         context.Referenced.Type, this._displayPattern) ),
+                context.Referencing.Declaration );
         }
     }
 

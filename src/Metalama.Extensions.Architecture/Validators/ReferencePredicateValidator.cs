@@ -40,21 +40,15 @@ public class ReferencePredicateValidator : OutboundReferenceValidator
                 r =>
                 {
                     // Do not validate inside the same type.
+                    // We are testing this here and not in a predicate because it allows to keep the granularity at namespace level
+                    // without affecting performance too much since this code would only run in case positive match.
                     if ( referencedNamedType != null && r.ReferencingDeclaration.IsContainedIn( referencedNamedType ) )
                     {
                         return null;
                     }
                     
-                    // Allow the predicate to skip a reference instance.
-                    if ( !this._allowedScope.IsMatch( r ) )
-                    {
-                        return null;
-                    }
-                    
                     // Return the error message.
-                    var usageKind = (r.ReferenceKinds & ReferenceKinds.Assignment) == ReferenceKinds.Assignment ? "assigned" : "referenced";
-
-                    
+                    var usageKind = r.ReferenceKind == ReferenceKinds.Assignment ? "assigned" : "referenced";
 
                     return ArchitectureDiagnosticDefinitions.OnlyAccessibleFrom.WithArguments(
                         (referencedDeclaration,

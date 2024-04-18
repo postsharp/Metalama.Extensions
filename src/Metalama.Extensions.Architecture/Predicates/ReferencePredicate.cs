@@ -50,8 +50,6 @@ public abstract class ReferencePredicate : ICompileTimeSerializable
     /// Gets a value indicating whether the predicate matches the given <see cref="ReferenceValidationContext"/>.
     /// </summary>
     public abstract bool IsMatch( ReferenceValidationContext context );
-
-    public virtual bool IsMatch( in ReferenceInstance referenceInstance ) => true;
-
+    
     public abstract ReferenceGranularity Granularity { get; }
 }
