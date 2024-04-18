@@ -165,5 +165,6 @@ public static class ReferencePredicateExtensions
     /// <summary>
     /// Accepts code references that are legitimate based on family access rules, but rejects code references that are legitimate according to other rules.
     /// </summary>
-    public static ReferencePredicate HasFamilyAccess( this ReferencePredicateBuilder builder ) => new HasFamilyAccessPredicate( builder );
+    public static ReferencePredicate HasFamilyAccess( this ReferencePredicateBuilder builder )
+        => new ReferencingDeclarationHasFamilyAccessToReferencedTypePredicate( builder );
 }

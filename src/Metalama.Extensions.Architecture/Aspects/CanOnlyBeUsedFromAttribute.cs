@@ -32,7 +32,9 @@ public class CanOnlyBeUsedFromAttribute : BaseUsageValidationAttribute, IAspect<
 
         builder.Outbound.ValidateOutboundReferences(
             new ReferencePredicateValidator(
-                new HasFamilyAccessPredicate( new ReferencePredicateBuilder( ReferenceDirection.Outbound, builder ) ).Or( predicate ).Or( exclusionPredicate ),
+                new ReferencingDeclarationHasFamilyAccessToReferencedTypePredicate( new ReferencePredicateBuilder( ReferenceDirection.Outbound, builder ) )
+                    .Or( predicate )
+                    .Or( exclusionPredicate ),
                 this.Description,
                 this.ReferenceKinds ) );
     }

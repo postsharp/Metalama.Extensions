@@ -58,7 +58,7 @@ namespace Metalama.Extensions.Architecture.AspectTests.InternalsCannotBeUsedFrom
             {
                 public static void Method()
                 {
-                    // These calls should be allowed.
+                    // These calls should be allowed because of ExcludeNestedTypesPredicate.
                     ConstrainedClass.InternalMethod();
                     ConstrainedClass.InternalProtectedMethod();
                 }
@@ -69,7 +69,7 @@ namespace Metalama.Extensions.Architecture.AspectTests.InternalsCannotBeUsedFrom
         {
             public static void Method()
             {
-                // These calls should be allowed.
+                // These calls should be allowed because we have family access.
                 PublicMethod();
                 InternalProtectedMethod();
                 ProtectedMethod();

@@ -20,7 +20,7 @@ public class InternalsCannotBeUsedFromAttribute : InternalsUsageValidationAttrib
         ReferencePredicate predicate,
         ReferencePredicate? exclusionPredicate )
         => new(
-            new HasFamilyAccessPredicate( predicate.Builder ).Or( predicate.Not() ).Or( exclusionPredicate ),
+            new ReferencingDeclarationHasFamilyAccessToReferencedTypePredicate( predicate.Builder ).Or( predicate.Not() ).Or( exclusionPredicate ),
             this.Description,
             this.ReferenceKinds );
 }
