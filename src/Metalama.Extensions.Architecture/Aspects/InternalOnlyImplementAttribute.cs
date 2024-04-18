@@ -35,8 +35,7 @@ namespace Metalama.Extensions.Architecture.Aspects
             }
 
             context.Diagnostics.Report(
-                r =>
-                    ArchitectureDiagnosticDefinitions.InternalImplement.WithArguments( (context.Destination.Declaration, this._projectName) ) );
+                ArchitectureDiagnosticDefinitions.InternalImplement.WithArguments( (context.Destination.Declaration, this._projectName) ) );
         }
 
         public override void BuildEligibility( IEligibilityBuilder<INamedType> builder )
