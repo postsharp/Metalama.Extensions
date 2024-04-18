@@ -5,6 +5,7 @@ using Metalama.Extensions.Architecture.Validators;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 using Metalama.Framework.Eligibility;
+using Metalama.Framework.Validation;
 using System.Linq;
 
 namespace Metalama.Extensions.Architecture.Aspects;
@@ -16,7 +17,10 @@ public abstract class InternalsUsageValidationAttribute : BaseUsageValidationAtt
 {
     public virtual void BuildAspect( IAspectBuilder<INamedType> builder )
     {
-        if ( !this.TryCreatePredicate( builder, out var predicate ) || !this.TryCreateExclusionPredicate( builder, out var exclusionPredicate ) )
+        var predicateBuilder = new ReferencePredicateBuilder( ReferenceEndRole.Origin, builder );
+
+        if ( !this.TryCreatePredicate( builder, predicateBuilder, out var predicate )
+             || !this.TryCreateExclusionPredicate( builder, predicateBuilder, out var exclusionPredicate ) )
         {
             return;
         }
@@ -26,16 +30,18 @@ public abstract class InternalsUsageValidationAttribute : BaseUsageValidationAtt
         // Register a validator for all internal members.
         builder.Outbound.SelectMany(
                 t => t.Members().Where( m => m.Accessibility is Accessibility.Internal or Accessibility.PrivateProtected or Accessibility.ProtectedInternal ) )
-            .ValidateReferences( validator );
+            .ValidateOutboundReferences( validator );
 
         // Also register internal accessors of public properties.
         builder.Outbound.SelectMany( t => t.Properties.Where( p => p.Accessibility is Accessibility.Public or Accessibility.Protected ) )
             .SelectMany(
                 p => p.Accessors.Where( m => m.Accessibility is Accessibility.Internal or Accessibility.PrivateProtected or Accessibility.ProtectedInternal ) )
-            .ValidateReferences( validator );
+            .ValidateOutboundReferences( validator );
     }
 
-    protected abstract ReferencePredicateValidator CreateValidator( ReferencePredicate predicate, ReferencePredicate? exclusionPredicate );
+    protected abstract ReferencePredicateValidator CreateValidator(
+        ReferencePredicate predicate,
+        ReferencePredicate? exclusionPredicate );
 
     public virtual void BuildEligibility( IEligibilityBuilder<INamedType> builder ) => builder.MustHaveAccessibility( Accessibility.Public );
 }

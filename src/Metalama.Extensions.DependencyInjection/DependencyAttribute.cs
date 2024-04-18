@@ -46,7 +46,7 @@ public class DependencyAttribute : FieldOrPropertyAspect
             true => false,
             false => true
         };
-        
+
         return new DependencyProperties(
             target.DeclaringType,
             target.Type,

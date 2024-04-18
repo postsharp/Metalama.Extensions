@@ -15,7 +15,7 @@ internal class OrPredicate : ReferencePredicate
         this._predicate2 = predicate2;
     }
 
-    public override bool IsMatch( in ReferenceValidationContext context )
+    public override bool IsMatch( ReferenceValidationContext context )
     {
         if ( this._predicate1.IsMatch( context ) )
         {
@@ -29,4 +29,6 @@ internal class OrPredicate : ReferencePredicate
 
         return false;
     }
+
+    public override ReferenceGranularity Granularity => this._predicate1.Granularity.CombineWith( this._predicate2.Granularity );
 }

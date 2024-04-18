@@ -58,7 +58,7 @@ namespace Metalama.Extensions.Architecture.AspectTests.InternalsCannotBeUsedFrom
             {
                 public static void Method()
                 {
-                    // These calls should be allowed.
+                    // These calls should be allowed because of ExcludeNestedTypesPredicate.
                     ConstrainedClass.InternalMethod();
                     ConstrainedClass.InternalProtectedMethod();
                 }
@@ -69,7 +69,7 @@ namespace Metalama.Extensions.Architecture.AspectTests.InternalsCannotBeUsedFrom
         {
             public static void Method()
             {
-                // These calls should be allowed.
+                // These calls should be allowed because we have family access.
                 PublicMethod();
                 InternalProtectedMethod();
                 ProtectedMethod();
@@ -89,6 +89,10 @@ namespace Metalama.Extensions.Architecture.AspectTests.InternalsCannotBeUsedFrom
 
     internal class ExcludeNestedTypesPredicate : ReferencePredicate
     {
-        public override bool IsMatch( in ReferenceValidationContext context ) => context.ReferencingDeclaration.GetClosestNamedType()?.DeclaringType != null;
+        public ExcludeNestedTypesPredicate( ReferencePredicateBuilder builder ) : base( builder ) { }
+
+        public override bool IsMatch( ReferenceValidationContext context ) => context.Origin.Type.DeclaringType != null;
+
+        public override ReferenceGranularity Granularity => ReferenceGranularity.Type;
     }
 }

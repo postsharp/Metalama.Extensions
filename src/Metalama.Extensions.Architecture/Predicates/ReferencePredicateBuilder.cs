@@ -5,6 +5,7 @@ using Metalama.Extensions.Architecture.Fabrics;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 using Metalama.Framework.Fabrics;
+using Metalama.Framework.Validation;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
@@ -19,29 +20,39 @@ namespace Metalama.Extensions.Architecture.Predicates;
 public sealed class ReferencePredicateBuilder
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="ReferencePredicateBuilder"/> class by specifying an <see cref="TypeSetVerifier{T}"/>.
+    /// Gets the role of the <see cref="ReferenceEnd"/> validated by the built predicates.
     /// </summary>
-    /// <param name="verifier">The parent <see cref="TypeSetVerifier{T}"/>.</param>
+    public ReferenceEndRole ValidatedRole { get; }
+
     [Obsolete]
     public ReferencePredicateBuilder( IVerifier<IDeclaration> verifier )
     {
         this.Namespace = verifier.Namespace;
         this.AssemblyName = verifier.AssemblyName;
-    }
-
-    public ReferencePredicateBuilder( IAspectReceiver<IDeclaration> verifier )
-    {
-        this.Namespace = verifier.OriginatingNamespace;
-        this.AssemblyName = verifier.Project.AssemblyName;
+        this.ValidatedRole = ReferenceEndRole.Origin;
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ReferencePredicateBuilder"/> class.
+    /// Initializes a new instance of the <see cref="ReferencePredicateBuilder"/> class from an <see cref="IAspectReceiver{TDeclaration}"/>.
     /// </summary>
-    /// <param name="ns">The namespace of the current context, used to resolve methods like <see cref="ReferencePredicateExtensions.CurrentNamespace"/>.</param>
-    /// <param name="assemblyName">The name of the current assembly, used to resolve methods like <see cref="ReferencePredicateExtensions.CurrentAssembly"/>.</param>
-    public ReferencePredicateBuilder( string? ns, string? assemblyName )
+    public ReferencePredicateBuilder( ReferenceEndRole validatedRole, IAspectReceiver<IDeclaration> receiver ) : this(
+        validatedRole,
+        receiver.OriginatingNamespace,
+        receiver.Project.AssemblyName )
+    { }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ReferencePredicateBuilder"/> class from an <see cref="IAspectBuilder{TAspectTarget}"/>.
+    /// </summary>
+    public ReferencePredicateBuilder( ReferenceEndRole validatedRole, IAspectBuilder<IDeclaration> aspectBuilder ) : this(
+        validatedRole,
+        aspectBuilder.Target.GetNamespace()?.FullName,
+        aspectBuilder.Project.AssemblyName )
+    { }
+
+    private ReferencePredicateBuilder( ReferenceEndRole validatedRole, string? ns = null, string? assemblyName = null )
     {
+        this.ValidatedRole = validatedRole;
         this.Namespace = ns;
         this.AssemblyName = assemblyName;
     }
@@ -58,8 +69,11 @@ public sealed class ReferencePredicateBuilder
     /// </summary>
     public string? AssemblyName { get; }
 
-    [return: NotNullIfNotNull( nameof(func) )]
-    internal static ReferencePredicate? Build( Func<ReferencePredicateBuilder, ReferencePredicate>? func, IAspectReceiver<IDeclaration> verifier )
+    [return: NotNullIfNotNull( nameof( func ) )]
+    internal static ReferencePredicate? Build(
+        Func<ReferencePredicateBuilder, ReferencePredicate>? func,
+        IAspectReceiver<IDeclaration> verifier,
+        ReferenceEndRole role )
     {
         if ( func == null )
         {
@@ -67,7 +81,7 @@ public sealed class ReferencePredicateBuilder
         }
         else
         {
-            return func( new ReferencePredicateBuilder( verifier ) );
+            return func( new ReferencePredicateBuilder( role, verifier ) );
         }
     }
 }

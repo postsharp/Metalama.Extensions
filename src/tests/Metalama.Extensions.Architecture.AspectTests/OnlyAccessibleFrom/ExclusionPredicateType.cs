@@ -19,6 +19,10 @@ namespace Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.Exclus
 
     internal class ExcludeNestedTypesPredicate : ReferencePredicate
     {
-        public override bool IsMatch( in ReferenceValidationContext context ) => context.ReferencingDeclaration.GetClosestNamedType()?.DeclaringType != null;
+        public ExcludeNestedTypesPredicate( ReferencePredicateBuilder builder ) : base( builder ) { }
+
+        public override bool IsMatch( ReferenceValidationContext context ) => context.Origin.Type.DeclaringType != null;
+
+        public override ReferenceGranularity Granularity => ReferenceGranularity.Type;
     }
 }

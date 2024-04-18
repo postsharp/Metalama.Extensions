@@ -6,6 +6,7 @@ using Metalama.Extensions.Architecture.Validators;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 using Metalama.Framework.Eligibility;
+using Metalama.Framework.Validation;
 
 namespace Metalama.Extensions.Architecture.Aspects;
 
@@ -21,12 +22,20 @@ public class CanOnlyBeUsedFromAttribute : BaseUsageValidationAttribute, IAspect<
 
     public void BuildAspect( IAspectBuilder<IMemberOrNamedType> builder )
     {
-        if ( !this.TryCreatePredicate( builder, out var predicate ) || !this.TryCreateExclusionPredicate( builder, out var exclusionPredicate ) )
+        var predicateBuilder = new ReferencePredicateBuilder( ReferenceEndRole.Origin, builder );
+
+        if ( !this.TryCreatePredicate( builder, predicateBuilder, out var predicate )
+             || !this.TryCreateExclusionPredicate( builder, predicateBuilder, out var exclusionPredicate ) )
         {
             return;
         }
 
-        builder.Outbound.ValidateReferences(
-            new ReferencePredicateValidator( new HasFamilyAccessPredicate().Or( predicate ).Or( exclusionPredicate ), this.Description, this.ReferenceKinds ) );
+        builder.Outbound.ValidateOutboundReferences(
+            new ReferencePredicateValidator(
+                new HasFamilyAccessPredicate( new ReferencePredicateBuilder( ReferenceEndRole.Origin, builder ) )
+                    .Or( predicate )
+                    .Or( exclusionPredicate ),
+                this.Description,
+                this.ReferenceKinds ) );
     }
 }

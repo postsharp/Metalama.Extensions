@@ -9,12 +9,12 @@ internal class AnyPredicate : ReferencePredicate
 {
     private ImmutableArray<ReferencePredicate> _predicates;
 
-    public AnyPredicate( ImmutableArray<ReferencePredicate> predicates, ReferencePredicateBuilder? builder = null ) : base( builder )
+    public AnyPredicate( ImmutableArray<ReferencePredicate> predicates, ReferencePredicateBuilder builder ) : base( builder )
     {
         this._predicates = predicates;
     }
 
-    public override bool IsMatch( in ReferenceValidationContext context )
+    public override bool IsMatch( ReferenceValidationContext context )
     {
         foreach ( var predicate in this._predicates )
         {
@@ -25,5 +25,20 @@ internal class AnyPredicate : ReferencePredicate
         }
 
         return false;
+    }
+
+    public override ReferenceGranularity Granularity
+    {
+        get
+        {
+            var granularity = ReferenceGranularity.Compilation;
+
+            foreach ( var predicate in this._predicates )
+            {
+                granularity = granularity.CombineWith( predicate.Granularity );
+            }
+
+            return granularity;
+        }
     }
 }

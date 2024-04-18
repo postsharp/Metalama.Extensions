@@ -14,7 +14,7 @@ using System.Text.RegularExpressions;
 namespace Metalama.Extensions.Architecture
 {
     /// <summary>
-    /// Extension methods that verify the architecture. These methods extend the <see cref="IAspectReceiver{T}"/> interface, which is returned
+    /// Extension methods that verify the architecture. These methods extend the <see cref="IAspectReceiver{TDeclaration}"/> interface, which is returned
     /// by the <see cref="AmenderExtensions.Verify(Metalama.Framework.Fabrics.IProjectAmender)"/> method of the <see cref="AmenderExtensions"/> class.
     /// </summary>
     [CompileTime]
@@ -69,10 +69,13 @@ namespace Metalama.Extensions.Architecture
         {
             var taggedReceiver = receiver
                 .Tag(
-                    ( d, tag ) => new ReferencePredicateValidator( predicate( new ReferencePredicateBuilder( receiver ), d, tag ), description, referenceKinds ) );
+                    ( d, tag ) => new ReferencePredicateValidator(
+                        predicate( new ReferencePredicateBuilder( ReferenceEndRole.Origin, receiver ), d, tag ),
+                        description,
+                        referenceKinds ) );
 
             taggedReceiver
-                .ValidateReferences( ( _, validator ) => validator );
+                .ValidateOutboundReferences( ( _, validator ) => validator );
         }
 
         /// <summary>
@@ -120,8 +123,8 @@ namespace Metalama.Extensions.Architecture
             ReferenceKinds referenceKinds = ReferenceKinds.All )
             where TDeclaration : class, IDeclaration
             => receiver
-                .Tag( ( d, tag ) => predicate( new ReferencePredicateBuilder( receiver ), d, tag ).Not() )
-                .ValidateReferences( ( _, validator ) => new ReferencePredicateValidator( validator, description, referenceKinds ) );
+                .Tag( ( d, tag ) => predicate( new ReferencePredicateBuilder( ReferenceEndRole.Origin, receiver ), d, tag ).Not() )
+                .ValidateOutboundReferences( ( _, validator ) => new ReferencePredicateValidator( validator, description, referenceKinds ) );
 
         private static void VerifyInternalsAccess<TDeclaration, TTag>(
             this IAspectReceiver<TDeclaration, TTag> receiver,
@@ -134,7 +137,7 @@ namespace Metalama.Extensions.Architecture
             var taggedReceiver = receiver.Tag(
                 ( d, tag ) =>
                 {
-                    var predicateBuilder = new ReferencePredicateBuilder( receiver );
+                    var predicateBuilder = new ReferencePredicateBuilder( ReferenceEndRole.Origin, receiver );
                     var builtPredicate = predicate( predicateBuilder, d, tag );
                     var typePredicate = builtPredicate;
                     var memberPredicate = predicateBuilder.HasFamilyAccess().Or( transformPredicate( builtPredicate ) );
@@ -153,13 +156,13 @@ namespace Metalama.Extensions.Architecture
             // Check internal types.
             types
                 .Where( t => t.Accessibility == Accessibility.Internal )
-                .ValidateReferences( ( _, tag ) => tag.typeValidator );
+                .ValidateOutboundReferences( ( _, tag ) => tag.typeValidator );
 
             // Check internal members of public types.
             publicTypes
                 .SelectMany( t => t.Members() )
                 .Where( m => m.Accessibility is Accessibility.Internal or Accessibility.PrivateProtected or Accessibility.ProtectedInternal )
-                .ValidateReferences( ( _, tag ) => tag.memberValidator );
+                .ValidateOutboundReferences( ( _, tag ) => tag.memberValidator );
 
             // Check internal accessors of public properties.
             publicTypes
@@ -167,7 +170,7 @@ namespace Metalama.Extensions.Architecture
                 .Where( p => p.Accessibility is Accessibility.Public or Accessibility.Protected )
                 .SelectMany( p => p.Accessors )
                 .Where( m => m.Accessibility is Accessibility.Internal or Accessibility.PrivateProtected or Accessibility.ProtectedInternal )
-                .ValidateReferences( ( _, tag ) => tag.memberValidator );
+                .ValidateOutboundReferences( ( _, tag ) => tag.memberValidator );
         }
 
         /// <summary>
@@ -206,7 +209,7 @@ namespace Metalama.Extensions.Architecture
             ReferenceKinds referenceKinds = ReferenceKinds.All )
             where TDeclaration : class, IDeclaration
             => InternalsCannotBeUsedFromCore( receiver, predicate, description );
-        
+
         private static void InternalsCanOnlyBeUsedFromCore<TDeclaration, TTag>(
             this IAspectReceiver<TDeclaration, TTag> receiver,
             Func<ReferencePredicateBuilder, TDeclaration, TTag, ReferencePredicate> predicate,
@@ -268,8 +271,10 @@ namespace Metalama.Extensions.Architecture
             this IAspectReceiver<IDeclaration> receiver,
             string pattern,
             Func<ReferencePredicateBuilder, ReferencePredicate>? exclusions = null )
-            => receiver.ValidateReferences(
-                DerivedTypeNamingConventionValidator.CreateStarPatternValidator( pattern, ReferencePredicateBuilder.Build( exclusions, receiver ) ) );
+            => receiver.ValidateOutboundReferences(
+                DerivedTypeNamingConventionValidator.CreateStarPatternValidator(
+                    pattern,
+                    ReferencePredicateBuilder.Build( exclusions, receiver, ReferenceEndRole.Origin ) ) );
 
         /// <summary>
         /// Reports a warning when any type that inherits any type in the current selection does not follow a given convention, where the convention
@@ -279,8 +284,10 @@ namespace Metalama.Extensions.Architecture
             this IAspectReceiver<IDeclaration> receiver,
             string pattern,
             Func<ReferencePredicateBuilder, ReferencePredicate>? exclusions = null )
-            => receiver.ValidateReferences(
-                DerivedTypeNamingConventionValidator.CreateRegexValidator( pattern, ReferencePredicateBuilder.Build( exclusions, receiver ) ) );
+            => receiver.ValidateOutboundReferences(
+                DerivedTypeNamingConventionValidator.CreateRegexValidator(
+                    pattern,
+                    ReferencePredicateBuilder.Build( exclusions, receiver, ReferenceEndRole.Origin ) ) );
 
         /// <summary>
         /// Reports a warning when any declaration in the selection fails to respect the given naming convention, with the asterisk character (<c>*</c>)

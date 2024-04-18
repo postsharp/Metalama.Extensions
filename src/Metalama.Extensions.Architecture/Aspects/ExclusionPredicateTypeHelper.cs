@@ -10,36 +10,41 @@ namespace Metalama.Extensions.Architecture.Aspects;
 [CompileTime]
 internal static class ExclusionPredicateTypeHelper
 {
-    public static bool ValidateExclusionPredicateType( Type? type, ScopedDiagnosticSink diagnostics )
+    public static bool TryCreateExclusionPredicate(
+        Type? type,
+        ScopedDiagnosticSink diagnostics,
+        ReferencePredicateBuilder predicateBuilder,
+        out ReferencePredicate? predicate )
     {
         if ( type != null )
         {
             if ( !typeof(ReferencePredicate).IsAssignableFrom( type ) )
             {
                 diagnostics.Report( ArchitectureDiagnosticDefinitions.ExclusionTypePropertyMustBeOfTypeReferencePredicate );
+                predicate = null;
 
                 return false;
             }
-            else if ( type.GetConstructor( Type.EmptyTypes ) == null )
+            else
             {
-                diagnostics.Report( ArchitectureDiagnosticDefinitions.ExclusionTypePropertyMustHaveDefaultConstructor );
+                var constructor = type.GetConstructor( [typeof(ReferencePredicateBuilder)] );
 
-                return false;
+                if ( constructor == null )
+                {
+                    diagnostics.Report( ArchitectureDiagnosticDefinitions.ExclusionTypePropertyMustHaveDefaultConstructor );
+                    predicate = null;
+
+                    return false;
+                }
+
+                predicate = (ReferencePredicate) constructor.Invoke( [predicateBuilder] );
+
+                return true;
             }
         }
+
+        predicate = null;
 
         return true;
-    }
-
-    public static ReferencePredicate? GetExclusionPredicate( Type? type )
-    {
-        if ( type != null )
-        {
-            return (ReferencePredicate) Activator.CreateInstance( type );
-        }
-        else
-        {
-            return null;
-        }
     }
 }

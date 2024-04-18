@@ -78,10 +78,9 @@ public static class ReferencePredicateExtensions
     /// (matches any identifier character, but not the dot), <c>.**.</c> (matches any sub-namespace in the middle of a namespace), <c>**.</c>
     /// (matches any sub-namespace at the beginning of a namespace) or <c>.**</c> (matches any sub-namespace at the end of a namespace -- this pattern
     /// is allowed but redundant). </param>
-    public static ReferencePredicate Namespace( this ReferencePredicateBuilder builder, string ns ) => new ReferencingNamespacePredicate( ns, builder );
+    public static ReferencePredicate Namespace( this ReferencePredicateBuilder builder, string ns ) => new NamespacePredicate( ns, builder );
 
-    public static ReferencePredicate Namespace( this ReferencePredicateBuilder builder, INamespace ns )
-        => new ReferencingNamespacePredicate( ns.FullName, builder );
+    public static ReferencePredicate Namespace( this ReferencePredicateBuilder builder, INamespace ns ) => new NamespacePredicate( ns.FullName, builder );
 
     /// <summary>
     /// Accepts code references contained in a given assembly.
@@ -91,7 +90,7 @@ public static class ReferencePredicateExtensions
     /// (matches any identifier character, but not the dot), <c>.**.</c> (matches any dotted name in the middle of a namespace), <c>**.</c>
     /// (matches any dotted name at the beginning of a the assembly name) or <c>.**</c> (matches any dotted name at the end of the assembly name). </param>
     public static ReferencePredicate Assembly( this ReferencePredicateBuilder builder, string assemblyName )
-        => new ReferencingAssemblyPredicate( assemblyName, builder );
+        => new AssemblyNamePredicate( assemblyName, builder );
 
     /// <summary>
     /// Accepts code references contained in the current namespace.
@@ -103,7 +102,7 @@ public static class ReferencePredicateExtensions
             throw new InvalidOperationException( "There is no namespace in the current context." );
         }
 
-        return new ReferencingNamespacePredicate( builder.Namespace, builder );
+        return new NamespacePredicate( builder.Namespace, builder );
     }
 
     /// <summary>
@@ -116,38 +115,53 @@ public static class ReferencePredicateExtensions
             throw new InvalidOperationException( "There is no assembly in the current context." );
         }
 
-        return new ReferencingAssemblyPredicate( builder.AssemblyName, builder );
+        return new AssemblyNamePredicate( builder.AssemblyName, builder );
     }
 
     /// <summary>
     /// Accepts code references contained in the namespace of a given type.
     /// </summary>
     public static ReferencePredicate NamespaceOf( this ReferencePredicateBuilder builder, Type type )
-        => new ReferencingNamespacePredicate(
+        => new NamespacePredicate(
             type.Namespace ?? throw new ArgumentOutOfRangeException( nameof(type), $"The type {type.FullName} has no namespace." ),
             builder );
 
     /// <summary>
-    /// Accepts code references contained in a given type.
+    /// Accepts code references contained in a given type, specified as a reflection <see cref="System.Type"/>.
     /// </summary>
     /// <seealso cref="AnyType(Metalama.Extensions.Architecture.Predicates.ReferencePredicateBuilder,System.Type[])"/>
-    public static ReferencePredicate Type( this ReferencePredicateBuilder builder, Type type ) => new ReferencingTypePredicate( type, builder );
-
-    public static ReferencePredicate Type( this ReferencePredicateBuilder builder, INamedType type ) => new ReferencingTypePredicate( type, builder );
+    public static ReferencePredicate Type( this ReferencePredicateBuilder builder, Type type ) => new TypeEqualityPredicate( [type], builder );
 
     /// <summary>
-    /// Accepts code references contained in any type in a given list.
+    /// Accepts code references contained in a given type, specified as an <see cref="INamedType"/>.
     /// </summary>
-    /// <seealso cref="Type(Metalama.Extensions.Architecture.Predicates.ReferencePredicateBuilder,System.Type)"/>
-    public static ReferencePredicate AnyType( this ReferencePredicateBuilder builder, params Type[] types )
-        => new AnyReferencingTypePredicate( types, builder );
+    /// <seealso cref="AnyType(Metalama.Extensions.Architecture.Predicates.ReferencePredicateBuilder,System.Type[])"/>
+    public static ReferencePredicate Type( this ReferencePredicateBuilder builder, INamedType type ) => new TypeEqualityPredicate( [type], builder );
 
     /// <summary>
-    /// Accepts code references contained in any type in a given list.
+    /// Accepts code references contained in any type in a given list. Types are specified as reflection <see cref="System.Type"/> objects.
     /// </summary>
     /// <seealso cref="Type(Metalama.Extensions.Architecture.Predicates.ReferencePredicateBuilder,System.Type)"/>
-    public static ReferencePredicate AnyType( this ReferencePredicateBuilder builder, IEnumerable<Type> types )
-        => new AnyReferencingTypePredicate( types, builder );
+    public static ReferencePredicate AnyType( this ReferencePredicateBuilder builder, params Type[] types ) => new TypeEqualityPredicate( types, builder );
+
+    /// <summary>
+    /// Accepts code references contained in any type in a given list. Types are specified as <see cref="INamedType"/> objects.
+    /// </summary>
+    /// <seealso cref="Type(Metalama.Extensions.Architecture.Predicates.ReferencePredicateBuilder,System.Type)"/>
+    public static ReferencePredicate AnyType( this ReferencePredicateBuilder builder, params INamedType[] types )
+        => new TypeEqualityPredicate( types, builder );
+
+    /// <summary>
+    /// Accepts code references contained in any type in a given list. Types are specified as reflection <see cref="System.Type"/> objects.
+    /// </summary>
+    /// <seealso cref="Type(Metalama.Extensions.Architecture.Predicates.ReferencePredicateBuilder,System.Type)"/>
+    public static ReferencePredicate AnyType( this ReferencePredicateBuilder builder, IEnumerable<Type> types ) => new TypeEqualityPredicate( types, builder );
+
+    /// <summary>
+    /// Accepts code references contained in any type in a given list. Types are specified as <see cref="INamedType"/> objects.
+    /// </summary>
+    public static ReferencePredicate AnyType( this ReferencePredicateBuilder builder, IEnumerable<INamedType> types )
+        => new TypeEqualityPredicate( types, builder );
 
     /// <summary>
     /// Accepts code references contained in a given type specified as a string, optionally containing wildcards <c>*</c> or <c>**</c>.
@@ -157,7 +171,7 @@ public static class ReferencePredicateExtensions
     /// (matches any identifier character, but not the dot), <c>.**.</c> (matches any sub-namespace in the middle of a full type name), <c>**.</c>
     /// (matches any sub-namespace at the beginning of the full type name) or <c>.**</c> (matches any sub-namespace and any type name at the end of a namespace). </param>
     /// <returns></returns>
-    public static ReferencePredicate Type( this ReferencePredicateBuilder builder, string type ) => new ReferencingTypeNamePredicate( type, builder );
+    public static ReferencePredicate Type( this ReferencePredicateBuilder builder, string type ) => new TypeNamePredicate( type, builder );
 
     /// <summary>
     /// Accepts code references that are legitimate based on family access rules, but rejects code references that are legitimate according to other rules.

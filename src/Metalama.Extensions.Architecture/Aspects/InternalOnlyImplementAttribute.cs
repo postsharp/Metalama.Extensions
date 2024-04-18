@@ -20,22 +20,22 @@ namespace Metalama.Extensions.Architecture.Aspects
 
         public override void BuildAspect( IAspectBuilder<INamedType> builder )
         {
-            builder.Outbound.ValidateReferences( this.ValidateReference, ReferenceKinds.BaseType );
+            builder.Outbound.ValidateOutboundReferences( this.ValidateReference, ReferenceGranularity.Compilation, ReferenceKinds.BaseType );
 
             // It is normally not recommended to store state in an aspect field (instead it is recommended for aspects to have an immutable design).
             // In this case, it does not matter because the aspect instance is not shared or inherited.
             this._projectName = builder.Project.Name ?? "unnamed";
         }
 
-        private void ValidateReference( in ReferenceValidationContext context )
+        private void ValidateReference( ReferenceValidationContext context )
         {
-            if ( context.ReferencedDeclaration.DeclaringAssembly.AreInternalsVisibleFrom( context.ReferencingDeclaration.DeclaringAssembly ) )
+            if ( context.Destination.Declaration.DeclaringAssembly.AreInternalsVisibleFrom( context.Origin.Assembly ) )
             {
                 return;
             }
 
             context.Diagnostics.Report(
-                ArchitectureDiagnosticDefinitions.InternalImplement.WithArguments( (context.ReferencedDeclaration, this._projectName) ) );
+                ArchitectureDiagnosticDefinitions.InternalImplement.WithArguments( (context.Destination.Declaration, this._projectName) ) );
         }
 
         public override void BuildEligibility( IEligibilityBuilder<INamedType> builder )

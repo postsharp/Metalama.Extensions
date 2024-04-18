@@ -29,19 +29,19 @@ namespace Metalama.Extensions.Architecture.Aspects
 
         public void BuildAspect( IAspectBuilder<IDeclaration> builder )
         {
-            builder.Outbound.ValidateReferences( this.ValidateReference );
+            builder.Outbound.ValidateOutboundReferences( this.ValidateReference, ReferenceGranularity.Member );
         }
 
-        private void ValidateReference( in ReferenceValidationContext context )
+        private void ValidateReference( ReferenceValidationContext context )
         {
             // Declarations contained in an experimental declaration can reference it.
-            if ( context.ReferencingDeclaration.IsContainedIn( context.ReferencedDeclaration ) )
+            if ( context.Origin.Type.IsContainedIn( context.Destination.Declaration ) )
             {
                 return;
             }
 
             // An experimental declaration an reference another experimental declaration.
-            if ( context.ReferencingDeclaration.ContainingAncestorsAndSelf()
+            if ( context.Origin.Declaration.ContainingAncestorsAndSelf()
                 .Any( d => d.DeclarationKind != DeclarationKind.Compilation && d.Enhancements().HasAspect<ExperimentalAttribute>() ) )
             {
                 return;
@@ -49,7 +49,7 @@ namespace Metalama.Extensions.Architecture.Aspects
 
             context.Diagnostics.Report(
                 ArchitectureDiagnosticDefinitions.ExperimentalApi.WithArguments(
-                    (context.ReferencedDeclaration, context.ReferencedDeclaration.DeclarationKind, string.IsNullOrEmpty( this.Description ) ? "" : " ",
+                    (context.Destination.Declaration, context.Destination.Declaration.DeclarationKind, string.IsNullOrEmpty( this.Description ) ? "" : " ",
                      this.Description) ) );
         }
 

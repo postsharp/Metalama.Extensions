@@ -5,6 +5,7 @@ using Metalama.Extensions.Architecture.Validators;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 using Metalama.Framework.Eligibility;
+using Metalama.Framework.Validation;
 
 namespace Metalama.Extensions.Architecture.Aspects;
 
@@ -19,12 +20,15 @@ public class CannotBeUsedFromAttribute : BaseUsageValidationAttribute, IAspect<I
 
     public void BuildAspect( IAspectBuilder<IMemberOrNamedType> builder )
     {
-        if ( !this.TryCreatePredicate( builder, out var predicate ) || !this.TryCreateExclusionPredicate( builder, out var exclusionPredicate ) )
+        var predicateBuilder = new ReferencePredicateBuilder( ReferenceEndRole.Origin, builder );
+
+        if ( !this.TryCreatePredicate( builder, predicateBuilder, out var predicate )
+             || !this.TryCreateExclusionPredicate( builder, predicateBuilder, out var exclusionPredicate ) )
         {
             return;
         }
 
-        builder.Outbound.ValidateReferences(
+        builder.Outbound.ValidateOutboundReferences(
             new ReferencePredicateValidator(
                 predicate.Not().Or( exclusionPredicate ),
                 this.Description,

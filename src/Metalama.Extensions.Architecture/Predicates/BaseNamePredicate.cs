@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 namespace Metalama.Extensions.Architecture.Predicates;
 
 [CompileTime]
-internal abstract class BaseNamePredicate : ReferencePredicate
+internal abstract class BaseNamePredicate : ReferenceEndPredicate
 {
     private const string _identifierChar = "[\\p{L}\\p{M}\\p{N}\\p{Pc}\\p{Cf}]";
     private const string _starPattern = _identifierChar + "*";
@@ -22,7 +22,7 @@ internal abstract class BaseNamePredicate : ReferencePredicate
     [NonCompileTimeSerialized]
     private Regex? _regex;
 
-    protected BaseNamePredicate( string name, ReferencePredicateBuilder? builder = null ) : base( builder )
+    protected BaseNamePredicate( string name, ReferencePredicateBuilder builder ) : base( builder )
     {
         if ( name.Contains( "*" ) )
         {

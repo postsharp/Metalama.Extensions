@@ -8,11 +8,11 @@ using System.Linq;
 
 namespace Metalama.Extensions.Architecture.Predicates;
 
-internal class AnyReferencingTypePredicate : ReferencePredicate
+internal class TypeEqualityPredicate : ReferenceEndPredicate
 {
     private readonly IRef<IDeclaration>[] _typeRefs;
 
-    public AnyReferencingTypePredicate( IEnumerable<Type> types, ReferencePredicateBuilder? builder = null )
+    public TypeEqualityPredicate( IEnumerable<Type> types, ReferencePredicateBuilder builder )
         : base( builder )
     {
         var iTypes = types.Select( TypeFactory.GetType );
@@ -38,10 +38,31 @@ internal class AnyReferencingTypePredicate : ReferencePredicate
         this._typeRefs = typeRefs.ToArray();
     }
 
-    public override bool IsMatch( in ReferenceValidationContext context )
+    public TypeEqualityPredicate( IEnumerable<INamedType> types, ReferencePredicateBuilder builder )
+        : base( builder )
     {
-        var contextCopy = context;
+        var typeRefs = new List<IRef<IDeclaration>>();
 
-        return this._typeRefs.Any( t => contextCopy.ReferencingType.Equals( t.GetTarget( options: default ) ) );
+        foreach ( var type in types )
+        {
+            if ( type is { IsGeneric: true, IsCanonicalGenericInstance: false } )
+            {
+                throw new InvalidOperationException(
+                    $"The type '{type}' cannot be used as a referencing type predicate parameter. Bound generic types are not allowed." );
+            }
+
+            typeRefs.Add( type.Definition.ToRef() );
+        }
+
+        this._typeRefs = typeRefs.ToArray();
     }
+
+    public override bool IsMatch( in ReferenceEnd referenceEnd )
+    {
+        var referenceEndType = referenceEnd.Type;
+
+        return this._typeRefs.Any( t => referenceEndType.Equals( t.GetTarget( options: default ) ) );
+    }
+
+    public override ReferenceGranularity Granularity => ReferenceGranularity.Type;
 }

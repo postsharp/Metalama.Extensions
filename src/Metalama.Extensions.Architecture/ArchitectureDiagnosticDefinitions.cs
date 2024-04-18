@@ -51,13 +51,12 @@ internal static class ArchitectureDiagnosticDefinitions
         "At least one property of the attribute must be set.",
         _category );
 
-    public static readonly DiagnosticDefinition<(IDeclaration ValidatedDeclaration, DeclarationKind DeclarationKind, string UsageKind, INamedType
-            ReferencingType, string?
-            OptionalSpace, string? Description)>
+    public static readonly DiagnosticDefinition<(IDeclaration ValidatedDeclaration, DeclarationKind ValidatedDeclarationKind, string UsageKind, IDeclaration
+            ReferencingDeclaration, DeclarationKind ReferencingDeclarationKind, string? OptionalSpace, string? Description)>
         OnlyAccessibleFrom = new(
             "LAMA0905",
             Severity.Warning,
-            "The '{0}' {1} cannot be {2} by the '{3}' type.{4}{5}",
+            "The '{0}' {1} cannot be {2} by the '{3}' {4}.{5}{6}",
             "The declaration cannot be used from this context because of an architecture constraint.",
             _category );
 
@@ -79,5 +78,5 @@ internal static class ArchitectureDiagnosticDefinitions
         new(
             "LAMA0907",
             Severity.Warning,
-            $"The type assigned to the {nameof(DerivedTypesMustRespectRegexNamingConventionAttribute.ExclusionPredicateType)} property must have a default constructor." );
+            $"The type assigned to the {nameof(DerivedTypesMustRespectRegexNamingConventionAttribute.ExclusionPredicateType)} property must have a constructor constructor accepting a single parameter of type {nameof(ReferencePredicateBuilder)}." );
 }

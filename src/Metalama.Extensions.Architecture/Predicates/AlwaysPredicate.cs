@@ -6,7 +6,9 @@ namespace Metalama.Extensions.Architecture.Predicates;
 
 internal class AlwaysPredicate : ReferencePredicate
 {
-    public AlwaysPredicate( ReferencePredicateBuilder? builder = null ) : base( builder ) { }
+    public AlwaysPredicate( ReferencePredicateBuilder builder ) : base( builder ) { }
 
-    public override bool IsMatch( in ReferenceValidationContext context ) => true;
+    public override bool IsMatch( ReferenceValidationContext context ) => true;
+
+    public override ReferenceGranularity Granularity => ReferenceGranularity.Compilation;
 }
