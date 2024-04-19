@@ -8,7 +8,7 @@ internal class TypeNamePredicate : BaseNamePredicate
 {
     public TypeNamePredicate( string name, ReferencePredicateBuilder builder ) : base( name, builder ) { }
 
-    public override bool IsMatch( in ReferenceEnd referenceEnd ) => this.IsMatch( referenceEnd.Type.FullName );
+    public override bool IsMatch( ReferenceEnd referenceEnd ) => this.IsMatch( referenceEnd.Type.FullName );
 
     public override ReferenceGranularity Granularity => ReferenceGranularity.Type;
 }

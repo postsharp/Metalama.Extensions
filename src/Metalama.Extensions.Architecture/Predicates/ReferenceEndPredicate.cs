@@ -26,5 +26,5 @@ public abstract class ReferenceEndPredicate : ReferencePredicate
     /// <summary>
     /// Gets a value indicating whether the predicate matches the given <see cref="ReferenceEnd"/>.
     /// </summary>
-    public abstract bool IsMatch( in ReferenceEnd referenceEnd );
+    public abstract bool IsMatch( ReferenceEnd referenceEnd );
 }

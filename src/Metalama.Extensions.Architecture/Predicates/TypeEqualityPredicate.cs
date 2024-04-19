@@ -57,7 +57,7 @@ internal class TypeEqualityPredicate : ReferenceEndPredicate
         this._typeRefs = typeRefs.ToArray();
     }
 
-    public override bool IsMatch( in ReferenceEnd referenceEnd )
+    public override bool IsMatch( ReferenceEnd referenceEnd )
     {
         var referenceEndType = referenceEnd.Type;
 

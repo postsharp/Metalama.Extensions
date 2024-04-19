@@ -8,7 +8,7 @@ internal class NamespacePredicate : BaseNamePredicate
 {
     public NamespacePredicate( string name, ReferencePredicateBuilder builder ) : base( name, builder ) { }
 
-    public override bool IsMatch( in ReferenceEnd referenceEnd )
+    public override bool IsMatch( ReferenceEnd referenceEnd )
     {
         for ( var ns = referenceEnd.Namespace; ns != null; ns = ns.ParentNamespace )
         {
