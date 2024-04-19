@@ -69,6 +69,8 @@ internal class LazyServiceLocatorDependencyInjectionStrategy : DefaultDependency
             return false;
         }
 
+        SuppressNonNullableFieldMustContainValue( builder, builder.Target );
+
         var typeBuilder = builder.WithTarget( builder.Target.DeclaringType );
 
         if ( !this.TryAddFields( typeBuilder, overrideResult.Declaration, propertyArgs ) )
@@ -99,6 +101,9 @@ internal class LazyServiceLocatorDependencyInjectionStrategy : DefaultDependency
         if ( introduceServiceProviderFieldResult.Outcome != AdviceOutcome.Ignore )
         {
             this.InitializeServiceProvider( builder, propertyArgs.ServiceProviderField );
+
+            SuppressionHelper.SuppressUnusedWarnings( builder, propertyArgs.ServiceProviderField );
+            SuppressNonNullableFieldMustContainValue( builder, propertyArgs.ServiceProviderField );
         }
 
         // Introduce a field that caches the service.
@@ -113,6 +118,8 @@ internal class LazyServiceLocatorDependencyInjectionStrategy : DefaultDependency
         }
 
         propertyArgs.CacheField = introduceCacheFieldResult.Declaration;
+
+        SuppressionHelper.SuppressUnusedWarnings( builder, propertyArgs.CacheField );
 
         return true;
     }

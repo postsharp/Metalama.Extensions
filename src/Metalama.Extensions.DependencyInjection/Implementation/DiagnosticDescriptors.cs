@@ -12,6 +12,7 @@ internal static class DiagnosticDescriptors
     private const string _category = "Metalama.Extensions.DependencyInjection";
 
     // Diagnostics need to be declared in an aspect or fabric at the moment.
+    // Range: 0701-0749
 
     internal static readonly DiagnosticDefinition<(IType DependencyType, INamedType TargetType)>
         NoDependencyInjectionFrameworkRegistered = new(
@@ -28,4 +29,10 @@ internal static class DiagnosticDescriptors
             "None of the registered dependency injection frameworks can handle the dependency '{0}' in type '{1}'.",
             "None of the registered dependency injection frameworks can handle a dependency.",
             _category );
+
+    internal static readonly SuppressionDefinition NonNullableFieldMustContainValue = new( "CS8618" );
+
+    internal static readonly SuppressionDefinition FieldIsNeverUsed = new( "CS0169" );
+
+    internal static readonly SuppressionDefinition PrivateMemberIsUnused = new( "IDE0051" );
 }

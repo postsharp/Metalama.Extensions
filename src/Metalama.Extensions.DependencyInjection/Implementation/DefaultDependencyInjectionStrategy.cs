@@ -72,7 +72,6 @@ public class DefaultDependencyInjectionStrategy
     /// The entry point of the <see cref="DefaultDependencyInjectionStrategy"/>. Orchestrates all steps: first calls <see cref="TryIntroduceFieldOrProperty"/>,
     /// then <see cref="GetPullStrategy"/>, then <see cref="TryPullDependency(Metalama.Framework.Aspects.IAspectBuilder{Metalama.Framework.Code.INamedType},Metalama.Framework.Code.IFieldOrProperty,Metalama.Extensions.DependencyInjection.Implementation.IPullStrategy)"/>.
     /// </summary>
-    /// <param name="builder"></param>
     public virtual bool TryIntroduceDependency( IAspectBuilder<INamedType> builder, [NotNullWhen( true )] out IFieldOrProperty? fieldOrProperty )
     {
         if ( !this.TryIntroduceFieldOrProperty( builder, out fieldOrProperty, out var didExist ) )
@@ -84,6 +83,8 @@ public class DefaultDependencyInjectionStrategy
         {
             return true;
         }
+
+        SuppressionHelper.SuppressUnusedWarnings( builder, fieldOrProperty );
 
         var pullStrategy = this.GetPullStrategy( fieldOrProperty );
 
@@ -107,6 +108,15 @@ public class DefaultDependencyInjectionStrategy
         => type.Constructors.Where( c => c.InitializerKind != ConstructorInitializerKind.This && !c.IsRecordCopyConstructor() );
 
     /// <summary>
+    /// Suppresses the warning CS8618 ("Non-nullable variable must contain a non-null value when exiting constructor.") for a member that is being introduced,
+    /// if necessary. This is useful for design-time diagnostics.
+    /// </summary>
+    protected static void SuppressNonNullableFieldMustContainValue( IAspectBuilder builder, IFieldOrProperty introducedMember )
+    {
+        SuppressionHelper.SuppressNonNullableFieldMustContainValue( builder, introducedMember, GetConstructors( introducedMember.DeclaringType ) );
+    }
+
+    /// <summary>
     /// Pulls the dependency from all constructors, i.e. introduce a parameter to these constructors (according to an <see cref="IPullStrategy"/>), and
     /// assigns its value to the dependency property.
     /// </summary>
@@ -115,6 +125,8 @@ public class DefaultDependencyInjectionStrategy
     /// <param name="pullStrategy">A pull strategy (typically the one returned by <see cref="GetPullStrategy"/>).</param>
     protected bool TryPullDependency( IAspectBuilder<INamedType> aspectBuilder, IFieldOrProperty dependencyFieldOrProperty, IPullStrategy pullStrategy )
     {
+        SuppressNonNullableFieldMustContainValue( aspectBuilder, dependencyFieldOrProperty );
+
         var success = true;
 
         foreach ( var constructor in GetConstructors( aspectBuilder.Target ) )

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) SharpCrafters s.r.o. See the LICENSE.md file in the root directory of this repository root for details.
 
 using JetBrains.Annotations;
+using Metalama.Extensions.DependencyInjection.Implementation;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 
@@ -34,6 +35,10 @@ public class IntroduceDependencyAttribute : DeclarativeAdviceAttribute
 
     public sealed override void BuildAdvice( IMemberOrNamedType templateMember, string templateMemberId, IAspectBuilder<IDeclaration> builder )
     {
+        // Suppress warnings on the aspect field.
+        builder.Diagnostics.Suppress( DiagnosticDescriptors.NonNullableFieldMustContainValue, templateMember );
+        builder.Diagnostics.Suppress( DiagnosticDescriptors.PrivateMemberIsUnused, templateMember );
+
         if ( !builder.TryIntroduceDependency(
                 this.ToProperties( (IFieldOrProperty) templateMember, builder.Target.GetClosestNamedType()! ),
                 out _ ) )
