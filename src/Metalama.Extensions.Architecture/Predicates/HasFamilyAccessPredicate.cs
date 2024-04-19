@@ -18,8 +18,8 @@ internal class HasFamilyAccessPredicate : ReferencePredicate
     {
         // TODO: take nested types into account.
 
-        ref var b = ref context.GetReferenceEnd( this._role );
-        ref var a = ref context.GetReferenceEnd( this._role == ReferenceEndRole.Destination ? ReferenceEndRole.Origin : ReferenceEndRole.Destination );
+        var b = context.GetReferenceEnd( this._role );
+        var a = context.GetReferenceEnd( this._role == ReferenceEndRole.Destination ? ReferenceEndRole.Origin : ReferenceEndRole.Destination );
 
         return a.Declaration is IMemberOrNamedType { Accessibility: Accessibility.Protected or Accessibility.ProtectedInternal }
                && b.Type.Is( a.Member.GetClosestNamedType()! );
