@@ -15,7 +15,7 @@ namespace Metalama.Extensions.Architecture.AspectTests.OnlyAccessibleFrom.Extern
     {
         public override void AmendProject( IProjectAmender amender )
         {
-            amender.SelectType( typeof(Regex) ).CannotBeUsedFrom( r => r.NamespaceOf( typeof(ForbiddenClass) ) );
+            amender.SelectReflectionType( typeof(Regex) ).CannotBeUsedFrom( r => r.NamespaceOf( typeof(ForbiddenClass) ) );
         }
     }
 
