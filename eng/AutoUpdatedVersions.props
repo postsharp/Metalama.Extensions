@@ -4,7 +4,7 @@
     <PropertyGroup>
         <MetalamaBackstageVersion>2024.1.12</MetalamaBackstageVersion>
         <MetalamaCompilerVersion>2024.1.7</MetalamaCompilerVersion>
-        <MetalamaVersion>2024.1.15</MetalamaVersion>
+        <MetalamaVersion>2024.1.16</MetalamaVersion>
         <MetalamaFrameworkRunTimeVersion>2024.1.4</MetalamaFrameworkRunTimeVersion>
     </PropertyGroup>
 
