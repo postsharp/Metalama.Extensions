@@ -29,6 +29,6 @@ public class TargetClass
   private IFormatProvider? formatProviderCache;
   public TargetClass(IFormatProvider formatProvider)
   {
-    this._serviceProvider = ServiceProviderProvider.ServiceProvider();
+    _serviceProvider = ServiceProviderProvider.ServiceProvider();
   }
 }

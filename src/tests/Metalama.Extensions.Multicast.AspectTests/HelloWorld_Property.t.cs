@@ -12,7 +12,7 @@ public class C
     init
     {
       Console.WriteLine("Overridden set: Hello, world.");
-      this._f1 = value;
+      _f1 = value;
     }
   }
   private int _p;
@@ -26,7 +26,7 @@ public class C
     set
     {
       Console.WriteLine("Overridden set: Hello, world.");
-      this._p = value;
+      _p = value;
     }
   }
 }
