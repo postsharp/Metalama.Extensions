@@ -8,7 +8,7 @@ using Metalama.Extensions.DependencyInjection;
 using Metalama.Extensions.DependencyInjection.AspectTests.Advice.Programmatic_DesignTime;
 using Metalama.Framework.Code;
 
-[assembly: AspectOrder( typeof(DependencyAttribute), typeof(MyAspect) )]
+[assembly: AspectOrder( AspectOrderDirection.RunTime, typeof(DependencyAttribute), typeof(MyAspect) )]
 
 namespace Metalama.Extensions.DependencyInjection.AspectTests.Advice.Programmatic_DesignTime;
 

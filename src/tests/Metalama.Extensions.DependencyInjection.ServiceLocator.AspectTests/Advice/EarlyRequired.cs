@@ -4,7 +4,7 @@ using Metalama.Extensions.DependencyInjection;
 using Metalama.Extensions.DependencyInjection.ServiceLocator.AspectTests.Advice.EarlyRequired;
 using Metalama.Framework.Aspects;
 
-[assembly: AspectOrder( typeof(DependencyAttribute), typeof(MyAspect) )]
+[assembly: AspectOrder( AspectOrderDirection.RunTime, typeof(DependencyAttribute), typeof(MyAspect) )]
 
 namespace Metalama.Extensions.DependencyInjection.ServiceLocator.AspectTests.Advice.EarlyRequired;
 

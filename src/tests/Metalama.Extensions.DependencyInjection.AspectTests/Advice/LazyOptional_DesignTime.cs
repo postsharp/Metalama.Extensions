@@ -7,7 +7,7 @@ using Metalama.Framework.Aspects;
 using Metalama.Extensions.DependencyInjection;
 using Metalama.Extensions.DependencyInjection.AspectTests.Advice.LazyOptional_DesignTime;
 
-[assembly: AspectOrder( typeof(DependencyAttribute), typeof(MyAspect) )]
+[assembly: AspectOrder( AspectOrderDirection.RunTime, typeof(DependencyAttribute), typeof(MyAspect) )]
 
 namespace Metalama.Extensions.DependencyInjection.AspectTests.Advice.LazyOptional_DesignTime;
 
