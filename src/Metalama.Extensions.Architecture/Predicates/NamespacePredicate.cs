@@ -10,7 +10,7 @@ internal class NamespacePredicate : BaseNamePredicate
 
     public override bool IsMatch( ReferenceEnd referenceEnd )
     {
-        for ( var ns = referenceEnd.Namespace; ns != null; ns = ns.ParentNamespace )
+        for ( var ns = referenceEnd.Namespace; ns != null; ns = ns.ContainingNamespace )
         {
             if ( this.IsMatch( ns.FullName ) )
             {

@@ -85,7 +85,7 @@ public abstract class BaseUsageValidationAttribute : Attribute, IConditionallyIn
         ReferencePredicateBuilder predicateBuilder,
         [NotNullWhen( true )] out ReferencePredicate? predicate )
     {
-        var currentNamespace = aspectBuilder.Target.GetClosestNamedType()!.Namespace;
+        var currentNamespace = aspectBuilder.Target.GetClosestNamedType()!.ContainingNamespace;
 
         var predicates = ImmutableArray.CreateBuilder<ReferencePredicate>();
 

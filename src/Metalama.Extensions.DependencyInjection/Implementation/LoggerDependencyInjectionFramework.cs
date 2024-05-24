@@ -31,7 +31,7 @@ public sealed class LoggerDependencyInjectionFramework : DefaultDependencyInject
         public LoggerPullStrategy( DependencyProperties properties, IFieldOrProperty introducedFieldOrProperty ) : base( properties, introducedFieldOrProperty )
         {
             var loggerType = (INamedType) introducedFieldOrProperty.Type;
-            var genericLoggerType = loggerType.Namespace.Types.OfName( "ILogger" ).Single( l => l.TypeParameters.Count == 1 );
+            var genericLoggerType = loggerType.ContainingNamespace.Types.OfName( "ILogger" ).Single( l => l.TypeParameters.Count == 1 );
 
             // Sets the type of the required or created constructor parameter. We return ILogger<T> where T is the declaring type.
             // (The default behavior would return just ILogger).
