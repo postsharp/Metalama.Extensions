@@ -6,7 +6,7 @@ namespace Metalama.Extensions.DependencyInjection.AspectTests.Advice.LazyOptiona
         {
             get
             {
-                return default( IFormatProvider )!;
+                return default !;
             }
         }
         private Func<IFormatProvider> _formatProviderFunc;
