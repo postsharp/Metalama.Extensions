@@ -6,7 +6,7 @@ namespace Metalama.Extensions.DependencyInjection.AspectTests.Advice.LazyRequire
         {
             get
             {
-                return default( IFormatProvider )!;
+                return default !;
             }
         }
         private Func<IFormatProvider> _formatProviderFunc;
