@@ -9,12 +9,6 @@
         <MetalamaExtensionsAssemblyVersion>$(MainVersion)</MetalamaExtensionsAssemblyVersion>
     </PropertyGroup>
 
-    
-    <!-- Set the default versions of dependencies -->
-    <PropertyGroup>
-        <PostSharpEngineeringVersion>2023.2.83</PostSharpEngineeringVersion>
-    </PropertyGroup>
-
     <!-- Set the deafult versions of auto-updated dependencies -->
     <Import Project="AutoUpdatedVersions.props" />
 
@@ -25,5 +19,8 @@
         <AssemblyVersion>$(MetalamaExtensionsAssemblyVersion)</AssemblyVersion>
         <Version>$(MetalamaExtensionsVersion)</Version>
     </PropertyGroup>
+
+    <!-- Versions of other dependencies are set in Directory.Packages.props. -->
+    <!-- See https://learn.microsoft.com/en-us/nuget/consume-packages/central-package-management. -->
 
 </Project>
