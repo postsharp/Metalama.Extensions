@@ -9,8 +9,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Metalama.Framework" Version="$(MetalamaVersion)" PrivateAssets="all" />
-        <PackageReference Include="Metalama.Framework.Sdk" Version="$(MetalamaVersion)" PrivateAssets="all" />
+        <PackageReference Include="Metalama.Framework" PrivateAssets="all" />
+        <PackageReference Include="Metalama.Framework.Sdk" PrivateAssets="all" />
     </ItemGroup>
 
     <ItemGroup>
