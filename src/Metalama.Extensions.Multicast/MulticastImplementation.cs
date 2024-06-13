@@ -134,7 +134,7 @@ public sealed class MulticastImplementation
 
     private IEligibilityRule<IDeclaration> CreateEligibilityRule()
     {
-        List<Action<IEligibilityBuilder<IDeclaration>>> rules = new();
+        List<Action<IEligibilityBuilder<IDeclaration>>> rules = [];
 
         void AcceptAssembly()
         {

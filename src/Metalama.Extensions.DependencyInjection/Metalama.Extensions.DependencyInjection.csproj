@@ -3,16 +3,16 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
         <Nullable>enable</Nullable>
-		<PackageDescription>An official and open-source Metalama extension that allows aspects to consume dependencies from an arbitrary dependency injection framework.</PackageDescription>
+        <PackageDescription>An official and open-source Metalama extension that allows aspects to consume dependencies from an arbitrary dependency injection framework.</PackageDescription>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="JetBrains.Annotations" Version="2022.3.1" />
-        <PackageReference Include="Metalama.Framework" Version="$(MetalamaVersion)" />
+        <PackageReference Include="JetBrains.Annotations" />
+        <PackageReference Include="Metalama.Framework" />
     </ItemGroup>
 
 
-	<Import Sdk="PostSharp.Engineering.Sdk" Project="SystemTypes.props" />
+    <Import Sdk="PostSharp.Engineering.Sdk" Project="SystemTypes.props" />
 
     <ItemGroup>
         <None Include="README.md" Pack="true" PackagePath="\" />
