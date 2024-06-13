@@ -9,21 +9,21 @@ using MetalamaDependencies = PostSharp.Engineering.BuildTools.Dependencies.Defin
 
 var product = new Product( MetalamaDependencies.MetalamaExtensions )
 {
-    Solutions = new Solution[] 
-    { 
+    Solutions =
+    [
         new DotNetSolution( "Metalama.Extensions.sln" ) 
         { 
             CanFormatCode = true,
             FormatExclusions = new[] { "src\\tests\\*AspectTests\\**\\*" },
         } 
-    },
+    ],
     PublicArtifacts = Pattern.Create(
         "Metalama.Extensions.DependencyInjection.$(PackageVersion).nupkg",
         "Metalama.Extensions.DependencyInjection.ServiceLocator.$(PackageVersion).nupkg",
         "Metalama.Extensions.Multicast.$(PackageVersion).nupkg",
         "Metalama.Extensions.Metrics.$(PackageVersion).nupkg",
         "Metalama.Extensions.Architecture.$(PackageVersion).nupkg" ),
-    Dependencies = new[] { DevelopmentDependencies.PostSharpEngineering, MetalamaDependencies.Metalama },
+    Dependencies = [DevelopmentDependencies.PostSharpEngineering, MetalamaDependencies.Metalama],
     MainVersionDependency = MetalamaDependencies.Metalama
 };
 
