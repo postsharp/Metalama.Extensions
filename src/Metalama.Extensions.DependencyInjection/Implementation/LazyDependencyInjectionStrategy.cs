@@ -109,7 +109,7 @@ public partial class LazyDependencyInjectionStrategy : DefaultDependencyInjectio
 
         SuppressNonNullableFieldMustContainValue( builder, builder.Target );
 
-        return this.TryAddFields( builder.WithTarget( builder.Target.DeclaringType ), overrideResult.Declaration, templateArgs );
+        return this.TryAddFields( builder.With( builder.Target.DeclaringType ), overrideResult.Declaration, templateArgs );
     }
 
     public class TemplateArgs

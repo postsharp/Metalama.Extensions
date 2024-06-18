@@ -88,6 +88,5 @@ public static class DependencyInjectionExtensions
             return false;
         }
 
-        return framework.TryIntroduceDependency( properties, aspectBuilder.WithTarget( properties.TargetType ), out dependencyFieldOrProperty );
-    }
+        return framework.TryIntroduceDependency( properties, aspectBuilder.With( properties.TargetType ), out dependencyFieldOrProperty ); }
 }

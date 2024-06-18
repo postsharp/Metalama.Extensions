@@ -95,7 +95,7 @@ public class DefaultDependencyInjectionStrategy
     {
         var pullStrategy = this.GetPullStrategy( builder.Target );
 
-        this.TryPullDependency( builder.WithTarget( builder.Target.DeclaringType ), builder.Target, pullStrategy );
+        this.TryPullDependency( builder.With( builder.Target.DeclaringType ), builder.Target, pullStrategy );
 
         return true;
     }
