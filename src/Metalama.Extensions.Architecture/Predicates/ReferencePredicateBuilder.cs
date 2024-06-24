@@ -38,8 +38,7 @@ public sealed class ReferencePredicateBuilder
     public ReferencePredicateBuilder( ReferenceEndRole validatedRole, IAspectReceiver<IDeclaration> receiver ) : this(
         validatedRole,
         receiver.OriginatingNamespace,
-        receiver.Project.AssemblyName )
-    { }
+        receiver.Project.AssemblyName ) { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ReferencePredicateBuilder"/> class from an <see cref="IAspectBuilder{TAspectTarget}"/>.
@@ -47,8 +46,7 @@ public sealed class ReferencePredicateBuilder
     public ReferencePredicateBuilder( ReferenceEndRole validatedRole, IAspectBuilder<IDeclaration> aspectBuilder ) : this(
         validatedRole,
         aspectBuilder.Target.GetNamespace()?.FullName,
-        aspectBuilder.Project.AssemblyName )
-    { }
+        aspectBuilder.Project.AssemblyName ) { }
 
     private ReferencePredicateBuilder( ReferenceEndRole validatedRole, string? ns = null, string? assemblyName = null )
     {
@@ -69,7 +67,7 @@ public sealed class ReferencePredicateBuilder
     /// </summary>
     public string? AssemblyName { get; }
 
-    [return: NotNullIfNotNull( nameof( func ) )]
+    [return: NotNullIfNotNull( nameof(func) )]
     internal static ReferencePredicate? Build(
         Func<ReferencePredicateBuilder, ReferencePredicate>? func,
         IAspectReceiver<IDeclaration> verifier,

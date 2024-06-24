@@ -3,7 +3,6 @@
 using Metalama.Extensions.Architecture.Aspects;
 using Metalama.Extensions.Architecture.AspectTests.InternalsCanOnlyBeUsedFrom_Aspect.AllowedNs;
 using Metalama.Extensions.Architecture.Predicates;
-using Metalama.Framework.Code;
 using Metalama.Framework.Validation;
 
 namespace Metalama.Extensions.Architecture.AspectTests.InternalsCanOnlyBeUsedFrom_Aspect
