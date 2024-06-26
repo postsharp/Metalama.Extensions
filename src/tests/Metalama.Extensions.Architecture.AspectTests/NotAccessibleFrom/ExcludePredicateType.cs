@@ -2,7 +2,6 @@
 
 using Metalama.Extensions.Architecture.Aspects;
 using Metalama.Extensions.Architecture.Predicates;
-using Metalama.Framework.Code;
 using Metalama.Framework.Validation;
 
 namespace Metalama.Extensions.Architecture.AspectTests.NotAccessibleFrom.ExcludePredicateType

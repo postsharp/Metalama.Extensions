@@ -15,5 +15,5 @@ public class TargetClass( IFormatProvider formatProvider )
     private readonly ILogger? _logger;
 
     [Dependency]
-    private IFormatProvider formatProvider;
+    private IFormatProvider _formatProvider;
 }

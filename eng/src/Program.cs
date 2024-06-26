@@ -16,6 +16,7 @@ var product = new Product( MetalamaDependencies.MetalamaExtensions )
             CanFormatCode = true,
             FormatExclusions = ["src\\tests\\*AspectTests\\**\\*"],
         }
+        
     ],
     PublicArtifacts = Pattern.Create(
         "Metalama.Extensions.DependencyInjection.$(PackageVersion).nupkg",

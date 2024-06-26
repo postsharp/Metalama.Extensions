@@ -2,9 +2,7 @@
 
 using Metalama.Extensions.Architecture.Aspects;
 using Metalama.Extensions.Architecture.Predicates;
-using Metalama.Framework.Code;
 using Metalama.Framework.Validation;
-using System.Diagnostics;
 
 namespace Metalama.Extensions.Architecture.AspectTests.NamingConvention.ExcludingNestedTypes
 {
