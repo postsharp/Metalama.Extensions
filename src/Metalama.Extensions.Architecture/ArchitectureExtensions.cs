@@ -75,7 +75,7 @@ namespace Metalama.Extensions.Architecture
                         referenceKinds ) );
 
             taggedReceiver
-                .ValidateOutboundReferences( ( _, validator ) => validator );
+                .ValidateInboundReferences( ( _, validator ) => validator );
         }
 
         /// <summary>
@@ -124,7 +124,7 @@ namespace Metalama.Extensions.Architecture
             where TDeclaration : class, IDeclaration
             => receiver
                 .Tag( ( d, tag ) => predicate( new ReferencePredicateBuilder( ReferenceEndRole.Origin, receiver ), d, tag ).Not() )
-                .ValidateOutboundReferences( ( _, validator ) => new ReferencePredicateValidator( validator, description, referenceKinds ) );
+                .ValidateInboundReferences( ( _, validator ) => new ReferencePredicateValidator( validator, description, referenceKinds ) );
 
         private static void VerifyInternalsAccess<TDeclaration, TTag>(
             this IAspectReceiver<TDeclaration, TTag> receiver,
@@ -156,13 +156,13 @@ namespace Metalama.Extensions.Architecture
             // Check internal types.
             types
                 .Where( t => t.Accessibility == Accessibility.Internal )
-                .ValidateOutboundReferences( ( _, tag ) => tag.typeValidator );
+                .ValidateInboundReferences( ( _, tag ) => tag.typeValidator );
 
             // Check internal members of public types.
             publicTypes
                 .SelectMany( t => t.Members() )
                 .Where( m => m.Accessibility is Accessibility.Internal or Accessibility.PrivateProtected or Accessibility.ProtectedInternal )
-                .ValidateOutboundReferences( ( _, tag ) => tag.memberValidator );
+                .ValidateInboundReferences( ( _, tag ) => tag.memberValidator );
 
             // Check internal accessors of public properties.
             publicTypes
@@ -170,7 +170,7 @@ namespace Metalama.Extensions.Architecture
                 .Where( p => p.Accessibility is Accessibility.Public or Accessibility.Protected )
                 .SelectMany( p => p.Accessors )
                 .Where( m => m.Accessibility is Accessibility.Internal or Accessibility.PrivateProtected or Accessibility.ProtectedInternal )
-                .ValidateOutboundReferences( ( _, tag ) => tag.memberValidator );
+                .ValidateInboundReferences( ( _, tag ) => tag.memberValidator );
         }
 
         /// <summary>
@@ -271,7 +271,7 @@ namespace Metalama.Extensions.Architecture
             this IAspectReceiver<IDeclaration> receiver,
             string pattern,
             Func<ReferencePredicateBuilder, ReferencePredicate>? exclusions = null )
-            => receiver.ValidateOutboundReferences(
+            => receiver.ValidateInboundReferences(
                 DerivedTypeNamingConventionValidator.CreateStarPatternValidator(
                     pattern,
                     ReferencePredicateBuilder.Build( exclusions, receiver, ReferenceEndRole.Origin ) ) );
@@ -284,7 +284,7 @@ namespace Metalama.Extensions.Architecture
             this IAspectReceiver<IDeclaration> receiver,
             string pattern,
             Func<ReferencePredicateBuilder, ReferencePredicate>? exclusions = null )
-            => receiver.ValidateOutboundReferences(
+            => receiver.ValidateInboundReferences(
                 DerivedTypeNamingConventionValidator.CreateRegexValidator(
                     pattern,
                     ReferencePredicateBuilder.Build( exclusions, receiver, ReferenceEndRole.Origin ) ) );
