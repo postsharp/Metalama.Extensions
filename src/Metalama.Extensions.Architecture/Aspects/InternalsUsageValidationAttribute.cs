@@ -30,13 +30,13 @@ public abstract class InternalsUsageValidationAttribute : BaseUsageValidationAtt
         // Register a validator for all internal members.
         builder.Outbound.SelectMany(
                 t => t.Members().Where( m => m.Accessibility is Accessibility.Internal or Accessibility.PrivateProtected or Accessibility.ProtectedInternal ) )
-            .ValidateOutboundReferences( validator );
+            .ValidateInboundReferences( validator );
 
         // Also register internal accessors of public properties.
         builder.Outbound.SelectMany( t => t.Properties.Where( p => p.Accessibility is Accessibility.Public or Accessibility.Protected ) )
             .SelectMany(
                 p => p.Accessors.Where( m => m.Accessibility is Accessibility.Internal or Accessibility.PrivateProtected or Accessibility.ProtectedInternal ) )
-            .ValidateOutboundReferences( validator );
+            .ValidateInboundReferences( validator );
     }
 
     protected abstract ReferencePredicateValidator CreateValidator(

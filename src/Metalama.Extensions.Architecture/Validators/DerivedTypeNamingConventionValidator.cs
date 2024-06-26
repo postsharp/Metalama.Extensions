@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 namespace Metalama.Extensions.Architecture.Validators;
 
 [CompileTime]
-internal class DerivedTypeNamingConventionValidator : OutboundReferenceValidator
+internal class DerivedTypeNamingConventionValidator : InboundReferenceValidator
 {
     private readonly string _regexPattern;
     private readonly string _displayPattern;
