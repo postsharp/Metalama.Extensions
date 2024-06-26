@@ -30,7 +30,7 @@ public class CanOnlyBeUsedFromAttribute : BaseUsageValidationAttribute, IAspect<
             return;
         }
 
-        builder.Outbound.ValidateOutboundReferences(
+        builder.Outbound.ValidateInboundReferences(
             new ReferencePredicateValidator(
                 new HasFamilyAccessPredicate( new ReferencePredicateBuilder( ReferenceEndRole.Origin, builder ) )
                     .Or( predicate )

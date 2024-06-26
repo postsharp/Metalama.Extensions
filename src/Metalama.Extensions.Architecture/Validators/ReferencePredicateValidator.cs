@@ -8,7 +8,7 @@ using Metalama.Framework.Validation;
 namespace Metalama.Extensions.Architecture.Validators;
 
 [CompileTime]
-public class ReferencePredicateValidator : OutboundReferenceValidator
+public class ReferencePredicateValidator : InboundReferenceValidator
 {
     private readonly ReferencePredicate _allowedScope;
     private readonly string? _description;

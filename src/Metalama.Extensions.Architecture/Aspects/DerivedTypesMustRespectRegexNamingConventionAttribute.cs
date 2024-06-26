@@ -66,7 +66,7 @@ public class DerivedTypesMustRespectRegexNamingConventionAttribute : TypeAspect
             return;
         }
 
-        builder.Outbound.ValidateOutboundReferences(
+        builder.Outbound.ValidateInboundReferences(
             DerivedTypeNamingConventionValidator.CreateRegexValidator(
                 this.RegexPattern,
                 this.DisplayPattern,

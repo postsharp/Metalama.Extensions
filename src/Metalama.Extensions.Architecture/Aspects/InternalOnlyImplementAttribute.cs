@@ -20,7 +20,7 @@ namespace Metalama.Extensions.Architecture.Aspects
 
         public override void BuildAspect( IAspectBuilder<INamedType> builder )
         {
-            builder.Outbound.ValidateOutboundReferences( this.ValidateReference, ReferenceGranularity.Compilation, ReferenceKinds.BaseType );
+            builder.Outbound.ValidateInboundReferences( this.ValidateReference, ReferenceGranularity.Compilation, ReferenceKinds.BaseType );
 
             // It is normally not recommended to store state in an aspect field (instead it is recommended for aspects to have an immutable design).
             // In this case, it does not matter because the aspect instance is not shared or inherited.
