@@ -5,7 +5,6 @@ using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
 using Metalama.Framework.Serialization;
 using Metalama.Framework.Validation;
-using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 namespace Metalama.Extensions.Architecture.Validators;
@@ -60,8 +59,6 @@ internal class DerivedTypeNamingConventionValidator : ReferenceValidator
         {
             return false;
         }
-
-        Debugger.Break();
 
         if ( this._exclusion != null && this._exclusion.IsMatch( context ) )
         {
