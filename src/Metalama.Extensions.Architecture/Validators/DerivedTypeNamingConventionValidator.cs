@@ -61,8 +61,6 @@ internal class DerivedTypeNamingConventionValidator : ReferenceValidator
             return false;
         }
 
-        Debugger.Break();
-
         if ( this._exclusion != null && this._exclusion.IsMatch( context ) )
         {
             return false;
