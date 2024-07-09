@@ -18,10 +18,10 @@ public abstract class ReferenceEndPredicate : ReferencePredicate
 
     protected ReferenceEndPredicate( ReferencePredicateBuilder builder ) : base( builder )
     {
-        this.ValidatedRole = builder.ValidatedRole;
+        this.ValidatedRole = builder.Context.ValidatedRole;
     }
 
-    public sealed override bool IsMatch( ReferenceValidationContext context ) => this.IsMatch( context.GetReferenceEnd( this.ValidatedRole ) );
+    protected sealed override bool IsMatchCore( ReferenceValidationContext context ) => this.IsMatch( context.GetReferenceEnd( this.ValidatedRole ) );
 
     /// <summary>
     /// Gets a value indicating whether the predicate matches the given <see cref="ReferenceEnd"/>.

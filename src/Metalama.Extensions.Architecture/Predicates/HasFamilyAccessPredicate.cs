@@ -11,10 +11,10 @@ internal class HasFamilyAccessPredicate : ReferencePredicate
 
     public HasFamilyAccessPredicate( ReferencePredicateBuilder builder ) : base( builder )
     {
-        this._role = builder.ValidatedRole;
+        this._role = builder.Context.ValidatedRole;
     }
 
-    public override bool IsMatch( ReferenceValidationContext context )
+    protected override bool IsMatchCore( ReferenceValidationContext context )
     {
         // TODO: take nested types into account.
 

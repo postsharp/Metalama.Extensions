@@ -8,7 +8,7 @@ internal class AlwaysPredicate : ReferencePredicate
 {
     public AlwaysPredicate( ReferencePredicateBuilder builder ) : base( builder ) { }
 
-    public override bool IsMatch( ReferenceValidationContext context ) => true;
+    protected override bool IsMatchCore( ReferenceValidationContext context ) => true;
 
     public override ReferenceGranularity Granularity => ReferenceGranularity.Compilation;
 }
