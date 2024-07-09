@@ -14,7 +14,7 @@ internal class AnyPredicate : ReferencePredicate
         this._predicates = predicates;
     }
 
-    public override bool IsMatch( ReferenceValidationContext context )
+    protected override bool IsMatchCore( ReferenceValidationContext context )
     {
         foreach ( var predicate in this._predicates )
         {

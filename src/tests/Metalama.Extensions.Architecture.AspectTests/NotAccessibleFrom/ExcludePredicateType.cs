@@ -20,7 +20,7 @@ namespace Metalama.Extensions.Architecture.AspectTests.NotAccessibleFrom.Exclude
     {
         public ExcludeNestedTypesPredicate( ReferencePredicateBuilder builder ) : base( builder ) { }
 
-        public override bool IsMatch( ReferenceValidationContext context ) => context.Origin.Type.DeclaringType != null;
+        protected override bool IsMatchCore( ReferenceValidationContext context ) => context.Origin.Type.DeclaringType != null;
 
         public override ReferenceGranularity Granularity => ReferenceGranularity.Type;
     }

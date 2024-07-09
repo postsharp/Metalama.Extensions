@@ -20,6 +20,8 @@ namespace Metalama.Extensions.Architecture.Predicates;
 [PublicAPI]
 public abstract class ReferencePredicate : ICompileTimeSerializable
 {
+    private readonly PredicateModifier? _modifier;
+
     /// <summary>
     /// Gets the <see cref="ReferencePredicateBuilder"/> from which the current predicate was built,
     /// or <c>null</c> if the object was null without a <see cref="ReferencePredicateBuilder"/>.
@@ -35,12 +37,27 @@ public abstract class ReferencePredicate : ICompileTimeSerializable
     protected ReferencePredicate( ReferencePredicateBuilder builder )
     {
         this.Builder = builder;
+        this._modifier = builder.Modifier;
     }
 
     /// <summary>
     /// Gets a value indicating whether the predicate matches the given <see cref="ReferenceValidationContext"/>.
     /// </summary>
-    public abstract bool IsMatch( ReferenceValidationContext context );
+    protected abstract bool IsMatchCore( ReferenceValidationContext context );
+
+    public bool IsMatch( ReferenceValidationContext context )
+    {
+        var currentResult = this.IsMatchCore( context );
+
+        if ( this._modifier != null )
+        {
+            return this._modifier.IsMatch( currentResult, context );
+        }
+        else
+        {
+            return currentResult;
+        }
+    }
 
     /// <summary>
     /// Gets the granularity of validation required by this predicate. For instance, if the predicate only compares the namespace, it should return <see cref="ReferenceGranularity.Namespace"/>.

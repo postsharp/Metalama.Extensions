@@ -24,4 +24,19 @@
         <ProjectReference Include="..\..\Metalama.Extensions.Architecture\Metalama.Extensions.Architecture.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Update="Predicates\And.cs">
+        <DependentUpon>$([System.String]::Copy('InternalsCannotBeUsedFrom_Fabric').Substring( %(Filename.IndexOf('.') ).cs</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Predicates\Or.cs">
+        <DependentUpon>$([System.String]::Copy('InternalsCannotBeUsedFrom_Fabric').Substring( %(Filename.IndexOf('.') ).cs</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Predicates\Not.cs">
+        <DependentUpon>$([System.String]::Copy('InternalsCannotBeUsedFrom_Fabric').Substring( %(Filename.IndexOf('.') ).cs</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+    </ItemGroup>
+
 </Project>

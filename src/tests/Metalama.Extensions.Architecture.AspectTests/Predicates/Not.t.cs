@@ -1,0 +1,4 @@
+// Error CS0234 on `InternalsCannotBeUsedFrom_Fabric`: `The type or namespace name 'InternalsCannotBeUsedFrom_Fabric' does not exist in the namespace 'Metalama.Extensions.Architecture.AspectTests' (are you missing an assembly reference?)`
+// Warning LAMA0905 on `C`: `The 'Metalama.Extensions.Architecture.AspectTests.Predicates.Not' namespace cannot be referenced by the 'A' type.`
+// Warning LAMA0905 on `C`: `The 'Metalama.Extensions.Architecture.AspectTests.Predicates.Not' namespace cannot be referenced by the 'B' type.`
+// Warning LAMA0905 on `C`: `The 'Metalama.Extensions.Architecture.AspectTests.Predicates.Not' namespace cannot be referenced by the 'AB' type.`

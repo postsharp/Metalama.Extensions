@@ -32,7 +32,7 @@ public class DerivedTypesMustRespectRegexNamingConventionAttribute : TypeAspect
 
     /// <summary>
     /// Gets a <see cref="Type"/>, derived from <see cref="ReferencePredicate"/>, that determines exclusions for the current
-    /// architecture rule. Specifically, no warning will be reported if the  <see cref="ReferencePredicate.IsMatch"/> method
+    /// architecture rule. Specifically, no warning will be reported if the  <see cref="ReferencePredicate.IsMatchCore"/> method
     /// of the <see cref="ReferencePredicate"/> returns <c>true</c>. This type must have a default constructor.
     /// </summary>
     public Type? ExclusionPredicateType { get; init; }

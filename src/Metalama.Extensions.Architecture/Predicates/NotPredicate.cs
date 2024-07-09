@@ -13,7 +13,7 @@ internal class NotPredicate : ReferencePredicate
         this._predicate = predicate;
     }
 
-    public override bool IsMatch( ReferenceValidationContext context ) => !this._predicate.IsMatch( context );
+    protected override bool IsMatchCore( ReferenceValidationContext context ) => !this._predicate.IsMatch( context );
 
     public override ReferenceGranularity Granularity => this._predicate.Granularity;
 }

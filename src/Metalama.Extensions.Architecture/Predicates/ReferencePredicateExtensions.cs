@@ -6,6 +6,7 @@ using Metalama.Framework.Code;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 
 namespace Metalama.Extensions.Architecture.Predicates;
 
@@ -16,9 +17,17 @@ namespace Metalama.Extensions.Architecture.Predicates;
 [PublicAPI]
 public static class ReferencePredicateExtensions
 {
+    public static ReferencePredicate Any( this ReferencePredicateBuilder builder, params Func<ReferencePredicateBuilder, ReferencePredicate>[] predicates )
+    {
+        return new AnyPredicate(
+            predicates.Select( p => p( builder ) ).ToImmutableArray(),
+            builder );
+    }
+
     /// <summary>
     /// Combines two predicates with the <c>or</c> condition. This overload accepts the second predicate as a delegate.
     /// </summary>
+    [Obsolete( "Use the overload parameterless method overload." )]
     public static ReferencePredicate Or( this ReferencePredicate predicate, Func<ReferencePredicateBuilder, ReferencePredicate> otherPredicate )
     {
         if ( predicate.Builder == null )
@@ -27,6 +36,16 @@ public static class ReferencePredicateExtensions
         }
 
         return new OrPredicate( predicate, otherPredicate( predicate.Builder ) );
+    }
+
+    public static ReferencePredicateBuilder Or( this ReferencePredicate predicate )
+    {
+        if ( predicate.Builder == null )
+        {
+            throw new InvalidOperationException( "No ReferencePredicateBuilder available." );
+        }
+
+        return new ReferencePredicateBuilder( predicate.Builder, new OrPredicateModifier( predicate ) );
     }
 
     /// <summary>
@@ -38,6 +57,7 @@ public static class ReferencePredicateExtensions
     /// <summary>
     /// Combines two predicates with the <c>and</c> condition. This overload accepts the second predicate as a delegate.
     /// </summary>
+    [Obsolete( "Use the overload parameterless method overload." )]
     public static ReferencePredicate And( this ReferencePredicate predicate, Func<ReferencePredicateBuilder, ReferencePredicate> otherPredicate )
     {
         if ( predicate.Builder == null )
@@ -46,6 +66,16 @@ public static class ReferencePredicateExtensions
         }
 
         return new AndPredicate( predicate, otherPredicate( predicate.Builder ) );
+    }
+
+    public static ReferencePredicateBuilder And( this ReferencePredicate predicate )
+    {
+        if ( predicate.Builder == null )
+        {
+            throw new InvalidOperationException( "No ReferencePredicateBuilder available." );
+        }
+
+        return new ReferencePredicateBuilder( predicate.Builder, new AndPredicateModifier( predicate ) );
     }
 
     /// <summary>
@@ -58,6 +88,8 @@ public static class ReferencePredicateExtensions
     /// Inverts the given predicate.
     /// </summary>
     public static ReferencePredicate Not( this ReferencePredicate predicate ) => new NotPredicate( predicate );
+
+    public static ReferencePredicateBuilder Not( this ReferencePredicateBuilder builder ) => new( builder, new NotPredicateModifier( builder ) );
 
     /// <summary>
     /// Returns a predicate that always evaluate to <c>true</c>.
@@ -97,12 +129,12 @@ public static class ReferencePredicateExtensions
     /// </summary>
     public static ReferencePredicate CurrentNamespace( this ReferencePredicateBuilder builder )
     {
-        if ( builder.Namespace == null )
+        if ( builder.Context.Namespace == null )
         {
             throw new InvalidOperationException( "There is no namespace in the current context." );
         }
 
-        return new NamespacePredicate( builder.Namespace, builder );
+        return new NamespacePredicate( builder.Context.Namespace, builder );
     }
 
     /// <summary>
@@ -110,12 +142,12 @@ public static class ReferencePredicateExtensions
     /// </summary>
     public static ReferencePredicate CurrentAssembly( this ReferencePredicateBuilder builder )
     {
-        if ( builder.AssemblyName == null )
+        if ( builder.Context.AssemblyName == null )
         {
             throw new InvalidOperationException( "There is no assembly in the current context." );
         }
 
-        return new AssemblyNamePredicate( builder.AssemblyName, builder );
+        return new AssemblyNamePredicate( builder.Context.AssemblyName, builder );
     }
 
     /// <summary>

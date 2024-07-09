@@ -4,7 +4,6 @@ using JetBrains.Annotations;
 using Metalama.Extensions.Architecture.Fabrics;
 using Metalama.Framework.Aspects;
 using Metalama.Framework.Code;
-using Metalama.Framework.Fabrics;
 using Metalama.Framework.Validation;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -19,18 +18,8 @@ namespace Metalama.Extensions.Architecture.Predicates;
 [PublicAPI]
 public sealed class ReferencePredicateBuilder
 {
-    /// <summary>
-    /// Gets the role of the <see cref="ReferenceEnd"/> validated by the built predicates.
-    /// </summary>
-    public ReferenceEndRole ValidatedRole { get; }
-
     [Obsolete]
-    public ReferencePredicateBuilder( IVerifier<IDeclaration> verifier )
-    {
-        this.Namespace = verifier.Namespace;
-        this.AssemblyName = verifier.AssemblyName;
-        this.ValidatedRole = ReferenceEndRole.Origin;
-    }
+    public ReferencePredicateBuilder( IVerifier<IDeclaration> verifier ) : this( ReferenceEndRole.Origin, verifier.Namespace, verifier.AssemblyName ) { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ReferencePredicateBuilder"/> class from an <see cref="IAspectReceiver{TDeclaration}"/>.
@@ -50,22 +39,27 @@ public sealed class ReferencePredicateBuilder
 
     private ReferencePredicateBuilder( ReferenceEndRole validatedRole, string? ns = null, string? assemblyName = null )
     {
-        this.ValidatedRole = validatedRole;
-        this.Namespace = ns;
-        this.AssemblyName = assemblyName;
+        this.Context = new ReferencePredicateBuilderContext( validatedRole, ns, assemblyName );
     }
 
-    /// <summary>
-    /// Gets the namespace from which the current <see cref="ReferencePredicateBuilder"/> was instantiated, i.e. the namespace of the
-    /// <see cref="NamespaceFabric"/> or the <see cref="TypeFabric"/>. Returns <c>null</c> if the <see cref="ReferencePredicateBuilder"/> was instantiated
-    /// from a <see cref="ProjectFabric"/>. 
-    /// </summary>
-    public string? Namespace { get; }
+    internal ReferencePredicateBuilder( ReferencePredicateBuilder parent, PredicateModifier modifier )
+    {
+        this.Context = parent.Context;
+        this.Modifier = modifier;
+    }
 
-    /// <summary>
-    /// Gets assembly name the project that instantiated the current <see cref="IVerifier{T}"/>.
-    /// </summary>
-    public string? AssemblyName { get; }
+    public ReferencePredicateBuilderContext Context { get; }
+
+    [Obsolete( "Use the Context property." )]
+    public ReferenceEndRole ValidatedRole => this.Context.ValidatedRole;
+
+    [Obsolete( "Use the Context property." )]
+    public string? Namespace => this.Context.Namespace;
+
+    [Obsolete( "Use the Context property." )]
+    public string? AssemblyName => this.Context.AssemblyName;
+
+    internal PredicateModifier? Modifier { get; }
 
     [return: NotNullIfNotNull( nameof(func) )]
     internal static ReferencePredicate? Build(

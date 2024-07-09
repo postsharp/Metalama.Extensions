@@ -15,7 +15,7 @@ internal class OrPredicate : ReferencePredicate
         this._predicate2 = predicate2;
     }
 
-    public override bool IsMatch( ReferenceValidationContext context )
+    protected override bool IsMatchCore( ReferenceValidationContext context )
     {
         if ( this._predicate1.IsMatch( context ) )
         {
