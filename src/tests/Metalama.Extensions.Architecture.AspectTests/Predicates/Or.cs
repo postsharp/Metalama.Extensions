@@ -2,7 +2,6 @@
 
 using Metalama.Extensions.Architecture.Predicates;
 using Metalama.Framework.Fabrics;
-using Metalama.Extensions.Architecture.AspectTests.InternalsCannotBeUsedFrom_Fabric.ForbiddenNamespace;
 
 #pragma warning disable CS0649
 

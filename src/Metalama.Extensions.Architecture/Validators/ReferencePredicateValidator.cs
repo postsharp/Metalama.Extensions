@@ -42,7 +42,7 @@ public class ReferencePredicateValidator : InboundReferenceValidator
                     // Do not validate inside the same type.
                     // We are testing this here and not in a predicate because it allows to keep the granularity at namespace level
                     // without affecting performance too much since this code would only run in case positive match.
-                    if ( referencedNamedType != null && r.ReferencingDeclaration.IsContainedIn( referencedNamedType ) )
+                    if ( referencedNamedType != null && r.OriginDeclaration.IsContainedIn( referencedNamedType ) )
                     {
                         return null;
                     }
