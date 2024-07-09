@@ -39,12 +39,17 @@ public abstract class ReferencePredicate : ICompileTimeSerializable
         this.Builder = builder;
         this._modifier = builder.Modifier;
     }
-
+   
     /// <summary>
-    /// Gets a value indicating whether the predicate matches the given <see cref="ReferenceValidationContext"/>.
+    /// Gets a value indicating whether the current predicate matches the given <see cref="ReferenceValidationContext"/>,
+    /// ignoring any modifier such as <c>And</c>, <c>Or</c> or <c>Not</c>.
     /// </summary>
     protected abstract bool IsMatchCore( ReferenceValidationContext context );
 
+    /// <summary>
+    /// Gets a value indicating whether the predicate matches the given <see cref="ReferenceValidationContext"/>,
+    /// taking the optional modifier (e.g. an <c>And</c>, <c>Or</c> or <c>Not</c> modifier).
+    /// </summary>
     public bool IsMatch( ReferenceValidationContext context )
     {
         var currentResult = this.IsMatchCore( context );
