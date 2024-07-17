@@ -1,4 +1,4 @@
-![Metalama Logo](https://raw.githubusercontent.com/postsharp/Metalama/master/images/metalama-by-postsharp-light.svg)
+![Metalama Logo](https://raw.githubusercontent.com/postsharp/Metalama/master/images/metalama-by-postsharp.svg)
 
 The `Metalama.Extensions.DependencyInjection` package implements support for dependency injection in Metalama.
 
