@@ -1,15 +1,10 @@
-namespace Metalama.Extensions.DependencyInjection.DotNet.Tests.Advice.LazyOptional_DesignTime
+[MyAspect]
+public partial class TargetClass
 {
-    partial class TargetClass
-    {
-        private IFormatProvider _formatProvider
-        {
-            get
-            {
-                return default !;
-            }
-        }
-        private IServiceProvider _serviceProvider;
-        private IFormatProvider? _formatProviderCache;
-    }
+  public TargetClass()
+  {
+  }
+  public TargetClass(int x, IFormatProvider existingParameter)
+  {
+  }
 }

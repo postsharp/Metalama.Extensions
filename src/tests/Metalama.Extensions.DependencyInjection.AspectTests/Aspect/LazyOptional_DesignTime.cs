@@ -5,6 +5,7 @@
 
 namespace Metalama.Extensions.DependencyInjection.AspectTests.Aspect.LazyOptional_DesignTime;
 
+// <target>
 public partial class TargetClass
 {
     [Dependency( IsLazy = true, IsRequired = false )]

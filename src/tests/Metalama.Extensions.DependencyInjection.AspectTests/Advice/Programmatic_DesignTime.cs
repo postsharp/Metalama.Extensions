@@ -20,6 +20,7 @@ public class MyAspect : TypeAspect
     }
 }
 
+// <target>
 [MyAspect]
 public partial class TargetClass
 {
