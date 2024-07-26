@@ -5,6 +5,7 @@
 
 namespace Metalama.Extensions.DependencyInjection.AspectTests.Aspect.EarlyOptional_DesignTime;
 
+// <target>
 public partial class TargetClass
 {
     [Dependency( IsRequired = false )]

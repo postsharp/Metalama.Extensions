@@ -1,9 +1,12 @@
 // Warning CS0169 on `_formatProvider`: `The field 'TargetClass._formatProvider' is never used`
-namespace Metalama.Extensions.DependencyInjection.DotNet.Tests.Aspect.LazyOptional_DesignTime
+public partial class TargetClass
 {
-    partial class TargetClass
-    {
-        private IServiceProvider _serviceProvider;
-        private IFormatProvider? _formatProviderCache;
-    }
+  [Dependency(IsLazy = true, IsRequired = false)]
+  private readonly IFormatProvider _formatProvider;
+  public TargetClass()
+  {
+  }
+  public TargetClass(int x, IFormatProvider existingParameter)
+  {
+  }
 }

@@ -1,10 +1,12 @@
 // Warning CS0169 on `_formatProvider`: `The field 'TargetClass._formatProvider' is never used`
-namespace Metalama.Extensions.DependencyInjection.AspectTests.Aspect.EarlyOptional_DesignTime
+public partial class TargetClass
 {
-    partial class TargetClass
-    {
-        public TargetClass( IFormatProvider? formatProvider = null ) : this()
-        {
-        }
-    }
+  [Dependency(IsRequired = false)]
+  private readonly IFormatProvider? _formatProvider;
+  public TargetClass()
+  {
+  }
+  public TargetClass(int x, IFormatProvider existingParameter)
+  {
+  }
 }

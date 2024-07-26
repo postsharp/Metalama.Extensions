@@ -1,15 +1,12 @@
 // Warning CS0169 on `_formatProvider`: `The field 'TargetClass._formatProvider' is never used`
-namespace Metalama.Extensions.DependencyInjection.AspectTests.Aspect.LazyOptional_DesignTime
+public partial class TargetClass
 {
-    partial class TargetClass
-    {
-        private Func<IFormatProvider> _formatProviderFunc;
-        private IFormatProvider? _formatProviderCache;
-        public TargetClass( Func<IFormatProvider>? formatProvider = null ) : this()
-        {
-        }
-        public TargetClass( int x, IFormatProvider existingParameter, Func<IFormatProvider>? formatProvider = null ) : this( x, existingParameter )
-        {
-        }
-    }
+  [Dependency(IsLazy = true, IsRequired = false)]
+  private readonly IFormatProvider _formatProvider;
+  public TargetClass()
+  {
+  }
+  public TargetClass(int x, IFormatProvider existingParameter)
+  {
+  }
 }

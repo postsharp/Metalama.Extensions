@@ -1,10 +1,10 @@
-namespace Metalama.Extensions.DependencyInjection.AspectTests.Advice.EarlyRequired_DesignTime
+[MyAspect]
+public partial class TargetClass
 {
-    partial class TargetClass
-    {
-        private IFormatProvider _formatProvider;
-        public TargetClass( IFormatProvider? formatProvider = null ) : this()
-        {
-        }
-    }
+  public TargetClass()
+  {
+  }
+  public TargetClass(int x, IFormatProvider existingParameter)
+  {
+  }
 }

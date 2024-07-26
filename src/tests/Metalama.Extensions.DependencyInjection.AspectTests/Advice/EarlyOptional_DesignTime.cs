@@ -18,6 +18,7 @@ public class MyAspect : TypeAspect
     private readonly IFormatProvider? _formatProvider;
 }
 
+// <target>
 [MyAspect]
 public partial class TargetClass
 {
