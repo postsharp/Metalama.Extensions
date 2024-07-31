@@ -62,5 +62,5 @@ public class ReferencePredicateValidator : InboundReferenceValidator
         }
     }
 
-    public override ReferenceGranularity Granularity => this._allowedScope.Granularity;
+    public override ReferenceGranularity Granularity => this._allowedScope.TotalGranularity;
 }

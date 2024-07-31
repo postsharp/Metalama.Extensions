@@ -26,4 +26,6 @@ internal sealed class NotPredicateModifier : PredicateModifier
             return result;
         }
     }
+
+    public override ReferenceGranularity ModifyGranularity( ReferenceGranularity baseGranularity ) => baseGranularity;
 }

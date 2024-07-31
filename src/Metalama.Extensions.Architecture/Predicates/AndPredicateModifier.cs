@@ -4,14 +4,9 @@ using Metalama.Framework.Validation;
 
 namespace Metalama.Extensions.Architecture.Predicates;
 
-internal class AndPredicateModifier : PredicateModifier
+internal class AndPredicateModifier : CombiningPredicateModifier
 {
-    private ReferencePredicate OtherPredicate { get; }
-
-    public AndPredicateModifier( ReferencePredicate otherPredicate )
-    {
-        this.OtherPredicate = otherPredicate;
-    }
+    public AndPredicateModifier( ReferencePredicate otherPredicate ) : base( otherPredicate ) { }
 
     public override bool IsMatch( bool currentPredicateResult, ReferenceValidationContext context )
         => currentPredicateResult && this.OtherPredicate.IsMatch( context );
