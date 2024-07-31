@@ -4,19 +4,6 @@ using Metalama.Framework.Validation;
 
 namespace Metalama.Extensions.Architecture.Predicates;
 
-internal abstract class CombiningPredicateModifier : PredicateModifier
-{
-    protected ReferencePredicate OtherPredicate { get; }
-
-    public CombiningPredicateModifier( ReferencePredicate otherPredicate )
-    {
-        this.OtherPredicate = otherPredicate;
-    }
-
-    public sealed override ReferenceGranularity ModifyGranularity( ReferenceGranularity baseGranularity )
-        => baseGranularity.CombineWith( this.OtherPredicate.Granularity );
-}
-
 internal class AndPredicateModifier : CombiningPredicateModifier
 {
     public AndPredicateModifier( ReferencePredicate otherPredicate ) : base( otherPredicate ) { }
