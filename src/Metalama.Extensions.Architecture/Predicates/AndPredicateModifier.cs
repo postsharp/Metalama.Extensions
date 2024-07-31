@@ -4,14 +4,22 @@ using Metalama.Framework.Validation;
 
 namespace Metalama.Extensions.Architecture.Predicates;
 
-internal class AndPredicateModifier : PredicateModifier
+internal abstract class CombiningPredicateModifier : PredicateModifier
 {
-    private ReferencePredicate OtherPredicate { get; }
+    protected ReferencePredicate OtherPredicate { get; }
 
-    public AndPredicateModifier( ReferencePredicate otherPredicate )
+    public CombiningPredicateModifier( ReferencePredicate otherPredicate )
     {
         this.OtherPredicate = otherPredicate;
     }
+
+    public sealed override ReferenceGranularity ModifyGranularity( ReferenceGranularity baseGranularity )
+        => baseGranularity.CombineWith( this.OtherPredicate.Granularity );
+}
+
+internal class AndPredicateModifier : CombiningPredicateModifier
+{
+    public AndPredicateModifier( ReferencePredicate otherPredicate ) : base( otherPredicate ) { }
 
     public override bool IsMatch( bool currentPredicateResult, ReferenceValidationContext context )
         => currentPredicateResult && this.OtherPredicate.IsMatch( context );

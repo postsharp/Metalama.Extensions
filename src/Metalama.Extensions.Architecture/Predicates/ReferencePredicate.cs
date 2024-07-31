@@ -39,7 +39,7 @@ public abstract class ReferencePredicate : ICompileTimeSerializable
         this.Builder = builder;
         this._modifier = builder.Modifier;
     }
-   
+
     /// <summary>
     /// Gets a value indicating whether the current predicate matches the given <see cref="ReferenceValidationContext"/>,
     /// ignoring any modifier such as <c>And</c>, <c>Or</c> or <c>Not</c>.
@@ -65,7 +65,17 @@ public abstract class ReferencePredicate : ICompileTimeSerializable
     }
 
     /// <summary>
-    /// Gets the granularity of validation required by this predicate. For instance, if the predicate only compares the namespace, it should return <see cref="ReferenceGranularity.Namespace"/>.
+    /// Gets the granularity including the effect of <see cref="ReferencePredicateExtensions.And(Metalama.Extensions.Architecture.Predicates.ReferencePredicate,System.Func{Metalama.Extensions.Architecture.Predicates.ReferencePredicateBuilder,Metalama.Extensions.Architecture.Predicates.ReferencePredicate})"/>
+    /// or <see cref="ReferencePredicateExtensions.Or(Metalama.Extensions.Architecture.Predicates.ReferencePredicate,System.Func{Metalama.Extensions.Architecture.Predicates.ReferencePredicateBuilder,Metalama.Extensions.Architecture.Predicates.ReferencePredicate})"/>
+    /// clause.
+    /// </summary>
+    public ReferenceGranularity TotalGranularity => this._modifier?.ModifyGranularity( this.Granularity ) ?? this.Granularity;
+
+    /// <summary>
+    /// Gets the granularity of validation required by this predicate, ignoring the effect of any <see cref="ReferencePredicateExtensions.And(Metalama.Extensions.Architecture.Predicates.ReferencePredicate,System.Func{Metalama.Extensions.Architecture.Predicates.ReferencePredicateBuilder,Metalama.Extensions.Architecture.Predicates.ReferencePredicate})"/>
+    /// or <see cref="ReferencePredicateExtensions.Or(Metalama.Extensions.Architecture.Predicates.ReferencePredicate,System.Func{Metalama.Extensions.Architecture.Predicates.ReferencePredicateBuilder,Metalama.Extensions.Architecture.Predicates.ReferencePredicate})"/>
+    /// clause.
+    /// For instance, if the predicate only compares the namespace, it should return <see cref="ReferenceGranularity.Namespace"/>.
     /// </summary>
     public abstract ReferenceGranularity Granularity { get; }
 }

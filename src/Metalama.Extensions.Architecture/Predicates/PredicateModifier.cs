@@ -10,4 +10,6 @@ namespace Metalama.Extensions.Architecture.Predicates;
 internal abstract class PredicateModifier : ICompileTimeSerializable
 {
     public abstract bool IsMatch( bool currentPredicateResult, ReferenceValidationContext context );
+
+    public abstract ReferenceGranularity ModifyGranularity( ReferenceGranularity baseGranularity );
 }
