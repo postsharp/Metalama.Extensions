@@ -91,6 +91,6 @@ namespace Metalama.Extensions.Architecture.AspectTests.InternalsCanOnlyBeUsedFro
 
         protected override bool IsMatchCore( ReferenceValidationContext context ) => context.Origin.Type.DeclaringType != null;
 
-        public override ReferenceGranularity Granularity => ReferenceGranularity.Type;
+        protected override ReferenceGranularity GetGranularity() => ReferenceGranularity.Type;
     }
 }

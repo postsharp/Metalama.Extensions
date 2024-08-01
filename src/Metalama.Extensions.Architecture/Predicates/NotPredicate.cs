@@ -4,7 +4,7 @@ using Metalama.Framework.Validation;
 
 namespace Metalama.Extensions.Architecture.Predicates;
 
-internal class NotPredicate : ReferencePredicate
+internal sealed class NotPredicate : ReferencePredicate
 {
     private readonly ReferencePredicate _predicate;
 
@@ -15,5 +15,5 @@ internal class NotPredicate : ReferencePredicate
 
     protected override bool IsMatchCore( ReferenceValidationContext context ) => !this._predicate.IsMatch( context );
 
-    public override ReferenceGranularity Granularity => this._predicate.Granularity;
+    protected override ReferenceGranularity GetGranularity() => this._predicate.Granularity;
 }

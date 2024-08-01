@@ -10,5 +10,5 @@ internal class AlwaysPredicate : ReferencePredicate
 
     protected override bool IsMatchCore( ReferenceValidationContext context ) => true;
 
-    public override ReferenceGranularity Granularity => ReferenceGranularity.Compilation;
+    protected override ReferenceGranularity GetGranularity() => ReferenceGranularity.Compilation;
 }

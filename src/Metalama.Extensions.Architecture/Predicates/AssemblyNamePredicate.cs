@@ -10,5 +10,5 @@ internal class AssemblyNamePredicate : BaseNamePredicate
 
     public override bool IsMatch( ReferenceEnd referenceEnd ) => this.IsMatch( referenceEnd.Assembly.Identity.Name );
 
-    public override ReferenceGranularity Granularity => ReferenceGranularity.Compilation;
+    protected override ReferenceGranularity GetGranularity() => ReferenceGranularity.Compilation;
 }

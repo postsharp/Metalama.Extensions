@@ -17,12 +17,21 @@ namespace Metalama.Extensions.Architecture.Predicates;
 [PublicAPI]
 public static class ReferencePredicateExtensions
 {
+    /// <summary>
+    /// Combines several other predicates with the <c>or</c> condition.
+    /// </summary>
     public static ReferencePredicate Any( this ReferencePredicateBuilder builder, params Func<ReferencePredicateBuilder, ReferencePredicate>[] predicates )
-    {
-        return new AnyPredicate(
+        => new AnyPredicate(
             predicates.Select( p => p( builder ) ).ToImmutableArray(),
             builder );
-    }
+
+    /// <summary>
+    /// Combines several other predicates with the <c>and</c> condition.
+    /// </summary>
+    public static ReferencePredicate All( this ReferencePredicateBuilder builder, params Func<ReferencePredicateBuilder, ReferencePredicate>[] predicates )
+        => new AllPredicate(
+            predicates.Select( p => p( builder ) ).ToImmutableArray(),
+            builder );
 
     /// <summary>
     /// Combines two predicates with the <c>or</c> condition. This overload accepts the second predicate as a delegate.
@@ -101,6 +110,12 @@ public static class ReferencePredicateExtensions
     /// </summary>
     public static ReferencePredicate Any( this ReferencePredicateBuilder builder, Func<ReferencePredicateBuilder, IEnumerable<ReferencePredicate>> predicates )
         => new AnyPredicate( predicates( builder ).ToImmutableArray(), builder );
+
+    /// <summary>
+    /// Combines several other predicates with the <c>and</c> condition.
+    /// </summary>
+    public static ReferencePredicate All( this ReferencePredicateBuilder builder, Func<ReferencePredicateBuilder, IEnumerable<ReferencePredicate>> predicates )
+        => new AllPredicate( predicates( builder ).ToImmutableArray(), builder );
 
     /// <summary>
     /// Accepts code references contained in a given namespace.

@@ -10,5 +10,5 @@ internal class TypeNamePredicate : BaseNamePredicate
 
     public override bool IsMatch( ReferenceEnd referenceEnd ) => this.IsMatch( referenceEnd.Type.FullName );
 
-    public override ReferenceGranularity Granularity => ReferenceGranularity.Type;
+    protected override ReferenceGranularity GetGranularity() => ReferenceGranularity.Type;
 }

@@ -64,5 +64,5 @@ internal class TypeEqualityPredicate : ReferenceEndPredicate
         return this._typeRefs.Any( t => referenceEndType.Equals( t.GetTarget( options: default ) ) );
     }
 
-    public override ReferenceGranularity Granularity => ReferenceGranularity.Type;
+    protected override ReferenceGranularity GetGranularity() => ReferenceGranularity.Type;
 }
