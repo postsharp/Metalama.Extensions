@@ -4,7 +4,7 @@ using Metalama.Framework.Validation;
 
 namespace Metalama.Extensions.Architecture.Predicates;
 
-internal class NotPredicate : ReferencePredicate
+internal sealed class NotPredicate : ReferencePredicate
 {
     private readonly ReferencePredicate _predicate;
 

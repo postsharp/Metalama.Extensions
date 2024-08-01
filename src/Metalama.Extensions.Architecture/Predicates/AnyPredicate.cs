@@ -5,18 +5,13 @@ using System.Collections.Immutable;
 
 namespace Metalama.Extensions.Architecture.Predicates;
 
-internal class AnyPredicate : ReferencePredicate
+internal sealed class AnyPredicate : CombiningReferencePredicate
 {
-    private ImmutableArray<ReferencePredicate> _predicates;
-
-    public AnyPredicate( ImmutableArray<ReferencePredicate> predicates, ReferencePredicateBuilder builder ) : base( builder )
-    {
-        this._predicates = predicates;
-    }
+    public AnyPredicate( ImmutableArray<ReferencePredicate> predicates, ReferencePredicateBuilder builder ) : base( predicates, builder ) { }
 
     protected override bool IsMatchCore( ReferenceValidationContext context )
     {
-        foreach ( var predicate in this._predicates )
+        foreach ( var predicate in this.Predicates )
         {
             if ( predicate.IsMatch( context ) )
             {
@@ -25,17 +20,5 @@ internal class AnyPredicate : ReferencePredicate
         }
 
         return false;
-    }
-
-    protected override ReferenceGranularity GetGranularity()
-    {
-        var granularity = ReferenceGranularity.Compilation;
-
-        foreach ( var predicate in this._predicates )
-        {
-            granularity = granularity.CombineWith( predicate.Granularity );
-        }
-
-        return granularity;
     }
 }
