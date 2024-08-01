@@ -27,18 +27,15 @@ internal class AnyPredicate : ReferencePredicate
         return false;
     }
 
-    public override ReferenceGranularity Granularity
+    protected override ReferenceGranularity GetGranularity()
     {
-        get
+        var granularity = ReferenceGranularity.Compilation;
+
+        foreach ( var predicate in this._predicates )
         {
-            var granularity = ReferenceGranularity.Compilation;
-
-            foreach ( var predicate in this._predicates )
-            {
-                granularity = granularity.CombineWith( predicate.Granularity );
-            }
-
-            return granularity;
+            granularity = granularity.CombineWith( predicate.Granularity );
         }
+
+        return granularity;
     }
 }

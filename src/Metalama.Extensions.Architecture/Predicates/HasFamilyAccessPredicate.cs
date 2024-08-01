@@ -25,5 +25,5 @@ internal class HasFamilyAccessPredicate : ReferencePredicate
                && b.Type.Is( a.Member.GetClosestNamedType()! );
     }
 
-    public override ReferenceGranularity Granularity => ReferenceGranularity.Type;
+    protected override ReferenceGranularity GetGranularity() => ReferenceGranularity.Type;
 }

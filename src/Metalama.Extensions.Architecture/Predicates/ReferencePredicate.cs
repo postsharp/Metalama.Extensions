@@ -65,17 +65,13 @@ public abstract class ReferencePredicate : ICompileTimeSerializable
     }
 
     /// <summary>
-    /// Gets the granularity including the effect of <see cref="ReferencePredicateExtensions.And(Metalama.Extensions.Architecture.Predicates.ReferencePredicate,System.Func{Metalama.Extensions.Architecture.Predicates.ReferencePredicateBuilder,Metalama.Extensions.Architecture.Predicates.ReferencePredicate})"/>
-    /// or <see cref="ReferencePredicateExtensions.Or(Metalama.Extensions.Architecture.Predicates.ReferencePredicate,System.Func{Metalama.Extensions.Architecture.Predicates.ReferencePredicateBuilder,Metalama.Extensions.Architecture.Predicates.ReferencePredicate})"/>
-    /// clause.
+    /// Gets the granularity including the modifiers such as <c>And</c>, <c>Or</c> or <c>Not</c>.
     /// </summary>
-    public ReferenceGranularity TotalGranularity => this._modifier?.ModifyGranularity( this.Granularity ) ?? this.Granularity;
+    public ReferenceGranularity Granularity => this._modifier?.ModifyGranularity( this.GetGranularity() ) ?? this.GetGranularity();
 
     /// <summary>
-    /// Gets the granularity of validation required by this predicate, ignoring the effect of any <see cref="ReferencePredicateExtensions.And(Metalama.Extensions.Architecture.Predicates.ReferencePredicate,System.Func{Metalama.Extensions.Architecture.Predicates.ReferencePredicateBuilder,Metalama.Extensions.Architecture.Predicates.ReferencePredicate})"/>
-    /// or <see cref="ReferencePredicateExtensions.Or(Metalama.Extensions.Architecture.Predicates.ReferencePredicate,System.Func{Metalama.Extensions.Architecture.Predicates.ReferencePredicateBuilder,Metalama.Extensions.Architecture.Predicates.ReferencePredicate})"/>
-    /// clause.
+    /// Gets the granularity of validation required by this predicate, effect ignoring any modifier such as <c>And</c>, <c>Or</c> or <c>Not</c>.
     /// For instance, if the predicate only compares the namespace, it should return <see cref="ReferenceGranularity.Namespace"/>.
     /// </summary>
-    public abstract ReferenceGranularity Granularity { get; }
+    protected abstract ReferenceGranularity GetGranularity();
 }

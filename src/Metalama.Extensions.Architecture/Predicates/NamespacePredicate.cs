@@ -21,5 +21,5 @@ internal class NamespacePredicate : BaseNamePredicate
         return false;
     }
 
-    public override ReferenceGranularity Granularity => ReferenceGranularity.Namespace;
+    protected override ReferenceGranularity GetGranularity() => ReferenceGranularity.Namespace;
 }

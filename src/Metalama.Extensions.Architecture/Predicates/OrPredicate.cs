@@ -30,5 +30,5 @@ internal class OrPredicate : ReferencePredicate
         return false;
     }
 
-    public override ReferenceGranularity Granularity => this._predicate1.Granularity.CombineWith( this._predicate2.Granularity );
+    protected override ReferenceGranularity GetGranularity() => this._predicate1.Granularity.CombineWith( this._predicate2.Granularity );
 }

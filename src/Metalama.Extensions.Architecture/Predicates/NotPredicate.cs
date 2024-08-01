@@ -15,5 +15,5 @@ internal class NotPredicate : ReferencePredicate
 
     protected override bool IsMatchCore( ReferenceValidationContext context ) => !this._predicate.IsMatch( context );
 
-    public override ReferenceGranularity Granularity => this._predicate.Granularity;
+    protected override ReferenceGranularity GetGranularity() => this._predicate.Granularity;
 }
