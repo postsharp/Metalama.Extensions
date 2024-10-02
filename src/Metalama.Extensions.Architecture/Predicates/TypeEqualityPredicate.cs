@@ -10,13 +10,13 @@ namespace Metalama.Extensions.Architecture.Predicates;
 
 internal class TypeEqualityPredicate : ReferenceEndPredicate
 {
-    private readonly IRef<IDeclaration>[] _typeRefs;
+    private readonly IRef<INamedType>[] _typeRefs;
 
     public TypeEqualityPredicate( IEnumerable<Type> types, ReferencePredicateBuilder builder )
         : base( builder )
     {
         var iTypes = types.Select( TypeFactory.GetType );
-        var typeRefs = new List<IRef<IDeclaration>>();
+        var typeRefs = new List<IRef<INamedType>>();
 
         foreach ( var iType in iTypes )
         {
@@ -41,7 +41,7 @@ internal class TypeEqualityPredicate : ReferenceEndPredicate
     public TypeEqualityPredicate( IEnumerable<INamedType> types, ReferencePredicateBuilder builder )
         : base( builder )
     {
-        var typeRefs = new List<IRef<IDeclaration>>();
+        var typeRefs = new List<IRef<INamedType>>();
 
         foreach ( var type in types )
         {
@@ -61,7 +61,7 @@ internal class TypeEqualityPredicate : ReferenceEndPredicate
     {
         var referenceEndType = referenceEnd.Type;
 
-        return this._typeRefs.Any( t => referenceEndType.Equals( t.GetTarget( options: default ) ) );
+        return this._typeRefs.Any( t => referenceEndType.Equals( t.GetTarget() ) );
     }
 
     protected override ReferenceGranularity GetGranularity() => ReferenceGranularity.Type;
