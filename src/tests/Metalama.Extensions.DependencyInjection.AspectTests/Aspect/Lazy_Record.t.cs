@@ -14,7 +14,7 @@ public record TargetRecord
   }
   private ILogger? _loggerCache;
   private Func<ILogger> _loggerFunc;
-  public TargetRecord(Func<ILogger>? logger = default)
+  public TargetRecord(Func<ILogger>? logger = null)
   {
     this._loggerFunc = logger ?? throw new System.ArgumentNullException(nameof(logger));
   }
