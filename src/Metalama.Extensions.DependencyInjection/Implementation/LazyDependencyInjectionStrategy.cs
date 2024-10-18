@@ -74,7 +74,7 @@ public partial class LazyDependencyInjectionStrategy : DefaultDependencyInjectio
         var introduceCacheFieldResult = builder.Advice.IntroduceField(
             builder.Target,
             property.Name + "Cache",
-            property.Type.ToNullableType() );
+            property.Type.ToNullable() );
 
         if ( introduceCacheFieldResult.Outcome == AdviceOutcome.Error )
         {
