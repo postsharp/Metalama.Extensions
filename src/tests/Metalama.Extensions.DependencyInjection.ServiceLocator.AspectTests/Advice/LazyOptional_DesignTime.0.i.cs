@@ -6,7 +6,7 @@ namespace Metalama.Extensions.DependencyInjection.DotNet.Tests.Advice.LazyOption
     {
       get
       {
-        return default !;
+        return default;
       }
     }
     private IServiceProvider _serviceProvider;
