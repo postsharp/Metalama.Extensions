@@ -5,7 +5,7 @@ public struct TargetStruct
   {
     get
     {
-      return _loggerCache ??= _loggerFunc!.Invoke();
+      return _loggerCache ??= _loggerFunc.Invoke();
     }
     init
     {
