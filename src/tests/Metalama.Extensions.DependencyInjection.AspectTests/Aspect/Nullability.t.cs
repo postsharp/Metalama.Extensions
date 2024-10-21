@@ -8,7 +8,7 @@ public class C
   // Required.
   [Dependency]
   private IFormatProvider _formatProvider;
-  public C(ILoggerFactory? loggerFactory = default, IFormatProvider? formatProvider = default)
+  public C(ILoggerFactory? loggerFactory = null, IFormatProvider? formatProvider = null)
   {
     this._loggerFactory = loggerFactory;
     this._formatProvider = formatProvider ?? throw new System.ArgumentNullException(nameof(formatProvider));
