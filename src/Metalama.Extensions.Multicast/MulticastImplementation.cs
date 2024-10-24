@@ -138,7 +138,7 @@ public sealed class MulticastImplementation
 
         void AcceptAssembly()
         {
-            rules.Add( builder => builder.MustBeOfType( typeof(ICompilation) ) );
+            rules.Add( builder => builder.MustBeInstanceOfType( typeof(ICompilation) ) );
         }
 
         void AcceptClassOrStruct()
@@ -153,7 +153,7 @@ public sealed class MulticastImplementation
 
         void AcceptHasAccessor()
         {
-            rules.Add( builder => builder.MustBeOfType( typeof(IHasAccessors) ) );
+            rules.Add( builder => builder.MustBeInstanceOfType( typeof(IHasAccessors) ) );
         }
 
         void AcceptHasParametersOrAncestor()
@@ -161,7 +161,7 @@ public sealed class MulticastImplementation
             AcceptAssembly();
             AcceptClassOrStruct();
             AcceptHasAccessor();
-            rules.Add( builder => builder.MustBeOfType( typeof(IHasParameters) ) );
+            rules.Add( builder => builder.MustBeInstanceOfType( typeof(IHasParameters) ) );
         }
 
         if ( this.ConcreteTargets.HasFlagFast( MulticastTargets.Assembly ) )
@@ -195,7 +195,7 @@ public sealed class MulticastImplementation
             AcceptClassOrStruct();
             AcceptHasAccessor();
 
-            rules.Add( builder => builder.MustBeOfType( typeof(IMethod) ) );
+            rules.Add( builder => builder.MustBeInstanceOfType( typeof(IMethod) ) );
         }
 
         if ( this.ConcreteTargets.HasFlagFast( MulticastTargets.InstanceConstructor ) )
@@ -222,7 +222,7 @@ public sealed class MulticastImplementation
                 builder =>
                 {
                     builder.MustBeExplicitlyDeclared();
-                    builder.MustBeOfType( typeof(IProperty) );
+                    builder.MustBeInstanceOfType( typeof(IProperty) );
                 } );
         }
 
@@ -231,7 +231,7 @@ public sealed class MulticastImplementation
             AcceptAssembly();
             AcceptClassOrStruct();
 
-            rules.Add( builder => builder.MustBeOfType( typeof(IEvent) ) );
+            rules.Add( builder => builder.MustBeInstanceOfType( typeof(IEvent) ) );
         }
 
         if ( this.ConcreteTargets.HasFlagFast( MulticastTargets.Field ) )
@@ -243,7 +243,7 @@ public sealed class MulticastImplementation
                 builder =>
                 {
                     builder.MustBeExplicitlyDeclared();
-                    builder.MustBeOfType( typeof(IField) );
+                    builder.MustBeInstanceOfType( typeof(IField) );
                 } );
         }
 
@@ -339,7 +339,7 @@ public sealed class MulticastImplementation
                             t => t.MethodsAndAccessors()
                                 .Where(
                                     m => !m.IsImplicitlyDeclared && Filter( m, attributeGroup, MulticastTargets.ReturnValue )
-                                                                 && !m.ReturnType.Is( SpecialType.Void ) ) )
+                                                                 && !m.ReturnType.Equals( SpecialType.Void ) ) )
                         .Select( m => m.ReturnParameter ) )
                 .AddAspectIfEligible( attributeGroup.AspectClass.Type, attributeGroup.GetMatchingAspect );
         }
@@ -413,7 +413,7 @@ public sealed class MulticastImplementation
                 .Outbound.SelectMany(
                     t => t.MethodsAndAccessors()
                         .Where(
-                            m => !m.IsImplicitlyDeclared && Filter( m, attributeGroup, MulticastTargets.ReturnValue ) && !m.ReturnType.Is( SpecialType.Void ) )
+                            m => !m.IsImplicitlyDeclared && Filter( m, attributeGroup, MulticastTargets.ReturnValue ) && !m.ReturnType.Equals( SpecialType.Void ) )
                         .Select( m => m.ReturnParameter ) )
                 .AddAspectIfEligible( attributeGroup.AspectClass.Type, attributeGroup.GetMatchingAspect );
         }
@@ -465,7 +465,7 @@ public sealed class MulticastImplementation
                 .Outbound.SelectMany(
                     t => t.Accessors
                         .Where(
-                            m => !m.IsImplicitlyDeclared && Filter( m, attributeGroup, MulticastTargets.ReturnValue ) && !m.ReturnType.Is( SpecialType.Void ) )
+                            m => !m.IsImplicitlyDeclared && Filter( m, attributeGroup, MulticastTargets.ReturnValue ) && !m.ReturnType.Equals( SpecialType.Void ) )
                         .Select( m => m.ReturnParameter ) )
                 .AddAspectIfEligible( attributeGroup.AspectClass.Type, attributeGroup.GetMatchingAspect );
         }
@@ -483,7 +483,7 @@ public sealed class MulticastImplementation
         if ( attributeGroup.TargetsAnyDeclarationKind( MulticastTargets.ReturnValue ) )
         {
             builder
-                .Outbound.SelectMany( m => m.ReturnParameter.Type.Is( SpecialType.Void ) ? Enumerable.Empty<IParameter>() : new[] { m.ReturnParameter } )
+                .Outbound.SelectMany( m => m.ReturnParameter.Type.Equals( SpecialType.Void ) ? Enumerable.Empty<IParameter>() : new[] { m.ReturnParameter } )
                 .AddAspectIfEligible( attributeGroup.AspectClass.Type, attributeGroup.GetMatchingAspect );
         }
     }

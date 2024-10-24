@@ -42,7 +42,7 @@ public class DefaultPullStrategy : IPullStrategy
 
     /// <inheritdoc />
     public virtual IParameter? GetExistingParameter( IConstructor constructor )
-        => constructor.Parameters.FirstOrDefault( p => p.Type.Is( this.ParameterType ) );
+        => constructor.Parameters.FirstOrDefault( p => p.Type.IsConvertibleTo( this.ParameterType ) );
 
     /// <summary>
     /// Gets the name of the new constructor parameter.
