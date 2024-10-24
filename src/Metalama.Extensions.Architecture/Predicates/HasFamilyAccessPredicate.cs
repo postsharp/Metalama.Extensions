@@ -22,7 +22,7 @@ internal class HasFamilyAccessPredicate : ReferencePredicate
         var a = context.GetReferenceEnd( this._role == ReferenceEndRole.Destination ? ReferenceEndRole.Origin : ReferenceEndRole.Destination );
 
         return a.Declaration is IMemberOrNamedType { Accessibility: Accessibility.Protected or Accessibility.ProtectedInternal }
-               && b.Type.Is( a.Member.GetClosestNamedType()! );
+               && b.Type.IsConvertibleTo( a.Member.GetClosestNamedType()! );
     }
 
     protected override ReferenceGranularity GetGranularity() => ReferenceGranularity.Type;
